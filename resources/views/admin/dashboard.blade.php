@@ -11,6 +11,13 @@
     </div>
     
     <div class="flex flex-wrap gap-2">
+        <!-- Tombol Ekspor ke Excel (Hanya muncul jika event terpilih tersedia) -->
+        @if($selectedEvent)
+            <a href="{{ route('admin.event.export', $selectedEvent->id) }}" class="px-5 py-3 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all-300 shadow-md flex items-center">
+                <i class="fa-solid fa-file-excel mr-2"></i>Ekspor ke Excel
+            </a>
+        @endif
+
         <!-- Tombol Buka Modal Buat Event Baru -->
         <button onclick="toggleModal('modal-event')" class="px-5 py-3 bg-blue-900 text-white rounded-xl text-sm font-bold hover:bg-blue-950 transition-all-300 shadow-md flex items-center">
             <i class="fa-solid fa-circle-plus mr-2"></i>Buat Event Baru
@@ -45,7 +52,7 @@
     @endif
 </div>
 
-<!-- BARIS 2: KARTU METRIK STATISTIK & GRAFIK TREN KEHADIRAN (SOLUSI FITUR KEHADIRAN PER EVENT) -->
+<!-- BARIS 2: KARTU METRIK STATISTIK & GRAFIK TREN KEHADIRAN -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
     <!-- Kartu Metrik Samping Kiri -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
@@ -238,7 +245,7 @@
     </div>
 </div>
 
-<!-- ==================== MODAL: DETAIL PRESENSI (FITUR MATA DETAIL) ==================== -->
+<!-- ==================== MODAL: DETAIL PRESENSI ==================== -->
 <div id="modal-detail" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden transform transition-all">
         <div class="p-6 bg-slate-900 text-white flex items-center justify-between">

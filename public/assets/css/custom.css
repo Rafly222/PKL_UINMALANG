@@ -1,0 +1,51 @@
+/* Custom CSS untuk Aplikasi Presensi Digital Diskominfo Malang */
+
+/* Transisi halus efek hover */
+.transition-all-300 {
+    transition: all 0.3s ease;
+}
+
+/* Mematikan tindakan sentuh bawaan browser agar coretan kanvas lancar di touchscreen */
+.touch-action-none {
+    touch-action: none;
+}
+
+/* Kustomisasi scrollbar modern premium */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Desain efek kedip kamera */
+.camera-flash {
+    animation: flashEffect 0.2s ease-out;
+}
+
+@keyframes flashEffect {
+    0% { background-color: rgba(255, 255, 255, 1); }
+    100% { background-color: rgba(255, 255, 255, 0); }
+}
+
+/* Animasi bayangan tombol */
+.btn-premium {
+    box-shadow: 0 4px 14px 0 rgba(30, 58, 138, 0.3);
+}
+
+.btn-premium:hover {
+    box-shadow: 0 6px 20px 0 rgba(30, 58, 138, 0.4);
+    transform: translateY(-1px);
+}

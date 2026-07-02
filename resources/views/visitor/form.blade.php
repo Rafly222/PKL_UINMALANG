@@ -22,7 +22,8 @@
         <!-- Banner Hiasan Header Card -->
         <div class="h-2 bg-gradient-to-r from-blue-800 via-indigo-900 to-teal-700"></div>
 
-        <form action="{{ route('presensi.store') }}" method="POST" class="p-6 sm:p-10 space-y-8">
+        <!-- <form action="{{ route('presensi.store') }}" method="POST" class="p-6 sm:p-10 space-y-8"> -->
+        <form id="form-presensi" action="{{ route('presensi.store') }}" method="POST" class="p-6 sm:p-10 space-y-8">
             @csrf
 
             <!-- 1. OPSI PILIHAN EVENT -->
@@ -168,7 +169,8 @@
 
             <!-- TOMBOL SUBMIT PRESENSI -->
             <div class="pt-4">
-                <button type="submit" class="w-full py-4 bg-gradient-to-r from-blue-900 to-indigo-950 text-white rounded-2xl text-base font-extrabold transition-all-300 btn-premium flex items-center justify-center shadow-lg">
+                <!-- <button type="submit" class="w-full py-4 bg-gradient-to-r from-blue-900 to-indigo-950 text-white rounded-2xl text-base font-extrabold transition-all-300 btn-premium flex items-center justify-center shadow-lg"> -->
+                <button type="submit" id="btn-submit" class="w-full py-4 bg-gradient-to-r from-blue-900 to-indigo-950 text-white rounded-2xl text-base font-extrabold transition-all-300 btn-premium flex items-center justify-center shadow-lg">
                     <i class="fa-solid fa-clipboard-check text-xl mr-3"></i>CATAT KEHADIRAN RESMI
                 </button>
             </div>
@@ -267,5 +269,13 @@
     document.addEventListener("DOMContentLoaded", () => {
         switchKategori('tamu'); // Default dibuka dengan tamu umum
     });
+
+    // menghindari data duplikat karena klik-klik
+    document.getElementById('form-presensi').addEventListener('submit', function() {
+    let btn = document.getElementById('btn-submit');
+    btn.disabled = true; // Matikan tombol
+    btn.classList.add('opacity-70', 'cursor-not-allowed'); // Ubah tampilan
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xl mr-3"></i>SEDANG MEMPROSES...';
+});
 </script>
 @endsection

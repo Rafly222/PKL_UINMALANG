@@ -3,22 +3,22 @@
 @section('title', 'Sistem Presensi Resmi - Diskominfo Kota Malang')
 
 @section('content')
-<div class="max-w-3xl mx-auto">
+<div class="max-w-4xl mx-auto">
     <!-- Judul & Deskripsi Header Form -->
     <div class="text-center mb-8">
-        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-bold uppercase tracking-wider">Aplikasi Publik</span>
+        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-bold uppercase tracking-wider">Akses Publik</span>
         <h2 class="text-2xl sm:text-3xl font-extrabold text-blue-950 mt-3">
             @if($selectedEvent)
-                Absensi Kehadiran {{ $selectedEvent->nama_event }}
+                Presensi Kehadiran {{ $selectedEvent->nama_event }}
             @else
-                Sistem Presensi Tamu & Pegawai
+                Presensi Tamu & Pegawai
             @endif
         </h2>
         <p class="text-sm text-slate-500 mt-2">Silakan lengkapi formulir di bawah ini dengan tertib. Pastikan kamera dan layar tanda tangan berfungsi penuh.</p>
     </div>
 
     <!-- Kotak Utama Formulir -->
-    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+    <div class="w-full bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
         <!-- Banner Hiasan Header Card -->
         <div class="h-2 bg-gradient-to-r from-blue-800 via-indigo-900 to-teal-700"></div>
 

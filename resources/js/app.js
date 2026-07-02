@@ -1,1 +1,1 @@
-//
+console.log('Jembatan JavaScript Vite Laravel Berhasil Dimuat!');

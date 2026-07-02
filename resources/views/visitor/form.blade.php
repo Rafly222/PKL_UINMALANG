@@ -124,8 +124,11 @@
                     </div>
 
                     <!-- Hasil Pratinjau Capture -->
-                    <div class="relative bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center h-56 overflow-hidden">
+                    <!-- <div class="relative bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center h-56 overflow-hidden">
                         <img id="photo-preview-img" class="hidden w-full h-full object-cover">
+                        <div class="text-center p-4"> -->
+                    <div class="relative bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center h-56 overflow-hidden">
+                        <img id="photo-preview-img" class="hidden absolute inset-0 w-full h-full object-cover z-10">
                         <div class="text-center p-4">
                             <i class="fa-solid fa-image-portrait text-3xl text-slate-300 mb-1"></i>
                             <p class="text-xs text-slate-400 font-semibold">Pratinjau Foto Absensi</p>

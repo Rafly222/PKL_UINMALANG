@@ -40,44 +40,36 @@
                     </div>
                 </div>
 
-                <!-- Sisi Kanan: Menu Navigasi Pengunjung vs Admin -->
-                <!-- <nav class="flex items-center space-x-2 sm:space-x-4">
+                <nav class="flex items-center gap-3">
                     <a href="{{ route('presensi.form') }}"
-                    class="px-4 py-2 rounded-lg text-sm font-semibold transition-all-300 {{ Request::is('/') ? 'bg-amber-500 text-blue-950' : 'hover:bg-blue-800' }}">
-                        <i class="fa-solid fa-pen-fancy mr-2"></i>Form Presensi
-                    </a>
-
-                    @auth
-                        <a href="{{ route('admin.dashboard') }}"
-                        class="px-4 py-2 rounded-lg text-sm font-semibold transition-all-300 {{ Request::is('admin*') ? 'bg-amber-500 text-blue-950' : 'hover:bg-blue-800' }}">
-                            <i class="fa-solid fa-chart-line mr-2"></i>Dashboard Rekap
-                        </a>
-
-                        <span class="hidden md:inline text-sm font-semibold text-amber-300">
-                            <i class="fa-solid fa-user mr-1"></i>{{ Auth::user()->name }}
-                        </span>
-
-                        <form action="{{ route('admin.logout') }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit"
-                                class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-semibold transition-all-300">
-                                <i class="fa-solid fa-right-from-bracket mr-2"></i>Logout
-                            </button>
-                        </form>
-                    @else
-                        <a href="{{ route('login') }}"
-                        class="px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-800 transition-all-300">
-                            <i class="fa-solid fa-right-to-bracket mr-2"></i>Login Admin
-                        </a>
-                    @endauth
-                </nav> -->
-                <!-- <nav class="flex items-center">
-                    <a href="{{ route('presensi.form') }}"
-                    class="px-4 py-2 rounded-lg text-sm font-semibold transition-all-300 {{ Request::is('/') ? 'bg-amber-500 text-blue-950' : 'hover:bg-blue-800' }}">
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="px-4 py-2 rounded-lg text-sm font-semibold transition-all-300 {{ Request::is('admin*') ? 'bg-amber-500 text-blue-950' : 'hover:bg-blue-800' }}">
                         <i class="fa-solid fa-pen-fancy mr-2"></i>
                         Form Presensi
                     </a>
-                </nav> -->
+
+                    <a href="{{ route('admin.dashboard') }}"
+                    class="px-4 py-2 rounded-lg text-sm font-semibold transition-all-300 {{ Request::is('admin*') ? 'bg-amber-500 text-blue-950' : 'hover:bg-blue-800' }}">
+                        <i class="fa-solid fa-chart-line mr-2"></i>
+                        Dashboard Rekap
+                    </a>
+
+                    <span class="hidden md:flex items-center text-sm font-semibold text-amber-300">
+                        <i class="fa-solid fa-user mr-2"></i>
+                        {{ Auth::user()->name }}
+                    </span>
+
+                    <form action="{{ route('admin.logout') }}" method="POST">
+                        @csrf
+                        <button type="submit"
+                            class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm font-semibold text-white">
+                            <i class="fa-solid fa-right-from-bracket mr-2"></i>
+                            Logout
+                        </button>
+                    </form>
+
+                </nav>
             </div>
         </div>
     </header>

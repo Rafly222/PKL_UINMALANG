@@ -69,6 +69,26 @@ class AdminDashboardController extends Controller
             'hourlyTrend'
         ));
     }
+    /**
+     * Menambahkan Admin baru ke sistem.
+     * Hanya bisa diakses oleh admin yang sudah login.
+     */
+    public function storeAdmin(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
+        ]);
+
+        \App\Models\User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+        ]);
+
+        return redirect()->back()->with('success', 'Admin baru berhasil ditambahkan.');
+    }
 
     /**
      * Membuat Event Acara Baru (Fitur: Create Event)

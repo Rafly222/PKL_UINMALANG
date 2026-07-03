@@ -11,17 +11,88 @@
     </div>
     
     <div class="flex flex-wrap gap-2">
-        <!-- Tombol Ekspor ke Excel (Hanya muncul jika event terpilih tersedia) -->
         @if($selectedEvent)
-            <a href="{{ route('admin.event.export', $selectedEvent->id) }}" class="px-5 py-3 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all-300 shadow-md flex items-center">
-                <i class="fa-solid fa-file-excel mr-2"></i>Ekspor ke Excel
+            <a href="{{ route('admin.event.export', $selectedEvent->id) }}"
+            class="px-5 py-3 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 shadow-md flex items-center">
+                <i class="fa-solid fa-file-excel mr-2"></i>
+                Ekspor ke Excel
             </a>
         @endif
+        <button
+            onclick="toggleModal('modal-event')"
+            class="px-5 py-3 bg-blue-900 text-white rounded-xl text-sm font-bold hover:bg-blue-950 shadow-md flex items-center">
 
-        <!-- Tombol Buka Modal Buat Event Baru -->
-        <button onclick="toggleModal('modal-event')" class="px-5 py-3 bg-blue-900 text-white rounded-xl text-sm font-bold hover:bg-blue-950 transition-all-300 shadow-md flex items-center">
-            <i class="fa-solid fa-circle-plus mr-2"></i>Buat Event Baru
+            <i class="fa-solid fa-calendar-plus mr-2"></i>
+            Buat Event Baru
         </button>
+        <button
+            onclick="toggleModal('modal-admin')"
+            class="px-5 py-3 bg-violet-700 text-white rounded-xl text-sm font-bold hover:bg-violet-800 shadow-md flex items-center">
+
+            <i class="fa-solid fa-user-plus mr-2"></i>
+            Tambah Admin
+        </button>
+
+        
+
+    </div>
+</div>
+
+<!-- ==================== MODAL TAMBAH ADMIN ==================== -->
+
+<div id="modal-admin" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+        <div class="p-6 bg-violet-700 text-white flex justify-between items-center">
+            <h3 class="font-extrabold text-base">
+                <i class="fa-solid fa-user-plus mr-2"></i>
+                Tambah Admin Baru
+            </h3>
+            <button onclick="toggleModal('modal-admin')">
+                ✕
+            </button>
+        </div>
+
+        <form action="{{ route('admin.store') }}" method="POST" class="p-6 space-y-4">
+            @csrf
+
+            <div>
+                <label class="text-xs font-bold">
+                    Nama Lengkap
+                </label>
+                <input type="text" name="name" required class="w-full mt-1 px-4 py-2 border rounded-lg">
+            </div>
+
+            <div>
+                <label class="text-xs font-bold">
+                    Email
+                </label>
+                <input type="email" name="email" required class="w-full mt-1 px-4 py-2 border rounded-lg">
+            </div>
+
+            <div>
+                <label class="text-xs font-bold">
+                    Password
+                </label>
+                <input type="password" name="password" required class="w-full mt-1 px-4 py-2 border rounded-lg">
+            </div>
+
+            <div>
+                <label class="text-xs font-bold">
+                    Konfirmasi Password
+                </label>
+                <input type="password" name="password_confirmation" required class="w-full mt-1 px-4 py-2 border rounded-lg">
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="toggleModal('modal-admin')" class="px-4 py-2 bg-slate-200 rounded-lg">
+                    Batal
+                </button>
+                <button type="submit" class="px-4 py-2 bg-violet-700 text-white rounded-lg">
+                    Simpan Admin
+                </button>
+            </div>
+
+        </form>
     </div>
 </div>
 

@@ -48,32 +48,3 @@ class AdminAuthController extends Controller
     return redirect('/admin/login');
 }
 }
-// class AdminAuthController extends Controller
-// {
-//     public function showLogin() {
-//         return view('admin.login');
-//     }
-
-//     // Fungsi login hanya boleh ada SATU
-//     public function login(Request $request) {
-//     $credentials = $request->validate([
-//         'email' => ['required', 'email'],
-//         'password' => ['required'],
-//     ]);
-
-//     if (Auth::attempt($credentials)) {
-//         $request->session()->regenerate();
-//         // Jika sampai di sini, artinya login BERHASIL
-//         return redirect()->intended('/admin/dashboard');
-//     }
-
-//     // Jika sampai di sini, artinya login GAGAL
-//     return back()->withErrors(['email' => 'Email atau password tidak cocok.']);
-//     }
-
-//     public function logout(Request $request) {
-//         Auth::logout();
-//         $request->session()->invalidate();
-//         return redirect('/admin/login');
-//     }
-// }

@@ -39,8 +39,100 @@
 </div>
 
 <!-- ==================== MODAL TAMBAH ADMIN ==================== -->
-
 <div id="modal-admin" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+        <div class="p-6 bg-violet-700 text-white flex justify-between items-center">
+            <h3 class="font-extrabold text-base">
+                <i class="fa-solid fa-user-plus mr-2"></i>
+                Tambah Admin Baru
+            </h3>
+            <button onclick="toggleModal('modal-admin')">
+                ✕
+            </button>
+        </div>
+
+        {{-- ✅ TAMBAHKAN NOTIFIKASI DI SINI --}}
+        <div class="px-6 pt-4">
+            {{-- Notifikasi Sukses --}}
+            @if(session('success'))
+                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-lg text-sm flex items-start gap-2">
+                    <i class="fa-solid fa-check-circle text-emerald-600 mt-0.5"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+
+            {{-- Notifikasi Error Validasi --}}
+            @if($errors->any())
+                <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-lg text-sm">
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-circle-exclamation text-rose-600 mt-0.5"></i>
+                        <div>
+                            <span class="font-bold">Terjadi kesalahan:</span>
+                            <ul class="list-disc list-inside mt-1 space-y-0.5">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        <form action="{{ route('admin.store') }}" method="POST" class="p-6 space-y-4">
+            @csrf
+
+            {{-- Field Nama --}}
+            <div>
+                <label class="text-xs font-bold">Nama Lengkap</label>
+                <input type="text" name="name" required 
+                       class="w-full mt-1 px-4 py-2 border rounded-lg @error('name') border-rose-500 @enderror"
+                       value="{{ old('name') }}">
+                @error('name')
+                    <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Field Email --}}
+            <div>
+                <label class="text-xs font-bold">Email</label>
+                <input type="email" name="email" required 
+                       class="w-full mt-1 px-4 py-2 border rounded-lg @error('email') border-rose-500 @enderror"
+                       value="{{ old('email') }}">
+                @error('email')
+                    <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Field Password --}}
+            <div>
+                <label class="text-xs font-bold">Password (min. 6 karakter)</label>
+                <input type="password" name="password" required 
+                       class="w-full mt-1 px-4 py-2 border rounded-lg @error('password') border-rose-500 @enderror">
+                @error('password')
+                    <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Field Konfirmasi Password --}}
+            <div>
+                <label class="text-xs font-bold">Konfirmasi Password</label>
+                <input type="password" name="password_confirmation" required 
+                       class="w-full mt-1 px-4 py-2 border rounded-lg">
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="toggleModal('modal-admin')" class="px-4 py-2 bg-slate-200 rounded-lg">
+                    Batal
+                </button>
+                <button type="submit" class="px-4 py-2 bg-violet-700 text-white rounded-lg">
+                    Simpan Admin
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- <div id="modal-admin" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
         <div class="p-6 bg-violet-700 text-white flex justify-between items-center">
             <h3 class="font-extrabold text-base">
@@ -94,7 +186,7 @@
 
         </form>
     </div>
-</div>
+</div> -->
 
 <!-- BARIS FILTER UTAMA: DROPDOWN EVENT -->
 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
@@ -285,7 +377,35 @@
 </div>
 
 <!-- ==================== MODAL: BUAT EVENT BARU (CREATE EVENT) ==================== -->
-<div id="modal-event" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+<div id="modal-event" class="hidden fixed inset-0 ...">
+    <div class="bg-white rounded-2xl shadow-xl ...">
+        <!-- ... header ... -->
+        
+        {{-- ✅ TAMBAHKAN NOTIFIKASI --}}
+        <div class="px-6 pt-4">
+            @if(session('success'))
+                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-lg text-sm">
+                    <i class="fa-solid fa-check-circle mr-2"></i>
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if($errors->any())
+                <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-lg text-sm">
+                    <ul class="list-disc list-inside">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+        </div>
+        
+        <form action="{{ route('admin.event.store') }}" method="POST" class="p-6 space-y-4">
+            <!-- ... -->
+        </form>
+    </div>
+</div>
+<!-- <div id="modal-event" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all">
         <div class="p-6 bg-blue-900 text-white flex items-center justify-between">
             <h3 class="font-extrabold text-base"><i class="fa-solid fa-calendar-plus mr-2"></i>Buat Event Kehadiran Baru</h3>
@@ -314,7 +434,7 @@
             </div>
         </form>
     </div>
-</div>
+</div> -->
 
 <!-- ==================== MODAL: DETAIL PRESENSI ==================== -->
 <div id="modal-detail" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -367,6 +487,30 @@
 <!-- Pustaka Chart.js untuk render grafik -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+     // ===== AUTO BUKA MODAL JIKA ADA ERROR =====
+    document.addEventListener('DOMContentLoaded', function() {
+        // Cek apakah ada error validasi
+        @if($errors->any())
+            const modalAdmin = document.getElementById('modal-admin');
+            if (modalAdmin) {
+                modalAdmin.classList.remove('hidden');
+            }
+        @endif
+        
+        // Cek apakah ada success (opsional)
+        @if(session('success'))
+            // Tampilkan alert atau toast
+            console.log('✅ {{ session('success') }}');
+        @endif
+    });
+
+    // Fungsi toggle modal (yang sudah ada)
+    function toggleModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.toggle('hidden');
+        }
+    }
     // Fungsi buka/tutup modal
     function toggleModal(modalId) {
         const modal = document.getElementById(modalId);

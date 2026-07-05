@@ -40,7 +40,6 @@
                         <option value="">Tidak ada event aktif hari ini</option>
                     @endforelse
                 </select>
-                <p class="text-xs text-slate-400">Judul judul form akan berubah secara otomatis menyesuaikan nama event profesional dinas.</p>
             </div>
 
             <!-- 2. PILIHAN JENIS FORMULIR (CUSTOM PEG/TAMU) -->

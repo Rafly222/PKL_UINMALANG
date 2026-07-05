@@ -377,64 +377,87 @@
 </div>
 
 <!-- ==================== MODAL: BUAT EVENT BARU (CREATE EVENT) ==================== -->
-<div id="modal-event" class="hidden fixed inset-0 ...">
-    <div class="bg-white rounded-2xl shadow-xl ...">
-        <!-- ... header ... -->
-        
-        {{-- ✅ TAMBAHKAN NOTIFIKASI --}}
-        <div class="px-6 pt-4">
+ <!-- ==================== MODAL: BUAT EVENT BARU (CREATE EVENT) ==================== -->
+<div id="modal-event" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all">
+        <div class="p-6 bg-blue-900 text-white flex items-center justify-between">
+            <h3 class="font-extrabold text-base">
+                <i class="fa-solid fa-calendar-plus mr-2"></i>Buat Event Kehadiran Baru
+            </h3>
+            <button onclick="toggleModal('modal-event')" class="text-white hover:text-slate-200">✕</button>
+        </div>
+
+        {{-- NOTIFIKASI --}}
+        <div class="px-6 pt-4 space-y-2">
             @if(session('success'))
-                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-lg text-sm">
-                    <i class="fa-solid fa-check-circle mr-2"></i>
-                    {{ session('success') }}
+                <div class="bg-emerald-50 border-l-4 border-emerald-500 text-emerald-800 p-3 rounded-lg text-sm flex items-start gap-2">
+                    <i class="fa-solid fa-check-circle text-emerald-600 mt-0.5"></i>
+                    <span>{{ session('success') }}</span>
                 </div>
             @endif
+
             @if($errors->any())
-                <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-lg text-sm">
-                    <ul class="list-disc list-inside">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+                <div class="bg-rose-50 border-l-4 border-rose-500 text-rose-800 p-3 rounded-lg text-sm">
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-circle-exclamation text-rose-600 mt-0.5"></i>
+                        <div>
+                            <span class="font-bold">Terjadi kesalahan:</span>
+                            <ul class="list-disc list-inside mt-1 text-xs space-y-0.5">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             @endif
         </div>
-        
+
         <form action="{{ route('admin.event.store') }}" method="POST" class="p-6 space-y-4">
-            <!-- ... -->
+            @csrf
+
+            <div>
+                <label class="text-xs font-bold text-slate-700">Nama Event <span class="text-red-500">*</span></label>
+                <input type="text" name="nama_event" required 
+                       class="w-full mt-1 px-4 py-2 border rounded-lg @error('nama_event') border-rose-500 @enderror"
+                       value="{{ old('nama_event') }}" placeholder="Contoh: PKL UIN Malang">
+                @error('nama_event')
+                    <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
+                <label class="text-xs font-bold text-slate-700">Tanggal <span class="text-red-500">*</span></label>
+                <input type="date" name="tanggal_event" required 
+                       class="w-full mt-1 px-4 py-2 border rounded-lg @error('tanggal_event') border-rose-500 @enderror"
+                       value="{{ old('tanggal_event') }}">
+                @error('tanggal_event')
+                    <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
+                <label class="text-xs font-bold text-slate-700">Target Peserta <span class="text-red-500">*</span></label>
+                <input type="number" name="target_peserta" required min="1" 
+                       class="w-full mt-1 px-4 py-2 border rounded-lg @error('target_peserta') border-rose-500 @enderror"
+                       value="{{ old('target_peserta', 100) }}">
+                @error('target_peserta')
+                    <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" onclick="toggleModal('modal-event')" class="px-4 py-2 bg-slate-200 rounded-lg hover:bg-slate-300 transition-all-300">
+                    Batal
+                </button>
+                <button type="submit" class="px-4 py-2 bg-blue-900 hover:bg-blue-950 text-white rounded-lg shadow transition-all-300">
+                    Simpan Event
+                </button>
+            </div>
         </form>
     </div>
 </div>
-<!-- <div id="modal-event" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all">
-        <div class="p-6 bg-blue-900 text-white flex items-center justify-between">
-            <h3 class="font-extrabold text-base"><i class="fa-solid fa-calendar-plus mr-2"></i>Buat Event Kehadiran Baru</h3>
-            <button onclick="toggleModal('modal-event')" class="text-white hover:text-slate-200">✕</button>
-        </div>
-        <form action="{{ route('admin.event.store') }}" method="POST" class="p-6 space-y-4">
-            @csrf
-            <div class="space-y-1">
-                <label for="nama_event" class="text-xs font-bold text-slate-700">Nama Event Dinas <span class="text-red-500">*</span></label>
-                <input type="text" name="nama_event" id="nama_event" required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-950" placeholder="Contoh: PKL UIN Malang">
-            </div>
-            
-            <div class="space-y-1">
-                <label for="tanggal_event" class="text-xs font-bold text-slate-700">Tanggal Pelaksanaan <span class="text-red-500">*</span></label>
-                <input type="date" name="tanggal_event" id="tanggal_event" required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-950">
-            </div>
 
-            <div class="space-y-1">
-                <label for="target_peserta" class="text-xs font-bold text-slate-700">Target Jumlah Peserta <span class="text-red-500">*</span></label>
-                <input type="number" name="target_peserta" id="target_peserta" required min="1" value="100" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-950">
-            </div>
-
-            <div class="pt-2 flex justify-end space-x-2">
-                <button type="button" onclick="toggleModal('modal-event')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold transition-all-300">Batal</button>
-                <button type="submit" class="px-4 py-2 bg-blue-900 hover:bg-blue-950 text-white rounded-lg text-xs font-bold transition-all-300 shadow">Simpan Event</button>
-            </div>
-        </form>
-    </div>
-</div> -->
 
 <!-- ==================== MODAL: DETAIL PRESENSI ==================== -->
 <div id="modal-detail" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">

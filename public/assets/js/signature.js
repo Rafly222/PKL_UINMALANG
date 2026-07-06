@@ -19,7 +19,7 @@ class SignaturePad {
     }
 
     init() {
-        // PERBAIKAN 1: Matikan paksa aksi gesture browser lewat CSS di JavaScript
+        // PERBAIKAN 1: Kunci mati pergerakan gesture browser pada canvas secara permanen
         this.canvas.style.touchAction = 'none';
         this.canvas.style.userSelect = 'none';
         this.canvas.style.webkitUserSelect = 'none';
@@ -27,10 +27,9 @@ class SignaturePad {
         // Mengatur ukuran resolusi internal canvas agar tanda tangan tidak blur/pecah
         this.resizeCanvas();
         
-        // PERBAIKAN 2: Debounce/Ubah resize handler agar tidak langsung menghapus coretan yang sudah ada
+        // PERBAIKAN 2: Amankan tanda tangan agar tidak terhapus otomatis saat resize semu terjadi
         window.addEventListener('resize', () => {
             if (!this.isEmpty()) {
-                // Simpan sementara tanda tangan sebelum ukuran diubah
                 const tempImage = this.canvas.toDataURL();
                 this.resizeCanvas();
                 const img = new Image();
@@ -43,15 +42,15 @@ class SignaturePad {
             }
         });
 
-        // POINTER EVENTS - Dengan penanganan preventDefault eksplisit
+        // POINTER EVENTS - Ditambahkan penjinak gesture browser (preventDefault)
         this.canvas.addEventListener('pointerdown', (e) => {
-            e.preventDefault(); // Mencegah fokus browser melompat
+            e.preventDefault(); 
             this.startDrawing(e);
         });
         
         this.canvas.addEventListener('pointermove', (e) => {
             if (this.isDrawing) {
-                e.preventDefault(); // Mencegah layar terseret (scrolling) atau memicu refresh
+                e.preventDefault(); // PERBAIKAN UTAMA: Cegah pull-to-refresh dan scroll halaman!
                 this.draw(e);
             }
         });

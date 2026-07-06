@@ -52,16 +52,14 @@
                     <label for="kat_pegawai" class="relative flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all-300 hover:bg-slate-50 border-slate-200" id="label-kat-peg">
                         <input type="radio" name="kategori_peserta" id="kat_pegawai" value="pegawai" class="absolute top-3 right-3 h-4 w-4 text-blue-800 focus:ring-blue-800" onclick="switchKategori('pegawai')">
                         <i class="fa-solid fa-user-tie text-2xl text-slate-400 mb-2 mt-2" id="icon-kat-peg"></i>
-                        <span class="text-sm font-bold text-slate-700">Pegawai (Custom)</span>
-                        <span class="text-xs text-slate-400 mt-1 text-center">Autofill otomatis via NIP</span>
+                        <span class="text-sm font-bold text-slate-700">Pegawai </span>
                     </label>
 
                     <!-- Opsi Tamu (Fitur Normal Presensi) -->
                     <label for="kat_tamu" class="relative flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all-300 hover:bg-slate-50 border-slate-200" id="label-kat-tamu">
                         <input type="radio" name="kategori_peserta" id="kat_tamu" value="tamu" class="absolute top-3 right-3 h-4 w-4 text-blue-800 focus:ring-blue-800" onclick="switchKategori('tamu')" checked>
                         <i class="fa-solid fa-id-card text-2xl text-slate-400 mb-2 mt-2" id="icon-kat-tamu"></i>
-                        <span class="text-sm font-bold text-slate-700">Tamu Umum (Normal)</span>
-                        <span class="text-xs text-slate-400 mt-1 text-center font-medium">Pengisian data manual</span>
+                        <span class="text-sm font-bold text-slate-700">Tamu Umum </span>
                     </label>
                 </div>
             </div>
@@ -137,7 +135,7 @@
                 </div>
 
                 <!-- Tombol Ambil Foto -->
-                <button type="button" id="capture-photo-btn" class="w-full py-2 bg-teal-700 text-white rounded-xl text-xs font-bold transition-all-300 hover:bg-teal-800 shadow shadow-teal-700/30">
+                <button type="button" id="capture-photo-btn" class="w-full py-2 bg-gradient-to-r from-blue-900 to-indigo-950 text-white rounded-2xl text-base font-extrabold transition-all-300 btn-premium flex items-center justify-center shadow-lg ">
                     <i class="fa-solid fa-shutter-button mr-2"></i>Ambil Foto Presensi (Capture)
                 </button>
 
@@ -149,7 +147,7 @@
             <div class="space-y-2">
                 <div class="flex items-center justify-between">
                     <label class="block text-sm font-bold text-slate-700">
-                        <i class="fa-solid fa-signature text-blue-800 mr-2"></i>Goresan Tanda Tangan <span class="text-red-500">*</span>
+                        <i class="fa-solid fa-signature text-blue-800 mr-2"></i>Tanda Tangan <span class="text-red-500">*</span>
                     </label>
                     <button type="button" id="clear-signature" class="text-xs font-bold text-red-600 hover:text-red-800 transition-all-300">
                         <i class="fa-solid fa-eraser mr-1"></i>Bersihkan Coreta
@@ -158,7 +156,7 @@
                 
                 <!-- Pembungkus Canvas Touchscreen -->
                 <div class="relative border-2 border-slate-200 rounded-xl overflow-hidden bg-slate-50">
-                    <canvas id="signature-pad" class="w-full h-44 cursor-crosshair touch-action-none"></canvas>
+                    <canvas id="signature-pad" class="w-full h-44 cursor-crosshair touch-none"></canvas>
                 </div>
                 <p class="text-xs text-slate-400">Gunakan layar sentuh touchscreen (tablet/HP/PC Kerja) atau mouse untuk membuat tanda tangan formal.</p>
                 

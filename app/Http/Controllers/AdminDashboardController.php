@@ -89,6 +89,11 @@ class AdminDashboardController extends Controller
 
         return redirect()->back()->with('success', 'Admin baru berhasil ditambahkan.');
     } 
+
+    public function create()
+    {
+        return view('admin.login');
+    }
     /**
      * Membuat Event Acara Baru (Fitur: Create Event)
      */

@@ -19,15 +19,51 @@ class SignaturePad {
     }
 
     init() {
+        // PERBAIKAN 1: Matikan paksa aksi gesture browser lewat CSS di JavaScript
+        this.canvas.style.touchAction = 'none';
+        this.canvas.style.userSelect = 'none';
+        this.canvas.style.webkitUserSelect = 'none';
+
         // Mengatur ukuran resolusi internal canvas agar tanda tangan tidak blur/pecah
         this.resizeCanvas();
-        window.addEventListener('resize', () => this.resizeCanvas());
+        
+        // PERBAIKAN 2: Debounce/Ubah resize handler agar tidak langsung menghapus coretan yang sudah ada
+        window.addEventListener('resize', () => {
+            if (!this.isEmpty()) {
+                // Simpan sementara tanda tangan sebelum ukuran diubah
+                const tempImage = this.canvas.toDataURL();
+                this.resizeCanvas();
+                const img = new Image();
+                img.onload = () => {
+                    this.ctx.drawImage(img, 0, 0, this.canvas.width / (window.devicePixelRatio || 1), this.canvas.height / (window.devicePixelRatio || 1));
+                };
+                img.src = tempImage;
+            } else {
+                this.resizeCanvas();
+            }
+        });
 
-        // POINTER EVENTS - Solusi jitu menyatukan Touch, Mouse, dan Stylus Pen
-        this.canvas.addEventListener('pointerdown', (e) => this.startDrawing(e));
-        this.canvas.addEventListener('pointermove', (e) => this.draw(e));
-        this.canvas.addEventListener('pointerup', (e) => this.stopDrawing(e));
-        this.canvas.addEventListener('pointerleave', (e) => this.stopDrawing(e));
+        // POINTER EVENTS - Dengan penanganan preventDefault eksplisit
+        this.canvas.addEventListener('pointerdown', (e) => {
+            e.preventDefault(); // Mencegah fokus browser melompat
+            this.startDrawing(e);
+        });
+        
+        this.canvas.addEventListener('pointermove', (e) => {
+            if (this.isDrawing) {
+                e.preventDefault(); // Mencegah layar terseret (scrolling) atau memicu refresh
+                this.draw(e);
+            }
+        });
+        
+        this.canvas.addEventListener('pointerup', (e) => {
+            e.preventDefault();
+            this.stopDrawing(e);
+        });
+        
+        this.canvas.addEventListener('pointerleave', (e) => {
+            this.stopDrawing(e);
+        });
 
         // Event Bersihkan Canvas
         if (this.clearBtn) {
@@ -37,7 +73,6 @@ class SignaturePad {
 
     resizeCanvas() {
         const rect = this.canvas.getBoundingClientRect();
-        // Gunakan device pixel ratio untuk rendering tajam di layar resolusi tinggi
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
         this.canvas.width = rect.width * ratio;
         this.canvas.height = rect.height * ratio;
@@ -47,7 +82,7 @@ class SignaturePad {
         this.ctx.lineWidth = 2.5;
         this.ctx.lineCap = 'round';
         this.ctx.lineJoin = 'round';
-        this.ctx.strokeStyle = '#1e3a8a'; // Warna biru tua formal (Diskominfo)
+        this.ctx.strokeStyle = '#101f43'; // Disesuaikan menjadi biru tua gelap serasi dengan tombol utama
     }
 
     getCoordinates(e) {
@@ -64,7 +99,7 @@ class SignaturePad {
         this.ctx.beginPath();
         this.ctx.moveTo(coords.x, coords.y);
         
-        // Amankan pointer focus ke canvas (agar coretan tidak terputus saat diseret cepat)
+        // Amankan pointer focus ke canvas
         this.canvas.setPointerCapture(e.pointerId);
     }
 
@@ -83,7 +118,7 @@ class SignaturePad {
         // Lepas pointer capture
         this.canvas.releasePointerCapture(e.pointerId);
         
-        // Konversikan coretan menjadi base64 string untuk dikirim lewat input Laravel
+        // Konversikan coretan menjadi base64 string
         this.saveSignature();
     }
 
@@ -96,7 +131,6 @@ class SignaturePad {
     }
 
     saveSignature() {
-        // Cek apakah canvas kosong sebelum menyimpan
         if (this.isEmpty()) {
             if (this.inputHidden) this.inputHidden.value = '';
             return;
@@ -109,7 +143,6 @@ class SignaturePad {
     }
 
     isEmpty() {
-        // Fungsi pembantu sederhana untuk mengecek apakah canvas memiliki coretan
         const buffer = new Uint32Array(
             this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height).data.buffer
         );
@@ -119,6 +152,7 @@ class SignaturePad {
 
 // Inisialisasi pad saat DOM siap
 document.addEventListener('DOMContentLoaded', () => {
+    // Menyesuaikan id pembungkus atau id canvas bawaan Anda
     if (document.getElementById('signature-pad')) {
         window.signatureEngine = new SignaturePad('signature-pad', 'clear-signature', 'tanda_tangan_input');
     }

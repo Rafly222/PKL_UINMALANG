@@ -3,8 +3,10 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Event;
 use App\Models\Presence;
+use App\Models\User;
 use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
@@ -84,5 +86,14 @@ class DatabaseSeeder extends Seeder
             'tanda_tangan' => $mockTtd,
             'waktu_absensi' => Carbon::now()->setHour(10)->setMinute(15)
         ]);
+
+        // User Admin Contoh
+        if (!User::where('email','admin@gmail.com')->exists()) {
+            User::create([
+                'name' => 'Moch Rafly Ramadhani A',
+                'email' => 'admin@gmail.com',
+                'password' => Hash::make('password'),
+            ]);
+        }
     }
 }

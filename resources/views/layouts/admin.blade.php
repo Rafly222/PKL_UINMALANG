@@ -42,20 +42,20 @@
 
                 <nav class="flex items-center gap-3">
                     <a href="{{ route('presensi.form') }}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="px-4 py-2 rounded-lg text-sm font-semibold transition-all-300 {{ Request::is('admin*') ? 'bg-amber-500 text-blue-950' : 'hover:bg-blue-800' }}">
-                        <i class="fa-solid fa-pen-fancy mr-2"></i>
-                        Form Presensi
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 transform hover:-translate-y-0.5 {{ Request::is('admin/presensi*') ? 'bg-amber-500 text-slate-900 shadow shadow-amber-500/30' : 'text-white hover:bg-white/20 hover:text-amber-400 hover:shadow-md' }}">
+                            <i class="fa-solid fa-pen-fancy mr-2"></i>
+                                Form Presensi
                     </a>
 
                     <a href="{{ route('admin.dashboard') }}"
-                    class="px-4 py-2 rounded-lg text-sm font-semibold transition-all-300 {{ Request::is('admin*') ? 'bg-amber-500 text-blue-950' : 'hover:bg-blue-800' }}">
+                    class="px-4 py-2 rounded-lg text-sm font-semibold transition-all-300 {{ Request::is('admin/dashboard*') ? 'bg-amber-500 text-slate-900 shadow' : 'text-white hover:bg-white/10' }}">
                         <i class="fa-solid fa-chart-line mr-2"></i>
                         Dashboard Rekap
                     </a>
 
-                    <span class="hidden md:flex items-center text-sm font-semibold text-amber-300">
+                    <span class="hidden md:flex items-center text-sm font-semibold text-white-300">
                         <i class="fa-solid fa-user mr-2"></i>
                         {{ Auth::user()->name }}
                     </span>

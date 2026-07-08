@@ -2,32 +2,38 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
 {
     protected $fillable = [
-        'user_id',
-        'nama_event',
-        'tanggal_event',
-        'time_start',
-        'time_end',
-        'audience_type',
-        'access_type',
-        'password_akses',
-        'form_fields'
+        'user_id', 'name', 'date', 'time_start', 'time_end', 
+        'access_type', 'password', 'audience_type', 'fields', 'custom_fields'
     ];
-    // Otomatis ubah JSON di database menjadi array PHP saat dipanggil 
+
+    // Mengubah data JSON otomatis menjadi tipe Array di PHP
     protected $casts = [
-        'form_fields' => 'array',
+        'fields' => 'array',
+        'custom_fields' => 'array',
     ];
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
     public function presences()
     {
         return $this->hasMany(Presence::class);
+    }
+
+    // Accessor untuk mendapatkan status form presensi (Berlaku / Tidak Berlaku)
+    public function getStatusAbsensiAttribute()
+    {
+        $now = \Carbon\Carbon::now('Asia/Jakarta');
+        $start = \Carbon\Carbon::parse($this->date . ' ' . $this->time_start, 'Asia/Jakarta');
+        $end = \Carbon\Carbon::parse($this->date . ' ' . $this->time_end, 'Asia/Jakarta');
+
+        return $now->between($start, $end) ? 'Berlaku' : 'Tidak Berlaku';
     }
 }

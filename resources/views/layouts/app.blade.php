@@ -6,86 +6,67 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title', 'E-Presensi Digital Diskominfo Malang')</title>
     
-    <!-- Google Fonts: Noto Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Laravel Vite Compiler -->
     @vite(['resources/css/app.css','resources/js/app.js'])
-    <!-- Custom Style Lokal -->
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
     
-    <!-- Yield CSS Khusus Halaman -->
     @yield('styles')
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
 
-    <!-- Header / Navbar Utama Dinsos/Diskominfo -->
     <header class="bg-gradient-to-r from-blue-900 to-indigo-950 text-white shadow-md sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-25">
-                <!-- Sisi Kiri: Logo & Judul Instansi -->
+            <div class="flex items-center justify-between h-20">
                 <div class="flex items-center space-x-4">
-                    <!-- Representasi Logo Pemkot Malang berbentuk SVG ramah performa -->
                     <svg class="h-14 w-14 text-amber-400 drop-shadow-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.33l-7.5-5-7.5 5V21M3 21h18M12 9h.008v.008H12V9zm-3 3h.008v.008H9V12zm6 0h.008v.008H15V12z" />
                     </svg>
                     <div>
-                        <h1 class="text-lg sm:text-xl font-extrabold tracking-wider leading-tight=">E-PRESENSI </h1>
-                        <p class="text-[10px] sm:text-xs text-amber-400 font-semibold tracking-wider">DISKOMINFO KOTA MALANG</p>
+                        <h1 class="text-lg sm:text-xl font-extrabold tracking-wider leading-none">E-PRESENSI</h1>
+                        <p class="text-[10px] sm:text-xs text-amber-400 font-semibold tracking-wider mt-1">DISKOMINFO KOTA MALANG</p>
                     </div>
                 </div>
 
-                <!-- Sisi Kanan: Menu Navigasi Pengunjung vs Admin -->
-                <!-- <nav class="flex items-center space-x-2 sm:space-x-4">
-                    <a href="{{ route('presensi.form') }}"
-                    class="px-4 py-2 rounded-lg text-sm font-semibold transition-all-300 {{ Request::is('/') ? 'bg-amber-500 text-blue-950' : 'hover:bg-blue-800' }}">
-                        <i class="fa-solid fa-pen-fancy mr-2"></i>Form Presensi
-                    </a>
-
+                <nav class="flex items-center gap-3">
                     @auth
-                        <a href="{{ route('admin.dashboard') }}"
-                        class="px-4 py-2 rounded-lg text-sm font-semibold transition-all-300 {{ Request::is('admin*') ? 'bg-amber-500 text-blue-950' : 'hover:bg-blue-800' }}">
+                        <a href="{{ Auth::user()->role === 'super_admin' ? route('admin.dashboard') : route('user.dashboard') }}"
+                           class="px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 {{ Request::is('*dashboard*') ? 'bg-amber-500 text-slate-900 shadow' : 'text-white hover:bg-white/10' }}">
                             <i class="fa-solid fa-chart-line mr-2"></i>Dashboard Rekap
                         </a>
 
-                        <span class="hidden md:inline text-sm font-semibold text-amber-300">
-                            <i class="fa-solid fa-user mr-1"></i>{{ Auth::user()->name }}
+                        <span class="hidden md:flex items-center text-sm font-semibold text-amber-300">
+                            <i class="fa-solid fa-user mr-2"></i>{{ Auth::user()->name }}
                         </span>
 
-                        <form action="{{ route('admin.logout') }}" method="POST" class="inline">
+                        <form action="{{ route('logout') }}" method="POST" class="inline">
                             @csrf
-                            <button type="submit"
-                                class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-semibold transition-all-300">
+                            <button type="submit" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-semibold transition-all-300">
                                 <i class="fa-solid fa-right-from-bracket mr-2"></i>Logout
                             </button>
                         </form>
                     @else
-                        <a href="{{ route('login') }}"
-                        class="px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-800 transition-all-300">
-                            <i class="fa-solid fa-right-to-bracket mr-2"></i>Login Admin
-                        </a>
+                        @if(Request::is('login'))
+                            <a href="{{ route('register') }}" class="px-4 py-2 bg-amber-500 text-slate-900 rounded-lg text-sm font-semibold shadow transition-all duration-300">
+                                <i class="fa-solid fa-user-plus mr-2"></i>Daftar Pegawai
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" class="px-4 py-2 bg-amber-500 text-slate-900 rounded-lg text-sm font-semibold shadow transition-all duration-300">
+                                <i class="fa-solid fa-right-to-bracket mr-2"></i>Login Masuk
+                            </a>
+                        @endif
                     @endauth
-                </nav> -->
-                <!-- <nav class="flex items-center">
-                    <a href="{{ route('presensi.form') }}"
-                    class="px-4 py-2 rounded-lg text-sm font-semibold transition-all-300 {{ Request::is('/') ? 'bg-amber-500 text-blue-950' : 'hover:bg-blue-800' }}">
-                        <i class="fa-solid fa-pen-fancy mr-2"></i>
-                        Form Presensi
-                    </a>
-                </nav> -->
+                </nav>
             </div>
         </div>
     </header>
 
-    <!-- Konten Utama Aplikasi -->
     <main class="flex-grow py-6 sm:py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Alert Notifikasi Berhasil -->
             @if (session('success'))
                 <div class="mb-6 p-4 bg-emerald-50 border-l-4 border-emerald-500 rounded-r-lg shadow-sm flex items-center justify-between">
                     <div class="flex items-center">
@@ -100,13 +81,10 @@
         </div>
     </main>
 
-    <!-- Footer Formal Pemkot Malang -->
     <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 text-center text-xs sm:text-sm">
         <p>&copy; 2026 Dinas Komunikasi dan Informatika Pemerintah Kota Malang. All Rights Reserved.</p>
-        
     </footer>
 
-    <!-- Yield Scripts Khusus Halaman -->
     @yield('scripts')
 </body>
 </html>

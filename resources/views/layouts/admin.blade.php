@@ -41,7 +41,7 @@
                 </div>
 
                 <nav class="flex items-center gap-3">
-                    <a href="{{ route('presensi.form') }}"
+                    <a href="#"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 transform hover:-translate-y-0.5 {{ Request::is('admin/presensi*') ? 'bg-amber-500 text-slate-900 shadow shadow-amber-500/30' : 'text-white hover:bg-white/20 hover:text-amber-400 hover:shadow-md' }}">
@@ -60,7 +60,7 @@
                         {{ Auth::user()->name }}
                     </span>
 
-                    <form action="{{ route('admin.logout') }}" method="POST">
+                    <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit"
                             class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm font-semibold text-white cursor-pointer">

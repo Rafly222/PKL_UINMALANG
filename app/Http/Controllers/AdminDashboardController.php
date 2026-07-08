@@ -270,4 +270,17 @@ class AdminDashboardController extends Controller
 
         return redirect()->back()->with('success', 'Data presensi peserta berhasil dihapus dari database.');
     }
+    public function deleteAndBlacklistUser($id)
+{
+ $user = User::findOrFail($id);
+ // 1. Catat identitas NIP dan NIK user tersebut ke daftar hitam
+ Blacklist::create([
+ 'nik' => $user->nik,
+ 'nip' => $user->nip,
+ ]);
+ // 2. Hapus akun user dari sistem secara permanen
+ $user->delete();
+ return redirect()->back()->with('success', 'Akun user berhasil dihapus
+dan identitasnya resmi diblokir dari registrasi!');
+}
 }

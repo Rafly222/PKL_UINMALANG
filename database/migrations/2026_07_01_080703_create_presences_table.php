@@ -16,6 +16,7 @@ $table->string('nama_lengkap');
 $table->string('nip')->nullable(); // Khusus pegawai, nullable untuk tamu
 $table->string('instansi');
 $table->string('no_wa');
+$table->json('data_presensi')->nullable();
 $table->text('foto_capture'); // Menyimpan base64 data gambar atau path file gambar
 $table->text('tanda_tangan'); // Menyimpan koordinat gambar TTD dalam format Base64PNG
 $table->timestamp('waktu_absensi');

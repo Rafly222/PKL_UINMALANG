@@ -24,7 +24,19 @@
     .event-card { transition: transform .18s ease, box-shadow .18s ease; }
     .event-card:hover { transform: translateY(-4px); box-shadow: 0 18px 45px rgba(50, 50, 93, .14); }
     .glass-panel { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(6px); }
-    .stat-card { margin-top: -72px; position: relative; z-index: 2; }
+    
+    /* Responsivitas Hero & Stat Card */
+    @media (min-width: 992px) {
+      .stat-card { margin-top: -72px; position: relative; z-index: 2; }
+    }
+    @media (max-width: 991.98px) {
+      .landing-hero {
+        padding-top: 120px;
+        padding-bottom: 60px;
+        min-height: auto;
+      }
+      .stat-card { margin-top: 24px; position: relative; z-index: 2; }
+    }
   </style>
 </head>
 

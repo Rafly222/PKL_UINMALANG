@@ -78,10 +78,10 @@
         <div class="col-lg-7">
           <span class="badge bg-white text-primary shadow-sm mb-3">Sistem Presensi Digital Pemerintah Kota Malang</span>
           <h1 class="text-white font-weight-bolder mb-3" style="font-size: clamp(2.25rem, 5vw, 4rem); letter-spacing: 0;">
-            E-Presensi Mandiri Diskominfo
+            E-Presensi Diskominfo
           </h1>
           <p class="text-white text-lg opacity-9 mb-4">
-            Pilih agenda aktif, isi identitas, ambil foto wajah, dan bubuhkan tanda tangan digital melalui perangkat apa pun.
+        
           </p>
           <div class="d-flex flex-wrap gap-2">
             <a href="#agenda" class="btn bg-gradient-info shadow-lg mb-0">Lihat Agenda</a>
@@ -96,8 +96,8 @@
                   <i class="ni ni-check-bold text-success"></i>
                 </div>
                 <div>
-                  <h6 class="text-white mb-0">Validasi realtime</h6>
-                  <p class="text-white opacity-8 text-xs mb-0">Waktu, akses privat, foto, dan TTD digital.</p>
+                  <h6 class="text-white mb-0"></h6>
+                  <p class="text-white opacity-8 text-xs mb-0"></p>
                 </div>
               </div>
               <hr class="horizontal light my-3">
@@ -143,7 +143,7 @@
             <div class="d-flex">
               <div>
                 <p class="text-sm mb-0 text-uppercase font-weight-bold">Keamanan</p>
-                <h5 class="font-weight-bolder mb-0">Gate Privat</h5>
+                <h5 class="font-weight-bolder mb-0">Privasi</h5>
               </div>
               <div class="icon icon-shape bg-gradient-danger shadow-danger text-center rounded-circle ms-auto">
                 <i class="ni ni-lock-circle-open text-lg opacity-10"></i>
@@ -286,7 +286,7 @@
     <div class="container">
       <div class="row align-items-center">
         <div class="col-lg-6 text-center text-lg-start text-sm text-muted">Copyright © {{ date('Y') }} Diskominfo Kota Malang.</div>
-        <div class="col-lg-6 text-center text-lg-end text-sm text-muted">Smart City · Laravel 11 · Argon Dashboard 2</div>
+        <!-- <div class="col-lg-6 text-center text-lg-end text-sm text-muted">Smart Ci</div> -->
       </div>
     </div>
   </footer>

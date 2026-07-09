@@ -13,7 +13,7 @@
           <div class="col-lg-8">
             <span class="badge bg-white text-danger shadow-sm mb-3">Super Admin</span>
             <h2 class="text-white font-weight-bolder mb-2">Portal Kendali E-Presensi</h2>
-            <p class="text-white opacity-8 mb-0">Kelola event global, akun user, blacklist NIK/NIP, dan log sistem dari satu dashboard.</p>
+            <!-- <p class="text-white opacity-8 mb-0">Kelola event global, akun user, blacklist NIK/NIP, dan log sistem dari satu dashboard.</p> -->
           </div>
           <div class="col-lg-4 mt-4 mt-lg-0">
             <div class="card bg-white shadow-lg border-0">
@@ -23,8 +23,8 @@
                     <i class="ni ni-settings-gear-65 text-lg opacity-10"></i>
                   </div>
                   <div>
-                    <p class="text-sm mb-0 text-uppercase font-weight-bold">Akses</p>
-                    <h5 class="font-weight-bolder mb-0">Global</h5>
+                    <p class="text-sm mb-0 text-uppercase font-weight-bold"></p>
+                    <h5 class="font-weight-bolder mb-0">ADMIN</h5>
                   </div>
                 </div>
               </div>
@@ -351,7 +351,7 @@
     <div class="card ep-card mb-4">
       <div class="card-header pb-0 bg-transparent">
         <h6 class="mb-0">Log Aktivitas Sistem</h6>
-        <p class="text-xs text-muted mb-0">Audit trail aktivitas penting dalam aplikasi E-Presensi.</p>
+        <!-- <p class="text-xs text-muted mb-0">Audit trail aktivitas penting dalam aplikasi E-Presensi.</p> -->
       </div>
       <div class="card-body px-0 pt-0 pb-2 mt-3">
         <div class="table-responsive p-4">
@@ -434,7 +434,7 @@
         perPage: 5,
         labels: {
           placeholder: "Cari...",
-          perPage: "entri per halaman",
+          perPage: "",
           noRows: "Tidak ada data ditemukan",
           info: "Menampilkan {start} sampai {end} dari {rows} entri",
         }
@@ -448,7 +448,7 @@
         perPage: 5,
         labels: {
           placeholder: "Cari...",
-          perPage: "entri per halaman",
+          perPage: "",
           noRows: "Tidak ada data ditemukan",
           info: "Menampilkan {start} sampai {end} dari {rows} entri",
         }
@@ -462,7 +462,7 @@
         perPage: 5,
         labels: {
           placeholder: "Cari...",
-          perPage: "entri per halaman",
+          perPage: "",
           noRows: "Tidak ada data ditemukan",
           info: "Menampilkan {start} sampai {end} dari {rows} entri",
         }
@@ -476,7 +476,7 @@
         perPage: 10,
         labels: {
           placeholder: "Cari log...",
-          perPage: "entri per halaman",
+          perPage: "",
           noRows: "Tidak ada log aktivitas ditemukan",
           info: "Menampilkan {start} sampai {end} dari {rows} entri",
         }

@@ -13,7 +13,7 @@
           <div class="col-lg-8">
             <span class="badge bg-white text-primary shadow-sm mb-3">Creator Event</span>
             <h2 class="text-white font-weight-bolder mb-2">Dashboard Pembuat Event</h2>
-            <p class="text-white opacity-8 mb-0">Buat event, atur field presensi, dan bagikan link unik kepada peserta kegiatan.</p>
+            <p class="text-white opacity-8 mb-0"></p>
           </div>
           <div class="col-lg-4 mt-4 mt-lg-0">
             <div class="card bg-white shadow-lg border-0">
@@ -59,7 +59,7 @@
         <div class="d-flex">
           <div>
             <p class="text-sm mb-0 text-uppercase font-weight-bold">Field Dinamis</p>
-            <h5 class="font-weight-bolder mb-0">JSON Config</h5>
+            <h5 class="font-weight-bolder mb-0">Pengaturan Form</h5>
           </div>
           <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle ms-auto">
             <i class="ni ni-settings text-lg opacity-10"></i>
@@ -95,7 +95,7 @@
           </div>
           <div>
             <h6 class="mb-0">Buat Event Presensi</h6>
-            <p class="text-xs text-muted mb-0">Atur jadwal, akses, dan field formulir.</p>
+            <p class="text-xs text-muted mb-0"></p>
           </div>
         </div>
       </div>
@@ -185,7 +185,7 @@
         <div class="d-flex align-items-center justify-content-between">
           <div>
             <h6 class="mb-0">Event Saya</h6>
-            <p class="text-xs text-muted mb-0">User hanya dapat mengelola event yang dibuat sendiri.</p>
+            <p class="text-xs text-muted mb-0"></p>
           </div>
           <span class="badge bg-gradient-primary">{{ $events->count() }} total</span>
         </div>
@@ -290,7 +290,7 @@
         perPage: 5,
         labels: {
           placeholder: "Cari...",
-          perPage: "entri per halaman",
+          perPage: "",
           noRows: "Tidak ada data ditemukan",
           info: "Menampilkan {start} sampai {end} dari {rows} entri",
         }

@@ -194,7 +194,21 @@ class PresenceController extends Controller
 
         if ($event->custom_fields) {
             foreach ($event->custom_fields as $cf) {
-                $rules[Str::slug($cf['label'], '_')] = 'required';
+                $slug = Str::slug($cf['label'], '_');
+                $isKhususPegawai = (stripos($cf['label'], 'khusus pegawai') !== false);
+                $isKhususTamu = (stripos($cf['label'], 'khusus tamu') !== false || stripos($cf['label'], 'khusus masyarakat') !== false || stripos($cf['label'], 'khusus umum') !== false);
+                
+                if ($event->audience_type === 'semua') {
+                    if ($isKhususPegawai && $request->input('tipe_peserta') === 'umum') {
+                        $rules[$slug] = 'nullable';
+                    } elseif ($isKhususTamu && $request->input('tipe_peserta') === 'pegawai') {
+                        $rules[$slug] = 'nullable';
+                    } else {
+                        $rules[$slug] = 'required';
+                    }
+                } else {
+                    $rules[$slug] = 'required';
+                }
             }
         }
 
@@ -221,7 +235,7 @@ class PresenceController extends Controller
         if ($event->custom_fields) {
             foreach ($event->custom_fields as $cf) {
                 $slug = Str::slug($cf['label'], '_');
-                if ($request->has($slug)) {
+                if ($request->filled($slug)) {
                     $data_presensi[$cf['label']] = $request->input($slug);
                 }
             }

@@ -31,7 +31,7 @@ Terletak pada folder `resources/views/`. Menggunakan **Blade Templating Engine**
 * **`layouts/app.blade.php`**: Template induk dashboard admin/user menggunakan aset tema **Argon Dashboard 2**.
 * **`auth/login.blade.php` & `register.blade.php`**: Form masuk dan pendaftaran user baru.
 * **`presence/form.blade.php`**: Halaman pengisian presensi publik dengan kamera capture (webcam) dan canvas tanda tangan digital.
-* **`dashboard/admin.blade.php` & `user.blade.php`**: Panel kendali untuk admin and user staff.
+* **`dashboard/admin.blade.php` & `user.blade.php`**: Panel kendali untuk admin dan user staff.
 * **`dashboard/presences.blade.php`**: Tabel interaktif rekap kehadiran per event (menggunakan Simple Datatables).
 
 ### C. Controller (Logika Bisnis & Alur Kerja)
@@ -113,7 +113,7 @@ erDiagram
 
 ### B. Validasi Kategori Peserta (Pegawai vs Umum)
 Tipe akses audiens dikendalikan secara dinamis pada halaman form presensi:
-* **Masyarakat Umum:** Cukup menginputkan **NIK (16 digit)**. Input NIP disembunyikan and bersifat opsional. Kolom instansi diisi manual oleh peserta atau default ke "Masyarakat Umum".
+* **Masyarakat Umum:** Cukup menginputkan **NIK (16 digit)**. Input NIP disembunyikan dan bersifat opsional. Kolom instansi diisi manual oleh peserta atau default ke "Masyarakat Umum".
 * **Pegawai Pemerintah:** Wajib menginputkan **NIK (16 digit)** dan **NIP (18 digit)**. 
 * **Pencocokan Database Pegawai:** Backend mencocokkan NIP yang diinput dengan database pegawai internal (mocking database). Jika terdaftar (misal NIP Dinas Kominfo), nama Instansi otomatis diset sesuai dinasnya. Jika tidak terdaftar, otomatis diset ke "Pemerintah Kota Malang".
 

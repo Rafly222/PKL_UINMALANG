@@ -39,13 +39,41 @@
               <tr>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-3">No</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder">NIK</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">NIP</th>
+                @if($event->audience_type === 'pegawai' || $event->audience_type === 'semua')
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder">NIP</th>
+                @endif
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Nama Lengkap</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">No WhatsApp</th>
+                
+                {{-- Dynamic Semi-Custom Columns --}}
+                @if(in_array('sc-phone', $event->fields ?? []))
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder">No WhatsApp</th>
+                @endif
+                @if(in_array('sc-gender', $event->fields ?? []))
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Jenis Kelamin</th>
+                @endif
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Instansi</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Kategori</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center">Foto</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center">TTD</th>
+                @if(in_array('sc-address', $event->fields ?? []))
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Alamat Domisili</th>
+                @endif
+
+                {{-- Dynamic Custom Columns --}}
+                @if($event->custom_fields && count($event->custom_fields) > 0)
+                  @foreach($event->custom_fields as $cf)
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder">{{ $cf['label'] }}</th>
+                  @endforeach
+                @endif
+
+                @if($event->audience_type === 'semua')
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Kategori</th>
+                @endif
+
+                @if(in_array('sc-photo', $event->fields ?? []))
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center">Foto</th>
+                @endif
+                @if(in_array('sc-signature', $event->fields ?? []))
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center">TTD</th>
+                @endif
+                
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Waktu Hadir</th>
               </tr>
             </thead>
@@ -54,38 +82,75 @@
                 <tr>
                   <td class="text-sm font-weight-bold ps-3">{{ $index + 1 }}</td>
                   <td class="text-sm">{{ $presence->nik }}</td>
-                  <td class="text-sm">{{ $presence->nip ?? '-' }}</td>
+                  @if($event->audience_type === 'pegawai' || $event->audience_type === 'semua')
+                    <td class="text-sm">{{ $presence->nip ?? '-' }}</td>
+                  @endif
                   <td class="text-sm font-weight-bold">{{ $presence->name }}</td>
-                  <td class="text-sm">{{ $presence->phone ?? '-' }}</td>
+                  
+                  {{-- WhatsApp --}}
+                  @if(in_array('sc-phone', $event->fields ?? []))
+                    <td class="text-sm">{{ $presence->phone ?? '-' }}</td>
+                  @endif
+                  
+                  {{-- Gender --}}
+                  @if(in_array('sc-gender', $event->fields ?? []))
+                    <td class="text-sm">{{ $presence->data_presensi['Jenis Kelamin'] ?? '-' }}</td>
+                  @endif
+                  
                   <td class="text-sm">{{ $presence->institution }}</td>
-                  <td>
-                    <span class="badge badge-sm {{ $presence->nip ? 'bg-gradient-info' : 'bg-gradient-secondary' }}">
-                      {{ $presence->nip ? 'Pegawai' : 'Warga Umum' }}
-                    </span>
-                  </td>
-                  <td class="text-center">
-                    @if($presence->photo)
-                      <button type="button" class="btn btn-link p-0 mb-0" data-bs-toggle="modal" data-bs-target="#photoModal-{{ $presence->id }}">
-                        <img src="{{ $presence->photo }}" class="avatar avatar-sm rounded-circle shadow-sm border border-2 border-success" alt="foto">
-                      </button>
-                    @else
-                      <span class="text-xs text-muted">-</span>
-                    @endif
-                  </td>
-                  <td class="text-center">
-                    @if($presence->signature)
-                      <button type="button" class="btn btn-xs btn-outline-info mb-0 py-1" data-bs-toggle="modal" data-bs-target="#sigModal-{{ $presence->id }}">
-                        Lihat TTD
-                      </button>
-                    @else
-                      <span class="text-xs text-muted">-</span>
-                    @endif
-                  </td>
+                  
+                  {{-- Address --}}
+                  @if(in_array('sc-address', $event->fields ?? []))
+                    <td class="text-sm">{{ $presence->data_presensi['Alamat'] ?? '-' }}</td>
+                  @endif
+
+                  {{-- Custom Fields --}}
+                  @if($event->custom_fields && count($event->custom_fields) > 0)
+                    @foreach($event->custom_fields as $cf)
+                      <td class="text-sm">{{ $presence->data_presensi[$cf['label']] ?? '-' }}</td>
+                    @endforeach
+                  @endif
+
+                  @if($event->audience_type === 'semua')
+                    <td>
+                      <span class="badge badge-sm {{ $presence->nip ? 'bg-gradient-info' : 'bg-gradient-secondary' }}">
+                        {{ $presence->nip ? 'Pegawai' : 'Warga Umum' }}
+                      </span>
+                    </td>
+                  @endif
+
+                  {{-- Photo --}}
+                  @if(in_array('sc-photo', $event->fields ?? []))
+                    <td class="text-center">
+                      @if($presence->photo)
+                        <button type="button" class="btn btn-link p-0 mb-0" data-bs-toggle="modal" data-bs-target="#photoModal-{{ $presence->id }}">
+                          <img src="{{ $presence->photo }}" class="avatar avatar-sm rounded-circle shadow-sm border border-2 border-success" alt="foto">
+                        </button>
+                      @else
+                        <span class="text-xs text-muted">-</span>
+                      @endif
+                    </td>
+                  @endif
+
+                  {{-- Signature --}}
+                  @if(in_array('sc-signature', $event->fields ?? []))
+                    <td class="text-center">
+                      @if($presence->signature)
+                        <button type="button" class="btn btn-xs btn-outline-info mb-0 py-1" data-bs-toggle="modal" data-bs-target="#sigModal-{{ $presence->id }}">
+                          Lihat TTD
+                        </button>
+                      @else
+                        <span class="text-xs text-muted">-</span>
+                      @endif
+                    </td>
+                  @endif
+
                   <td class="text-sm">{{ $presence->created_at->timezone('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</td>
                 </tr>
 
-                <!-- Modal Foto -->
-                @if($presence->photo)
+                {{-- Modals --}}
+                @if(in_array('sc-photo', $event->fields ?? []) && $presence->photo)
+                  <!-- Modal Foto -->
                   <div class="modal fade" id="photoModal-{{ $presence->id }}" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                       <div class="modal-content border-radius-xl">
@@ -101,8 +166,8 @@
                   </div>
                 @endif
 
-                <!-- Modal TTD -->
-                @if($presence->signature)
+                @if(in_array('sc-signature', $event->fields ?? []) && $presence->signature)
+                  <!-- Modal TTD -->
                   <div class="modal fade" id="sigModal-{{ $presence->id }}" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                       <div class="modal-content border-radius-xl">

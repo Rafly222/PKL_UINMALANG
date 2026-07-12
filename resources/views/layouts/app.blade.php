@@ -87,6 +87,17 @@
       box-shadow: 0 0 0 .2rem rgba(94, 114, 228, .15);
     }
 
+    .input-group:focus-within {
+      box-shadow: 0 0 0 .2rem rgba(94, 114, 228, .15) !important;
+      border-radius: 0.5rem !important;
+    }
+
+    .input-group:focus-within .form-control,
+    .input-group:focus-within .input-group-text {
+      border-color: #5e72e4 !important;
+      box-shadow: none !important;
+    }
+
     .table thead th {
       color: #8392ab;
       letter-spacing: .04em;

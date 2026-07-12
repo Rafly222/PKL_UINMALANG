@@ -37,14 +37,42 @@
             <tr>
                 <th>No</th>
                 <th>NIK</th>
-                <th>NIP</th>
+                @if($event->audience_type === 'pegawai' || $event->audience_type === 'semua')
+                    <th>NIP</th>
+                @endif
                 <th>Nama Lengkap</th>
-                <th>Nomor WhatsApp</th>
+                
+                {{-- Dynamic Semi-Custom Columns --}}
+                @if(in_array('sc-phone', $event->fields ?? []))
+                    <th>Nomor WhatsApp</th>
+                @endif
+                @if(in_array('sc-gender', $event->fields ?? []))
+                    <th>Jenis Kelamin</th>
+                @endif
                 <th>Instansi</th>
-                <th>Kategori Peserta</th>
+                @if(in_array('sc-address', $event->fields ?? []))
+                    <th>Alamat Domisili</th>
+                @endif
+
+                {{-- Dynamic Custom Columns --}}
+                @if($event->custom_fields && count($event->custom_fields) > 0)
+                    @foreach($event->custom_fields as $cf)
+                        <th>{{ $cf['label'] }}</th>
+                    @endforeach
+                @endif
+
+                @if($event->audience_type === 'semua')
+                    <th>Kategori Peserta</th>
+                @endif
+
                 <th>Waktu Presensi</th>
-                <th>Foto Wajah</th>
-                <th>Tanda Tangan</th>
+
+                @if(in_array('sc-photo', $event->fields ?? []))
+                    <th>Foto Wajah</th>
+                @endif
+                @if(in_array('sc-signature', $event->fields ?? []))
+                    <th>Tanda Tangan</th>
+                @endif
             </tr>
         </thead>
         <tbody>
@@ -52,26 +80,62 @@
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>'{{ $presence->nik }}</td>
-                    <td>'{{ $presence->nip ?? '-' }}</td>
+                    @if($event->audience_type === 'pegawai' || $event->audience_type === 'semua')
+                        <td>'{{ $presence->nip ?? '-' }}</td>
+                    @endif
                     <td>{{ $presence->name }}</td>
-                    <td>{{ $presence->phone ?? '-' }}</td>
+                    
+                    {{-- WhatsApp --}}
+                    @if(in_array('sc-phone', $event->fields ?? []))
+                        <td>{{ $presence->phone ?? '-' }}</td>
+                    @endif
+                    
+                    {{-- Gender --}}
+                    @if(in_array('sc-gender', $event->fields ?? []))
+                        <td>{{ $presence->data_presensi['Jenis Kelamin'] ?? '-' }}</td>
+                    @endif
+                    
                     <td>{{ $presence->institution }}</td>
-                    <td>{{ $presence->nip ? 'Pegawai Pemerintah' : 'Masyarakat Umum' }}</td>
+                    
+                    {{-- Address --}}
+                    @if(in_array('sc-address', $event->fields ?? []))
+                        <td>{{ $presence->data_presensi['Alamat'] ?? '-' }}</td>
+                    @endif
+
+                    {{-- Custom Fields --}}
+                    @if($event->custom_fields && count($event->custom_fields) > 0)
+                        @foreach($event->custom_fields as $cf)
+                            <td>{{ $presence->data_presensi[$cf['label']] ?? '-' }}</td>
+                        @endforeach
+                    @endif
+
+                    @if($event->audience_type === 'semua')
+                        <td>{{ $presence->nip ? 'Pegawai Pemerintah' : 'Masyarakat Umum' }}</td>
+                    @endif
+
                     <td>{{ $presence->created_at->timezone('Asia/Jakarta')->format('d-m-Y H:i:s') }} WIB</td>
-                    <td style="text-align: center; vertical-align: middle;">
-                        @if($presence->photo)
-                            <a href="{{ route('presence.photo', $presence->id) }}" target="_blank">Lihat Foto</a>
-                        @else
-                            -
-                        @endif
-                    </td>
-                    <td style="text-align: center; vertical-align: middle;">
-                        @if($presence->signature)
-                            <a href="{{ route('presence.signature', $presence->id) }}" target="_blank">Lihat TTD</a>
-                        @else
-                            -
-                        @endif
-                    </td>
+
+                    {{-- Photo --}}
+                    @if(in_array('sc-photo', $event->fields ?? []))
+                        <td style="text-align: center; vertical-align: middle;">
+                            @if($presence->photo)
+                                <a href="{{ route('presence.photo', $presence->id) }}" target="_blank">Lihat Foto</a>
+                            @else
+                                -
+                            @endif
+                        </td>
+                    @endif
+
+                    {{-- Signature --}}
+                    @if(in_array('sc-signature', $event->fields ?? []))
+                        <td style="text-align: center; vertical-align: middle;">
+                            @if($presence->signature)
+                                <a href="{{ route('presence.signature', $presence->id) }}" target="_blank">Lihat TTD</a>
+                            @else
+                                -
+                            @endif
+                        </td>
+                    @endif
                 </tr>
             @endforeach
         </tbody>

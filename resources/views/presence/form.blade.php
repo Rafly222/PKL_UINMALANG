@@ -154,16 +154,23 @@
               </div>
             @endif
           </div>
-
           @if($event->custom_fields && count($event->custom_fields) > 0)
             <hr class="horizontal dark my-4">
-            <span class="ep-section-label">Input Khusus Penyelenggara</span>
             <div class="row mt-3">
               @foreach($event->custom_fields as $cf)
-                @php $slug = \Illuminate\Support\Str::slug($cf['label'], '_') @endphp
-                <div class="col-md-6 mb-3">
-                  <label class="form-control-label text-xs">{{ $cf['label'] }} <span class="text-danger">*</span></label>
-                  <input type="{{ $cf['type'] }}" name="{{ $slug }}" required placeholder="Ketik {{ $cf['label'] }}" class="form-control">
+                @php 
+                  $slug = \Illuminate\Support\Str::slug($cf['label'], '_');
+                  $isKhususPegawai = (stripos($cf['label'], 'khusus pegawai') !== false);
+                  $isKhususTamu = (stripos($cf['label'], 'khusus tamu') !== false || stripos($cf['label'], 'khusus masyarakat') !== false || stripos($cf['label'], 'khusus umum') !== false);
+                @endphp
+                <div class="col-md-6 mb-3 custom-field-item" 
+                     @if($isKhususPegawai && $event->audience_type === 'semua') data-khusus-pegawai="true" @endif
+                     @if($isKhususTamu && $event->audience_type === 'semua') data-khusus-tamu="true" @endif>
+                  <label class="form-control-label text-xs">
+                    <span class="field-label-text">{{ $cf['label'] }}</span>
+                    <span class="text-danger field-asterisk">*</span>
+                  </label>
+                  <input type="{{ $cf['type'] }}" name="{{ $slug }}" id="cf-{{ $slug }}" required placeholder="Ketik {{ $cf['label'] }}" class="form-control">
                 </div>
               @endforeach
             </div>
@@ -246,6 +253,46 @@
       nipInput.removeAttribute('required');
       nipInput.value = '';
     }
+
+    // Toggle custom fields "khusus pegawai" jika tipe event "semua"
+    const khususPegawaiFields = document.querySelectorAll('[data-khusus-pegawai="true"]');
+    khususPegawaiFields.forEach(field => {
+      const input = field.querySelector('input');
+      const asterisk = field.querySelector('.field-asterisk');
+      
+      if (tipePeserta === 'pegawai') {
+        field.style.display = 'block';
+        if (input) input.setAttribute('required', 'required');
+        if (asterisk) asterisk.style.display = 'inline';
+      } else {
+        field.style.display = 'none';
+        if (input) {
+          input.removeAttribute('required');
+          input.value = ''; // clear value
+        }
+        if (asterisk) asterisk.style.display = 'none';
+      }
+    });
+
+    // Toggle custom fields "khusus tamu/umum" jika tipe event "semua"
+    const khususTamuFields = document.querySelectorAll('[data-khusus-tamu="true"]');
+    khususTamuFields.forEach(field => {
+      const input = field.querySelector('input');
+      const asterisk = field.querySelector('.field-asterisk');
+      
+      if (tipePeserta === 'umum') {
+        field.style.display = 'block';
+        if (input) input.setAttribute('required', 'required');
+        if (asterisk) asterisk.style.display = 'inline';
+      } else {
+        field.style.display = 'none';
+        if (input) {
+          input.removeAttribute('required');
+          input.value = ''; // clear value
+        }
+        if (asterisk) asterisk.style.display = 'none';
+      }
+    });
   }
 
   document.addEventListener('DOMContentLoaded', () => {

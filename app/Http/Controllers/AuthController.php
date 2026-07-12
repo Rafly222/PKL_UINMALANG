@@ -80,7 +80,7 @@ class AuthController extends Controller
             'nip' => 'nullable|size:18',
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6'
+            'password' => 'required|min:6|confirmed'
         ]);
 
         // Tahap 2: Logika Validasi Blacklist NIP/NIK

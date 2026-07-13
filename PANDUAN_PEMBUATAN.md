@@ -135,7 +135,7 @@ Log ini ditampilkan pada dashboard Admin menggunakan Datatable yang mendukung pe
 ### E. Tautan Ekspor Excel & Rendering Gambar
 * Ekspor dilakukan via stream response bertipe `application/vnd.ms-excel` yang mem-render tabel HTML mentah.
 * Kolom NIK dan NIP dipaksa berupa string dengan menambahkan kutip satu (`'{{ $presence->nik }}`) agar Excel tidak mengubahnya menjadi format ilmiah eksponensial.
-* Karena Excel memblokir rendering gambar berbasis Base64 langsung (`<img>` dengan tag `data:image...` disilang merah `[x]`), kolom foto dan tanda tangan dialihkan berupa hyperlink aktif **`Lihat Foto`** dan **`Lihat TTD`** yang mengarah ke rute publik aman. Ketika diklik di Excel, gambar akan langsung terbuka di browser pengguna.
+* Karena Excel memblokir rendering gambar berbasis Base64 langsung (`<img>` dengan tag `data:image...` disilang merah `[x]`), kolom foto dan tanda tangan dialihkan berupa tag `<img>` yang bersumber dari rute publik biner (`route('presence.photo')` dan `route('presence.signature')`). Selama server lokal Laravel berjalan, Excel akan mengunduh data biner gambar lewat URL tersebut secara otomatis dan langsung menampilkannya secara visual di dalam sel tabel.
 
 ---
 

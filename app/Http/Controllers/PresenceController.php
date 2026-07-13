@@ -214,6 +214,19 @@ class PresenceController extends Controller
 
         $request->validate($rules);
 
+        // Cek apakah NIK atau NIP sudah melakukan presensi untuk event ini
+        $isAlreadyPresence = Presence::where('event_id', $event->id)
+            ->where(function ($q) use ($request) {
+                $q->where('nik', $request->nik);
+                if ($request->filled('nip') && $request->tipe_peserta === 'pegawai') {
+                    $q->orWhere('nip', $request->nip);
+                }
+            })->exists();
+
+        if ($isAlreadyPresence) {
+            return back()->withInput()->with('warning', 'Anda sudah melakukan presensi pada event ini!');
+        }
+
         // Cari data instansi untuk pegawai / umum
         $institution = $request->institution;
         if ($request->tipe_peserta === 'pegawai') {

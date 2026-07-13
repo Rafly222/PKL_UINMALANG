@@ -11,6 +11,7 @@
             border: 1px solid #000000;
             padding: 8px;
             text-align: left;
+            vertical-align: middle;
         }
         th {
             background-color: #f2f2f2;
@@ -68,16 +69,16 @@
                 <th>Waktu Presensi</th>
 
                 @if(in_array('sc-photo', $event->fields ?? []))
-                    <th>Foto Wajah</th>
+                    <th style="width: 80px; text-align: center;">Foto Wajah</th>
                 @endif
                 @if(in_array('sc-signature', $event->fields ?? []))
-                    <th>Tanda Tangan</th>
+                    <th style="width: 120px; text-align: center;">Tanda Tangan</th>
                 @endif
             </tr>
         </thead>
         <tbody>
             @foreach($presences as $index => $presence)
-                <tr>
+                <tr style="height: 120px;">
                     <td>{{ $index + 1 }}</td>
                     <td>'{{ $presence->nik }}</td>
                     @if($event->audience_type === 'pegawai' || $event->audience_type === 'semua')
@@ -117,9 +118,9 @@
 
                     {{-- Photo --}}
                     @if(in_array('sc-photo', $event->fields ?? []))
-                        <td style="text-align: center; vertical-align: middle;">
+                        <td style="width: 80px; text-align: center; vertical-align: middle;">
                             @if($presence->photo)
-                                <a href="{{ route('presence.photo', $presence->id) }}" target="_blank">Lihat Foto</a>
+                                <img src="{{ route('presence.photo', $presence->id) }}" width="60" height="80">
                             @else
                                 -
                             @endif
@@ -128,9 +129,9 @@
 
                     {{-- Signature --}}
                     @if(in_array('sc-signature', $event->fields ?? []))
-                        <td style="text-align: center; vertical-align: middle;">
+                        <td style="width: 120px; text-align: center; vertical-align: middle;">
                             @if($presence->signature)
-                                <a href="{{ route('presence.signature', $presence->id) }}" target="_blank">Lihat TTD</a>
+                                <img src="{{ route('presence.signature', $presence->id) }}" width="100" height="50">
                             @else
                                 -
                             @endif

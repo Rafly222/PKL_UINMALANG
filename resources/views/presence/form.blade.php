@@ -53,6 +53,8 @@
       </div>
     @endif
 
+    @includeWhen(session('success') || session('warning') || session('info') || $errors->any(), 'partials.flash')
+
     <div class="card ep-card ep-form-card mb-5">
       <div class="card-header bg-transparent pb-0">
         <div class="d-flex align-items-center">
@@ -72,7 +74,7 @@
           <input type="hidden" name="signature" id="signature-base64">
 
           <!-- Kategori Kehadiran -->
-          @if($event->audience_type !== 'pegawai')
+          @if($event->audience_type === 'semua')
             <div class="mb-4">
               <label class="form-control-label text-xs">Kategori Kehadiran <span class="text-danger">*</span></label>
               <select name="tipe_peserta" id="tipe_peserta" class="form-control" onchange="toggleParticipantType()">
@@ -80,8 +82,10 @@
                 <option value="pegawai" @selected(old('tipe_peserta') === 'pegawai')>Pegawai Pemerintah (ASN/Non-ASN)</option>
               </select>
             </div>
-          @else
+          @elseif($event->audience_type === 'pegawai')
             <input type="hidden" name="tipe_peserta" id="tipe_peserta" value="pegawai">
+          @else
+            <input type="hidden" name="tipe_peserta" id="tipe_peserta" value="umum">
           @endif
 
           <!-- Integrasi Data Pegawai (ASN/Non-ASN) -->

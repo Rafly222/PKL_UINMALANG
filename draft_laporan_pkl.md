@@ -70,7 +70,7 @@ flowchart TD
     E --> F
     F --> G[Peserta Akses Form]
     G --> H{Cek Tipe Peserta?}
-    H -->|Pegawai| I[Input NIP + Tarik API Pegawai]
+    H -->|Pegawai| I[Input NIP + NIK + Tarik API Pegawai]
     H -->|Umum| J[Input NIK + Nama Mandiri]
     I --> K[Isi Custom Field khusus pegawai]
     J --> L[Isi Custom Field khusus umum]

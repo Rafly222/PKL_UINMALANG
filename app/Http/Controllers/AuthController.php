@@ -28,6 +28,19 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
+            // Cek apakah akun user sudah disetujui oleh admin
+            if ($user->status !== 'approved') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                if ($user->status === 'pending') {
+                    return back()->with('warning', 'Pendaftaran akun Anda masih menunggu persetujuan (approval) dari Super Admin.');
+                } else {
+                    return back()->with('warning', 'Pendaftaran akun Anda telah ditolak oleh Admin.');
+                }
+            }
+
             // Cek apakah NIP user terdaftar di database Blacklist
             $isBlacklisted = false;
             if ($user->nip) {
@@ -95,7 +108,8 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'user'
+            'role' => 'user',
+            'status' => 'pending'
         ]);
 
         // Catat Log Aktivitas
@@ -108,7 +122,7 @@ class AuthController extends Controller
             'user_agent' => $request->userAgent()
         ]);
 
-        return redirect('/login')->with('success', 'Registrasi berhasil! Silakan masuk.');
+        return redirect('/login')->with('info', 'Pendaftaran mandiri berhasil! Akun Anda sedang menunggu persetujuan (approval) dari Super Admin sebelum dapat digunakan.');
     }
 
     public function logout(Request $request)

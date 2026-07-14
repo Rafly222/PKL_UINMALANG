@@ -178,6 +178,14 @@
                   <i class="ni ni-single-02 text-info text-sm opacity-10"></i>
                 </div>
                 <span class="nav-link-text ms-1">Manajemen Akun</span>
+                <?php
+                  $sidebarPendingCount = \App\Models\User::where('status', 'pending')->count();
+                ?>
+                @if($sidebarPendingCount > 0)
+                  <span class="badge bg-gradient-warning text-white ms-auto font-weight-bold" style="font-size: 9px; padding: 2px 6px;">
+                    {{ $sidebarPendingCount }}
+                  </span>
+                @endif
               </a>
             </li>
             <li class="nav-item">

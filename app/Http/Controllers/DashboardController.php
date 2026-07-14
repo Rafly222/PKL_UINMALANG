@@ -161,10 +161,11 @@ class DashboardController extends Controller
     public function adminIndex()
     {
         $events = Event::with('creator')->latest()->get();
-        $totalUsers = User::count();
+        $totalUsers = User::where('status', 'approved')->count();
         $totalBlacklists = Blacklist::count();
         $totalLogs = \App\Models\ActivityLog::count();
-        return view('dashboard.admin', compact('events', 'totalUsers', 'totalBlacklists', 'totalLogs'));
+        $pendingUsersCount = User::where('status', 'pending')->count();
+        return view('dashboard.admin', compact('events', 'totalUsers', 'totalBlacklists', 'totalLogs', 'pendingUsersCount'));
     }
 
     public function adminBlacklist()
@@ -175,8 +176,31 @@ class DashboardController extends Controller
 
     public function adminUsers()
     {
-        $users = User::where('id', '!=', auth::id())->latest()->get();
-        return view('admin.users', compact('users'));
+        $users = User::where('status', 'approved')->where('id', '!=', Auth::id())->latest()->get();
+        $pendingUsers = User::where('status', 'pending')->latest()->get();
+        return view('admin.users', compact('users', 'pendingUsers'));
+    }
+
+    public function approveUser($id)
+    {
+        $user = User::findOrFail($id);
+        $user->update(['status' => 'approved']);
+
+        \App\Models\ActivityLog::log('approve_user', "Admin menyetujui pendaftaran akun: '{$user->name}' (Email: {$user->email}).");
+
+        return back()->with('success', "Akun '{$user->name}' berhasil disetujui!");
+    }
+
+    public function rejectUser($id)
+    {
+        $user = User::findOrFail($id);
+        $name = $user->name;
+        $email = $user->email;
+        $user->delete();
+
+        \App\Models\ActivityLog::log('reject_user', "Admin menolak pendaftaran akun: '{$name}' (Email: {$email}).");
+
+        return back()->with('info', "Pendaftaran akun '{$name}' ditolak dan data dihapus.");
     }
 
     public function adminLogs()

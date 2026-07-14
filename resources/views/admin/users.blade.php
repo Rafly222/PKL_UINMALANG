@@ -58,7 +58,62 @@
   </div>
 
   <div class="col-lg-8 mb-4">
-    <div class="card ep-card h-100">
+    @if($pendingUsers->count() > 0)
+      <div class="card ep-card mb-4 border-warning border-1 shadow-warning">
+        <div class="card-header pb-0 bg-transparent">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <h6 class="text-warning mb-0 font-weight-bolder"><i class="fas fa-exclamation-triangle me-1"></i> Menunggu Persetujuan Akun</h6>
+              <p class="text-xs text-muted mb-0">Terdapat pendaftaran mandiri yang membutuhkan persetujuan Anda.</p>
+            </div>
+            <span class="badge bg-gradient-warning">{{ $pendingUsers->count() }} Pendaftaran</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive p-3">
+            <table class="table mb-0 align-items-center">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-3">Informasi Pendaftar</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-end">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach($pendingUsers as $pUser)
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center ps-2">
+                        <div class="avatar avatar-sm bg-gradient-warning text-white rounded-circle me-3 d-flex align-items-center justify-content-center">
+                          {{ strtoupper(substr($pUser->name, 0, 1)) }}
+                        </div>
+                        <div>
+                          <h6 class="text-sm mb-0 font-weight-bold">{{ $pUser->name }}</h6>
+                          <span class="text-xs text-muted">{{ $pUser->email }} · NIP: {{ $pUser->nip ?? '-' }}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="text-end">
+                      <div class="d-flex justify-content-end gap-1">
+                        <form action="{{ route('admin.users.approve', $pUser->id) }}" method="POST" class="d-inline">
+                          @csrf
+                          <button type="submit" class="btn btn-xs bg-gradient-success mb-0 shadow-sm">Setujui</button>
+                        </form>
+                        <form action="{{ route('admin.users.reject', $pUser->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Tolak pendaftaran ini?')">
+                          @csrf
+                          <button type="submit" class="btn btn-xs btn-outline-danger mb-0 shadow-sm">Tolak</button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    @endif
+
+    <div class="card ep-card">
       <div class="card-header pb-0 bg-transparent">
         <h6 class="mb-0">Daftar Pengguna Aktif</h6>
         <p class="text-xs text-muted mb-0">List seluruh administrator dan staff terdaftar dalam sistem.</p>

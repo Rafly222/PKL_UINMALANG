@@ -18,6 +18,7 @@ return new class extends Migration
 
     $table->string('nip', 18)->unique()->nullable(); 
     $table->enum('role', ['user', 'admin'])->default('user'); 
+    $table->enum('status', ['pending', 'approved', 'rejected'])->default('approved'); 
     $table->rememberToken();
     $table->timestamps();
     });

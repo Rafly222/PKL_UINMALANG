@@ -60,6 +60,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Fitur CRUD & Akses Manajemen Admin
     Route::post('/admin/event/create', [DashboardController::class, 'storeEvent'])->name('admin.event.store');
     Route::post('/admin/users/create', [DashboardController::class, 'storeUserByAdmin'])->name('admin.users.store');
+    Route::post('/admin/users/approve/{id}', [DashboardController::class, 'approveUser'])->name('admin.users.approve');
+    Route::post('/admin/users/reject/{id}', [DashboardController::class, 'rejectUser'])->name('admin.users.reject');
     Route::delete('/admin/users/delete/{id}', [DashboardController::class, 'deleteAndBlacklistUser'])->name('admin.users.delete');
     Route::post('/admin/blacklist/create', [DashboardController::class, 'addManualBlacklist'])->name('admin.blacklist.store');
     Route::delete('/admin/blacklist/delete/{id}', [DashboardController::class, 'removeBlacklist'])->name('admin.blacklist.delete');

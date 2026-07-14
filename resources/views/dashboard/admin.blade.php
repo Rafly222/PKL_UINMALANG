@@ -34,6 +34,23 @@
       </div>
     </div>
     @includeWhen(session('success') || session('warning') || session('info') || $errors->any(), 'partials.flash')
+
+    @if($pendingUsersCount > 0)
+      <div class="alert alert-warning text-white shadow border-0 d-flex align-items-center p-3 mb-4" role="alert">
+        <div class="icon icon-shape bg-white shadow text-center border-radius-md me-3 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; min-width: 38px;">
+          <i class="fas fa-user-plus text-warning text-sm"></i>
+        </div>
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between w-100">
+          <div class="mb-2 mb-md-0">
+            <span class="font-weight-bolder">Pemberitahuan Pendaftaran Akun</span> ·
+            <span class="opacity-9">Ada <strong>{{ $pendingUsersCount }} akun baru</strong> yang mendaftar secara mandiri dan membutuhkan persetujuan Anda.</span>
+          </div>
+          <a href="{{ route('admin.users') }}" class="btn btn-sm btn-white mb-0 text-warning font-weight-bold shadow-sm">
+            <i class="fas fa-check-circle me-1"></i> Tinjau Pendaftaran
+          </a>
+        </div>
+      </div>
+    @endif
   </div>
 </div>
 

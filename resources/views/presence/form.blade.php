@@ -203,8 +203,11 @@
                     <button type="button" onclick="activateWebcam()" class="btn btn-outline-primary mb-2 me-2">
                       <i class="fas fa-power-off me-1"></i> Buka Kamera
                     </button>
-                    <button type="button" onclick="snapPhoto()" class="btn bg-gradient-danger text-white mb-2">
+                    <button type="button" id="btn-snap-photo" onclick="snapPhoto()" class="btn bg-gradient-danger text-white mb-2 me-2">
                       <i class="fas fa-camera me-1"></i> Capture Wajah
+                    </button>
+                    <button type="button" id="btn-retake-photo" onclick="resetWebcamCapture()" class="btn btn-outline-secondary mb-2 d-none">
+                      <i class="fas fa-undo me-1"></i> Ambil Ulang
                     </button>
                   </div>
                 </div>
@@ -344,12 +347,15 @@
   function snapPhoto() {
     const canvas = document.getElementById('captured-canvas');
     const video = document.getElementById('webcam-preview');
+    const btnRetake = document.getElementById('btn-retake-photo');
+    const btnSnap = document.getElementById('btn-snap-photo');
     const ctx = canvas.getContext('2d');
     canvas.width = 640;
     canvas.height = 480;
 
     if(activeStream && !video.classList.contains('d-none')) {
       ctx.drawImage(video, 0, 0, 640, 480);
+      video.classList.add('d-none'); // Sembunyikan live video preview setelah capture
     } else {
       ctx.fillStyle = '#172b4d';
       ctx.fillRect(0, 0, 640, 480);
@@ -362,6 +368,33 @@
     }
     canvas.classList.remove('d-none');
     document.getElementById('photo-base64').value = canvas.toDataURL('image/jpeg');
+
+    // Tampilkan tombol Ambil Ulang, sembunyikan tombol Capture
+    if(btnRetake) btnRetake.classList.remove('d-none');
+    if(btnSnap) btnSnap.classList.add('d-none');
+  }
+
+  function resetWebcamCapture() {
+    const canvas = document.getElementById('captured-canvas');
+    const video = document.getElementById('webcam-preview');
+    const input = document.getElementById('photo-base64');
+    const btnRetake = document.getElementById('btn-retake-photo');
+    const btnSnap = document.getElementById('btn-snap-photo');
+
+    // Kosongkan dan sembunyikan canvas hasil foto
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.classList.add('d-none');
+
+    // Kosongkan nilai Base64 input
+    input.value = '';
+
+    // Sembunyikan tombol Ambil Ulang, tampilkan tombol Capture
+    if(btnRetake) btnRetake.classList.add('d-none');
+    if(btnSnap) btnSnap.classList.remove('d-none');
+
+    // Tampilkan kembali live video preview
+    if(video) video.classList.remove('d-none');
   }
 
   let isWriting = false;

@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan PKL - Sistem E-Presensi Diskominfo Kota Malang</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* Gaya Tampilan Layar (Screen View Styles) */
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.8;
+            color: #1a1a1a;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .no-print {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-family: 'Inter', -apple-system, sans-serif;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .no-print h3 {
+            margin: 0 0 8px 0;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .no-print p {
+            margin: 0 0 15px 0;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .no-print button {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+        }
+
+        .no-print button:hover {
+            background-color: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .document-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 50px 70px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+        }
+
+        /* Standar Pengetikan Skripsi/Laporan Indonesia */
+        h1, h2, h3, h4 {
+            font-family: 'Times New Roman', Times, serif;
+            color: #000;
+            font-weight: bold;
+            page-break-after: avoid;
+        }
+
+        h1 {
+            font-size: 16pt;
+            text-align: center;
+            text-transform: uppercase;
+            margin-top: 40px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        h2 {
+            font-size: 14pt;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            font-size: 12pt;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            text-align: justify;
+            text-indent: 1.25cm; /* Menjorok ke dalam untuk awal paragraf */
+            margin-bottom: 15px;
+        }
+
+        /* Bullet & Numbering list */
+        ol, ul {
+            margin-bottom: 15px;
+            padding-left: 20px;
+        }
+
+        li {
+            text-align: justify;
+            margin-bottom: 5px;
+        }
+
+        /* Desain Tabel */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 11pt;
+            page-break-inside: avoid;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 8px 10px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #f3f4f6;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Desain Code Blocks */
+        pre {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 10pt;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 15px 0;
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 10pt;
+            background-color: #f1f5f9;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        /* Container Diagram Mermaid */
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            background-color: #fafafa;
+            border: 1px dashed #ccc;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+            page-break-inside: avoid;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        /* Gaya Khusus Cetak (Print Styles) */
+        @media print {
+            body {
+                background-color: white;
+                color: black;
+                margin: 0;
+                padding: 0;
+            }
+
+            .no-print {
+                display: none;
+            }
+
+            .document-container {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            /* Standar Margin A4 Indonesia: Kiri 4cm, Atas 3cm, Bawah 3cm, Kanan 3cm */
+            @page {
+                size: A4;
+                margin-top: 3cm;
+                margin-bottom: 3cm;
+                margin-left: 4cm;
+                margin-right: 3cm;
+            }
+
+            pre {
+                border: 1px solid #ccc;
+                background-color: #fff;
+                page-break-inside: avoid;
+            }
+
+            code {
+                background-color: transparent;
+                border: none;
+                padding: 0;
+            }
+
+            .mermaid {
+                border: none;
+                background-color: transparent;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Tombol Navigasi Cetak (Hanya Muncul Dilayar) -->
+    <div class="no-print">
+        <h3>Draft Laporan PKL Siap Cetak PDF</h3>
+        <p>Halaman ini diformat sesuai template resmi PKL Anda (Kiri 4cm, Atas-Bawah-Kanan 3cm) beserta diagram Mermaid otomatis ter-render.</p>
+        <button onclick="window.print()">Cetak / Simpan Sebagai PDF</button>
+    </div>
+
+    <!-- Container Dokumen Utama -->
+    <div class="document-container">
+
+        <!-- ================= HALAMAN SAMPUL (COVER) ================= -->
+        <div style="text-align: center; height: 95vh; display: flex; flex-direction: column; justify-content: space-between; page-break-after: always;">
+            <div>
+                <h2 style="font-size: 16pt; margin: 0;">LAPORAN PRAKTEK KERJA LAPANGAN (PKL)</h2>
+                <h1 style="font-size: 18pt; margin: 30px 0; line-height: 1.4; text-transform: uppercase;">SISTEM E-PRESENSI DIGITAL BERBASIS EVENT DENGAN VERIFIKASI WAJAH DAN TANDA TANGAN DISKOMINFO MALANG</h1>
+            </div>
+            
+            <div style="margin: 50px 0;">
+                <p style="text-align: center; text-indent: 0; font-weight: bold; margin: 0;">Oleh:</p>
+                <p style="text-align: center; text-indent: 0; font-size: 14pt; font-weight: bold; margin: 5px 0 0 0;">RAFLY PRATAMA</p>
+                <p style="text-align: center; text-indent: 0; font-size: 12pt; margin: 5px 0;">NIM. 199508242018031005</p>
+            </div>
+
+            <div style="margin-bottom: 50px;">
+                <p style="text-align: center; text-indent: 0; font-weight: bold; font-size: 14pt; margin: 0; text-transform: uppercase;">PROGRAM STUDI TEKNIK INFORMATIKA</p>
+                <p style="text-align: center; text-indent: 0; font-weight: bold; font-size: 14pt; margin: 5px 0 0 0; text-transform: uppercase;">FAKULTAS SAINS DAN TEKNOLOGI</p>
+                <p style="text-align: center; text-indent: 0; font-weight: bold; font-size: 14pt; margin: 5px 0 0 0; text-transform: uppercase;">UNIVERSITAS ISLAM NEGERI MAULANA MALIK IBRAHIM MALANG</p>
+                <p style="text-align: center; text-indent: 0; font-weight: bold; font-size: 12pt; margin: 15px 0 0 0;">2026</p>
+            </div>
+        </div>
+
+        <!-- ================= BAB I ================= -->
+        <h1 class="page-break">BAB 1 PENDAHULUAN</h1>
+
+        <h2>1.1 Latar Belakang</h2>
+        <p>Dinas Komunikasi dan Informatika (Diskominfo) Kota Malang merupakan instansi pemerintahan yang aktif menyelenggarakan berbagai kegiatan resmi seperti rapat koordinasi, pelatihan, sosialisasi, dan forum diskusi. Tiap event tersebut memerlukan pencatatan kehadiran yang cepat dan valid demi pertanggungjawaban administrasi.</p>
+        <p>Sebelum sistem baru ini dikembangkan, Diskominfo Kota Malang sudah memiliki aplikasi e-presensi. Namun, fungsionalitas aplikasi tersebut dirasa masih belum maksimal dan belum mampu menjawab kebutuhan operasional secara praktis. Beberapa kendala utama pada sistem e-presensi lama tersebut meliputi:</p>
+        <ol>
+            <li><strong>Tidak Adanya Manajemen Kelola Event</strong>: Aplikasi lama tidak memiliki sistem manajemen event yang terintegrasi. Hal ini memaksa panitia/peserta harus membuka beberapa tab browser secara terpisah pada layar komputer untuk mencatat absensi di event-event yang berbeda, yang mana hal ini sangat tidak praktis dan memakan waktu.</li>
+            <li><strong>Ketiadaan Fitur Touchscreen Tanda Tangan</strong>: Sistem lama tidak memiliki fitur penandatanganan langsung di layar (<em>touchscreen signature</em>). Hal ini menyulitkan peserta yang ingin membubuhkan tanda tangan langsung secara digital menggunakan perangkat mobile atau tablet.</li>
+            <li><strong>Ekspor Excel Tanpa Gambar dan Tanda Tangan</strong>: Pada saat rekapitulasi data kehadiran diekspor ke Microsoft Excel, file hasil ekspor dari sistem lama tidak dapat memuat gambar foto wajah dan tanda tangan digital secara langsung di dalam sel spreadsheet. Panitia harus mencari dan memasukkan dokumen gambar tersebut secara manual secara terpisah.</li>
+        </ol>
+        <p>Oleh karena itu, penulis ditugaskan untuk merancang dan membangun sistem <strong>E-Presensi Diskominfo Baru</strong> berbasis web mandiri (<em>self-service</em>). Sistem baru ini dirancang menggunakan Laravel 11 untuk menyelesaikan seluruh kendala di atas dengan menghadirkan dashboard manajemen event yang terpadu (*All-in-One*), input tanda tangan digital responsif berbasis touchscreen (*HTML5 Canvas*), sistem verifikasi foto wajah (*Webcam Capture*), ekspor rekapitulasi data kehadiran ke Microsoft Excel yang secara otomatis memuat gambar foto wajah dan tanda tangan digital peserta langsung di dalam sel lembar kerja, serta proteksi keamanan seperti pencegahan absensi ganda (duplikasi data) dan blacklist identitas.</p>
+
+        <h2>1.2 Rumusan Masalah</h2>
+        <ol>
+            <li>Bagaimana merancang sistem manajemen event terintegrasi untuk menyatukan pencatatan presensi berbagai kegiatan dalam satu aplikasi?</li>
+            <li>Bagaimana mengimplementasikan fitur touchscreen tanda tangan digital dan tangkapan foto wajah langsung pada web browser?</li>
+            <li>Bagaimana menyusun sistem ekspor laporan kehadiran ke format MS Excel yang mampu menampilkan gambar foto wajah dan tanda tangan secara langsung di dalam lembar kerja?</li>
+            <li>Bagaimana mencegah terjadinya absensi ganda (duplikasi data) pada sistem presensi?</li>
+        </ol>
+
+        <h2>1.3 Tujuan</h2>
+        <ol>
+            <li>Membangun aplikasi portal presensi mandiri berbasis event yang memudahkan staf Diskominfo mengelola kehadiran peserta secara digital.</li>
+            <li>Menyediakan fitur <em>custom fields</em> dinamis, touchscreen tanda tangan, dan capture foto wajah.</li>
+            <li>Menghasilkan sistem ekspor Excel yang otomatis memuat gambar biner (foto dan TTD) di dalam sel tabel.</li>
+            <li>Mencegah kebocoran data presensi ganda melalui verifikasi NIK/NIP.</li>
+        </ol>
+
+        <h2>1.4 Manfaat</h2>
+        <ul>
+            <li><strong>Bagi Instansi (Diskominfo)</strong>: Mempercepat proses rekap absensi, menghemat penggunaan kertas (<em>paperless</em>), dan menyediakan laporan kehadiran dalam format Excel yang siap pakai beserta bukti visualnya.</li>
+            <li><strong>Bagi Peserta</strong>: Memberikan pengalaman pengisian absensi yang cepat, modern, dan aman.</li>
+        </ul>
+
+        <h2>1.5 Batasan Masalah</h2>
+        <ol>
+            <li>Sistem dikembangkan berbasis web menggunakan framework Laravel 11.</li>
+            <li>Integrasi data identitas pegawai ASN/Non-ASN menggunakan simulasi API (<em>mock API</em>) internal Pemerintah Kota Malang.</li>
+            <li>Verifikasi wajah mengandalkan tangkapan kamera (<em>webcam</em>) lokal pada perangkat pengakses dan disimpan dalam format enkripsi Base64 di database.</li>
+            <li>Lokasi presensi tidak dibatasi oleh geofencing GPS (fokus pada kemudahan akses peserta).</li>
+        </ol>
+
+        <h2>1.6 Profil Singkat Perusahaan</h2>
+        <p>Dinas Komunikasi dan Informatika (Diskominfo) Kota Malang merupakan unsur pelaksana urusan pemerintahan bidang komunikasi, informatika, persandian, dan statistik di wilayah Kota Malang, Jawa Timur. Kantor dinas ini berlokasi di Jl. Terusan Candi Mendut No. 17, Mojolangu, Kec. Lowokwaru, Kota Malang.</p>
+
+        <p>Tugas pokok Diskominfo Kota Malang adalah menyelenggarakan urusan pemerintahan di bidang komunikasi dan informatika untuk daerah Malang. Terkait dengan tugas tersebut, instansi ini berwenang untuk merumuskan kebijakan teknis, melaksanakan pembinaan, serta menerbitkan perizinan terkait bidang komunikasi dan teknologi di wilayah kerjanya. Beberapa urusan perizinan dan layanan di bawah koordinasi Diskominfo antara lain:</p>
+        <ol>
+            <li>Pendaftaran Penyelenggara Sistem Elektronik (PSE) lingkup daerah.</li>
+            <li>Izin penyelenggaraan jaringan dan jasa telekomunikasi lokal.</li>
+            <li>Koordinasi penyelenggaraan penyiaran (Lembaga Penyiaran Swasta dan Lembaga Penyiaran Berlangganan).</li>
+            <li>Pengawasan izin prinsip telekomunikasi khusus untuk badan hukum serta sertifikasi alat/perangkat telekomunikasi dan izin stasiun radio lokal.</li>
+        </ol>
+
+        <p>Selain itu, Diskominfo Kota Malang berwenang merumuskan tata kelola layanan informasi publik dan portal web yang beroperasi di lingkungan pemerintah daerah. Situs web yang tidak sesuai kebijakan atau melanggar undang-undang dapat dikenakan kebijakan pemblokiran demi keamanan informasi. Instansi ini juga aktif melaksanakan program pengembangan sumber daya manusia (SDM) di bidang teknologi informasi dan komunikasi (TIK) melalui program-program pembinaan terpadu seperti <em>Digitalent</em> dan pelatihan literasi digital lainnya guna menyongsong tata pemerintahan berbasis <em>Smart City</em>.</p>
+
+        <h2>1.7 Jadwal Kegiatan</h2>
+        <p>Penyusunan program dan laporan PKL dilaksanakan selama 6 (enam) minggu dengan pembagian jadwal sebagai berikut:</p>
+        <ol>
+            <li><strong>Minggu 1</strong>: Analisis kebutuhan sistem berjalan dan wawancara kendala aplikasi e-presensi lama di Diskominfo Kota Malang.</li>
+            <li><strong>Minggu 2 - 4</strong>: Tahap perancangan arsitektur, basis data, dan penulisan kode program (coding) aplikasi E-Presensi Baru menggunakan Laravel 11.</li>
+            <li><strong>Minggu 5</strong>: Tahap pengujian fungsionalitas aplikasi menggunakan metode Black Box Testing dan simulasi ekspor laporan Excel.</li>
+            <li><strong>Minggu 6</strong>: Deployment aplikasi ke server lokal (Laragon) dan hosting publik (InfinityFree), serta penyusunan laporan PKL.</li>
+        </ol>
+
+
+        <!-- ================= BAB II ================= -->
+        <h1 class="page-break">BAB II DASAR TEORI</h1>
+
+        <h2>2.1 Dasar Teori 1</h2>
+        <p>Dasar teori pertama berfokus pada framework Laravel 11 dan Arsitektur Model-View-Controller (MVC):</p>
+        <ul>
+            <li><strong>Framework Laravel</strong>: Laravel adalah sebuah framework aplikasi web berbasis PHP yang menggunakan arsitektur Model-View-Controller (MVC) dan berfokus pada penyederhanaan sintaks pemrograman yang ekspresif dan efisien.</li>
+            <li><strong>Arsitektur MVC</strong>: 
+                <ul>
+                    <li><strong>Model</strong>: Mengelola data dan aturan bisnis, diwakili oleh <em>Eloquent ORM</em> yang memetakan tabel database menjadi objek PHP yang mudah dimanipulasi.</li>
+                    <li><strong>View</strong>: Mengelola visualisasi antarmuka pengguna dengan memanfaatkan <em>Blade Templating Engine</em>, memungkinkan kode HTML digabungkan secara dinamis dengan variabel PHP secara aman.</li>
+                    <li><strong>Controller</strong>: Bertindak sebagai koordinator yang memproses permintaan (<em>requests</em>) dari router, mengambil data melalui Model, menerapkan logika bisnis, dan mengirimkan respon ke View.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2>2.2 Dasar Teori 2</h2>
+        <p>Dasar teori kedua membahas mengenai basis data relasional MySQL/MariaDB serta pemanfaatan antarmuka Application Programming Interface (API) web modern:</p>
+        <ul>
+            <li><strong>Database Relasional (RDBMS)</strong>: MySQL/MariaDB menggunakan perintah SQL (Structured Query Language) untuk manipulasi data. Struktur tabel dihubungkan melalui <em>Primary Key</em> (identitas unik kolom dalam tabel) dan <em>Foreign Key</em> (kolom yang mereferensikan Primary Key tabel lain) guna menjaga konsistensi dan integritas data (<em>referential integrity</em>).</li>
+            <li><strong>HTML5 MediaDevices API (Webcam Capture)</strong>: Antarmuka <code>navigator.mediaDevices.getUserMedia()</code> yang memungkinkan halaman web mengakses input media perangkat lokal secara langsung seperti kamera (<em>webcam</em>) dan mikrofon dengan izin pengguna. Aliran video (<em>video stream</em>) dari kamera ditangkap dan ditampilkan pada elemen <code>&lt;video&gt;</code> HTML5, kemudian diproyeksikan ke elemen <code>&lt;canvas&gt;</code> untuk mengambil gambar cuplikan (<em>frame capture</em>) biner. Gambar biner tersebut dikonversi menjadi format representasi data tekstual <strong>Base64</strong> (format Data URL <code>data:image/jpeg;base64,...</code>) agar dapat dikirimkan secara instan ke server via protokol HTTP tanpa memerlukan unggahan berkas multipart fisik.</li>
+            <li><strong>HTML5 Canvas API (Touchscreen Signature)</strong>: Elemen <code>&lt;canvas&gt;</code> HTML5 digunakan untuk menggambar grafik secara dinamis menggunakan skrip (JavaScript). Pada fungsionalitas tanda tangan digital, Canvas mendeteksi koordinasi gerakan kursor mouse (<em>mousedown</em>, <em>mousemove</em>, <em>mouseup</em>) atau sensor sentuhan layar pada perangkat touchscreen (<em>touchstart</em>, <em>touchmove</em>, <em>touchend</em>). Garis sapuan digambar secara real-time pada kanvas piksel, yang kemudian diekspor menjadi format gambar PNG biner yang dikodekan ke dalam representasi teks <strong>Base64</strong> untuk disimpan secara efisien di database.</li>
+            <li><strong>Keamanan Kriptografi dan Hashing Bcrypt</strong>: Hashing satu arah (<em>one-way</em>) yang diadopsi adalah <strong>Bcrypt</strong>, sebuah fungsi hashing adaptif berbasis algoritma enkripsi Blowfish. Bcrypt menyertakan pengacakan acak (<em>salt</em>) dan faktor kerja (<em>work factor</em>) untuk melambatkan proses komputasi guna menangkal serangan <em>brute-force</em>.</li>
+            <li><strong>Ekspor Dokumen Spreadsheet Berbasis HTML Table</strong>: Aplikasi spreadsheet seperti Microsoft Excel dapat menginterpretasikan tag HTML terstruktur (seperti <code>&lt;table&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;td&gt;</code>) menjadi baris dan kolom spreadsheet saat berkas diunduh dengan ekstensi berkas <code>.xls</code> melalui manipulasi tajuk respon HTTP (<em>HTTP Response Headers</em>) seperti <code>Content-Type: application/vnd.ms-excel</code>.</li>
+        </ul>
+
+        <h3>2.2.1 Penomoran Tabel</h3>
+        <p>Semua tabel dalam laporan PKL ini diberi nomor secara sistematis menggunakan format <strong>Tabel [Nomor Bab].[Nomor Urut]</strong>. Nomor urut tabel dimulai kembali dari angka 1 pada setiap bab baru. Contoh: <em>Tabel 4.1</em> menunjukkan tabel pertama pada Bab IV.</p>
+
+        <h3>2.2.2 Penomoran Gambar</h3>
+        <p>Semua gambar, diagram alur, dan diagram arsitektur dalam laporan ini diberi nomor secara sistematis menggunakan format <strong>Gambar [Nomor Bab].[Nomor Urut]</strong>. Nomor urut gambar dimulai kembali dari angka 1 pada setiap bab baru. Contoh: <em>Gambar 3.1</em> menunjukkan gambar/diagram alur pertama pada Bab III.</p>
+
+
+        <!-- ================= BAB III ================= -->
+        <h1 class="page-break">BAB III DESAIN DAN IMPLEMENTASI</h1>
+
+        <h2>3.1 Analisis dan Desain</h2>
+        
+        <h3>3.1.1 Deskripsi Alur Kerja Sistem (System Workflow)</h3>
+        <p>Sistem E-Presensi terbagi menjadi dua bagian utama: <strong>sisi administrator (staf/admin)</strong> untuk manajemen event dan data, serta <strong>sisi peserta</strong> untuk pengisian absensi.</p>
+
+        <p style="text-align: center; text-indent: 0; font-weight: bold; margin-top: 20px;">Gambar 3.1 Alur Kerja Sistem E-Presensi</p>
+        <div class="mermaid">
+            flowchart TD
+                A[Staf Pembuat Event] --> B(Buat Event: Set Tipe & Custom Fields)
+                B --> C{Tipe Event?}
+                C -->|Private| D[Atur Sandi Gate]
+                C -->|Public| E[Akses Langsung]
+                D --> F[Penyebaran URL Kehadiran]
+                E --> F
+                F --> G[Peserta Akses Form]
+                G --> H{Cek Tipe Peserta?}
+                H -->|Pegawai| I[Input NIP + Tarik API Pegawai]
+                H -->|Umum| J[Input NIK + Nama Mandiri]
+                I --> K[Isi Custom Field khusus pegawai]
+                J --> L[Isi Custom Field khusus umum]
+                K --> M[Verifikasi Foto Wajah & TTD]
+                L --> M
+                M --> N[Kirim Absen]
+                N --> O{Cek Duplikasi NIK/NIP?}
+                O -->|Sudah Absen| P[Tolak Absen + Flash Warning]
+                O -->|Belum Absen| Q[Simpan Database + Halaman Sukses]
+        </div>
+
+        <h3>3.1.2 Perancangan Arsitektur MVC & Struktur Direktori Proyek</h3>
+        <p>Sistem E-Presensi ini dirancang menggunakan konsep arsitektur <strong>Model-View-Controller (MVC)</strong> yang membagi struktur aplikasi menjadi tiga bagian utama agar pengelolaan kode lebih rapi, terstruktur, dan modular:</p>
+        <ol>
+            <li><strong>Model</strong>: Berfungsi mengelola data dan merepresentasikan struktur tabel di database relasional. Pada framework Laravel 11, berkas model disimpan di dalam direktori <code>app/Models/</code>. Pada sistem ini terdapat beberapa model penting, yaitu: <code>User.php</code>, <code>Event.php</code>, <code>Presence.php</code>, <code>Blacklist.php</code>, dan <code>ActivityLog.php</code>.</li>
+            <li><strong>View</strong>: Berfungsi menangani tampilan antarmuka (<em>user interface</em>) yang berinteraksi langsung dengan pengguna. Menggunakan <em>Blade templating engine</em> bawaan Laravel yang disimpan pada direktori <code>resources/views/</code>. Berkas view utama meliputi: <code>presence/form.blade.php</code> (formulir peserta), <code>dashboard/admin.blade.php</code> (dashboard admin), dan <code>exports/presence_excel.blade.php</code> (kerangka ekspor Excel).</li>
+            <li><strong>Controller</strong>: Berfungsi sebagai otak logika sistem yang memproses request dari view, berinteraksi dengan model untuk manipulasi database, dan mengirimkan kembali hasilnya ke view. Disimpan pada direktori <code>app/Http/Controllers/</code> (misal: <code>PresenceController.php</code> dan <code>DashboardController.php</code>).</li>
+            <li><strong>Routing</strong>: Mengatur lalu lintas URL aplikasi yang memetakan tautan ke fungsi Controller yang sesuai, didefinisikan dalam berkas <code>routes/web.php</code>.</li>
+        </ol>
+
+        <p>Berikut adalah struktur direktori utama pada proyek sistem E-Presensi ini:</p>
+        <pre>
+epresensi-diskominfo/
+├── app/                        # Direktori Core Logika PHP Aplikasi
+│   ├── Http/Controllers/       # File Pengendali Alur Logika (Controller)
+│   └── Models/                 # File Representasi Tabel Database (Model)
+├── bootstrap/                  # Inisialisasi Awal Aplikasi dan Cache Cache
+├── config/                     # Berkas Konfigurasi Utama (Database, App, dll)
+├── database/                   # Folder Database Relasional
+│   ├── migrations/             # Berkas Pembentuk Struktur Tabel Database
+│   └── seeders/                # Pengisian Data Awal (Dummy)
+├── public/                     # Folder Akses Publik Web Server (Dokumen Root)
+│   ├── assets/                 # Aset Gambar, Logo, dan File Pendukung
+│   └── index.php               # Pintu Masuk Utama Request Aplikasi
+├── resources/                  # Aset Front-End Aplikasi
+│   └── views/                  # File Template Antarmuka (Blade Views)
+├── routes/                     # Definisi URL / Jalur Akses Aplikasi
+│   └── web.php                 # File Routing Utama Web Browser
+├── storage/                    # Tempat Penyimpanan Log & File Unggahan Sementara
+├── vendor/                     # Library Dependensi PHP (diinstal via Composer)
+└── .env                        # Konfigurasi Environment Server (Sensitif)</pre>
+
+        <h3>3.1.3 Perancangan Database Relasional (ERD)</h3>
+        <p>Skema database dirancang dengan relasi database relasional untuk menyimpan konfigurasi kegiatan dan data kehadiran peserta secara dinamis.</p>
+
+        <p style="text-align: center; text-indent: 0; font-weight: bold; margin-top: 20px;">Gambar 3.2 Diagram Entity Relationship (ERD)</p>
+        <div class="mermaid">
+            erDiagram
+                users {
+                    bigint id PK
+                    string name
+                    string email UK
+                    string password
+                    string nik UK
+                    string nip UK "Nullable"
+                    enum role "user, admin"
+                }
+                events {
+                    bigint id PK
+                    bigint user_id FK "users.id"
+                    string name
+                    date date
+                    time time_start
+                    time time_end
+                    enum access_type "publik, privat"
+                    string password "Nullable"
+                    enum audience_type "umum, pegawai, semua"
+                    json fields "Nullable"
+                    json custom_fields "Nullable"
+                }
+                presences {
+                    bigint id PK
+                    bigint event_id FK "events.id"
+                    string name
+                    string nik "Nullable"
+                    string nip "Nullable"
+                    string institution "Nullable"
+                    string phone "Nullable"
+                    json data_presensi "Nullable"
+                    text photo "Nullable"
+                    text signature "Nullable"
+                }
+                blacklists {
+                    bigint id PK
+                    string nik UK "Nullable"
+                    string nip UK "Nullable"
+                }
+                activity_logs {
+                    bigint id PK
+                    bigint user_id "Nullable"
+                    string user_name "Nullable"
+                    string activity
+                    text description
+                    string ip_address "Nullable"
+                }
+
+                users ||--o{ events : "creates"
+                events ||--o{ presences : "has"
+        </div>
+
+        <h2>3.2 Implementasi</h2>
+
+        <h3>3.2.1 Logika Otentikasi Login, Register, & Sistem Proteksi Blacklist</h3>
+        <p>Sistem menggunakan modul otentikasi kustom untuk login dan registrasi admin/staf. Guna mencegah kebocoran keamanan, dipasang sistem <strong>Blacklist Identitas</strong> yang memblokir akun staf jika identitas NIK/NIP mereka diblacklist oleh Super Admin.</p>
+        
+        <pre>
+// app/Http/Controllers/AuthController.php
+public function login(Request $request)
+{
+    $credentials = $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
+
+    if (Auth::attempt($credentials)) {
+        $user = Auth::user();
+        
+        // PROTEKSI BLACKLIST: Cek NIK atau NIP sebelum mengizinkan masuk
+        $isBlacklisted = Blacklist::where('nik', $user->nik)
+            ->orWhere(function ($q) use ($user) {
+                if ($user->nip) {
+                    $q->where('nip', $user->nip);
+                }
+            })->exists();
+
+        if ($isBlacklisted) {
+            Auth::logout();
+            ActivityLog::log('blocked_access', "Percobaan masuk diblokir: Kredensial '{$user->name}' terdaftar di database Blacklist.");
+            return back()->with('warning', 'Akses ditolak: Akun Anda ditangguhkan karena identitas NIK/NIP masuk dalam daftar Blacklist.');
+        }
+
+        ActivityLog::log('login', "Pengguna '{$user->name}' berhasil masuk.");
+        return redirect()->route('dashboard');
+    }
+    return back()->with('warning', 'Email atau password salah.');
+}</pre>
+
+        <h3>3.2.2 Logika Bypass Administrator dan Pembuat Event</h3>
+        <p>Dalam merancang pengalaman pengguna (*user experience*) yang fleksibel, admin sistem dan staf pembuat event harus dapat memantau, menguji, atau melihat formulir kehadiran kapan saja tanpa terhambat oleh batasan jam pelaksanaan event maupun gerbang kata sandi (gate password).</p>
+        
+        <pre>
+// app/Http/Controllers/PresenceController.php
+// Menentukan apakah user yang sedang masuk dibypass dari aturan gate
+$isBypassed = false;
+if (Auth::check()) {
+    // Bypass jika user adalah pembuat event tersebut, atau memiliki role 'admin'
+    if (Auth::id() === $event->user_id || Auth::user()->role === 'admin') {
+        $isBypassed = true;
+    }
+}</pre>
+
+        <h3>3.2.3 Logika Gate Password Kehadiran Event (Akses Privat)</h3>
+        <p>Apabila sebuah event dikonfigurasi dengan tipe akses <code>'privat'</code>, peserta wajib memasukkan kata sandi kegiatan yang tepat pada halaman <em>Gate</em>. Sistem menggunakan session storage untuk mengingat status keberhasilan verifikasi sandi ini secara aman agar peserta tidak perlu memasukkan password berulang kali selama sesi pengisian formulir.</p>
+
+        <pre>
+// app/Http/Controllers/PresenceController.php
+public function checkGatePassword(Request $request, $event_id)
+{
+    $request->validate([
+        'password' => 'required|string',
+    ]);
+    $event = Event::findOrFail($event_id);
+
+    if (Hash::check($request->password, $event->password) || $request->password === $event->password) {
+        session(["event_gate_passed_{$event->id}" => true]);
+        return redirect()->route('presence.form', $event->id)->with('success', 'Akses diberikan!');
+    }
+    return back()->with('warning', 'Kata Sandi yang Anda masukkan salah.');
+}</pre>
+
+        <h3>3.2.4 Logika Real-Time Akses & Validasi Batasan Waktu Event</h3>
+        <p>Keamanan data absensi sangat bergantung pada waktu pengisian. Sistem menerapkan penyaringan dinamis di landing page (<code>welcome.blade.php</code>) agar hanya memuat kegiatan yang sedang berlangsung secara real-time berdasarkan jam dan tanggal lokal server:</p>
+
+        <pre>
+// app/Http/Controllers/PresenceController.php
+public function index()
+{
+    $now = Carbon::now('Asia/Jakarta');
+    $today = $now->toDateString();
+    $time = $now->toTimeString();
+
+    $events = Event::where('date', $today)
+        ->where('time_start', '<=', $time)
+        ->where('time_end', '>=', $time)
+        ->latest()
+        ->get();
+
+    return view('welcome', compact('events'));
+}</pre>
+
+        <p>Jika peserta mencoba mengakses formulir event secara langsung menggunakan tautan URL bypass luar jam pelaksanaan, backend akan menolaknya melalui validasi ini:</p>
+        <pre>
+$now = Carbon::now('Asia/Jakarta');
+$eventDate = Carbon::parse($event->date, 'Asia/Jakarta');
+$start = Carbon::parse($event->date . ' ' . $event->time_start, 'Asia/Jakarta');
+$end = Carbon::parse($event->date . ' ' . $event->time_end, 'Asia/Jakarta');
+
+if (!$now->isSameDay($eventDate) || $now->lt($start) || $now->gt($end)) {
+    return view('presence.gate', [
+        'event' => $event,
+        'error' => 'Akses Ditolak: Kegiatan belum dimulai atau sudah berakhir!'
+    ]);
+}</pre>
+
+        <h3>3.2.5 Logika Backend Validasi Kondisional & Pencegahan Duplikasi</h3>
+        <p>Berikut adalah implementasi fungsi <code>submitForm</code> pada <code>PresenceController.php</code> untuk memvalidasi kolom kustom secara kondisional (dua arah) dan mengecek duplikasi kehadiran NIK/NIP secara simultan:</p>
+
+        <pre>
+// app/Http/Controllers/PresenceController.php
+public function submitForm(Request $request, $event_id)
+{
+    $event = Event::findOrFail($event_id);
+    $fields = $event->fields ?? [];
+
+    $rules = [
+        'name' => 'required|string',
+        'nik' => 'required|size:16',
+        'tipe_peserta' => 'required|in:pegawai,umum',
+        'phone' => in_array('sc-phone', $fields) ? 'required|string|max:30' : 'nullable|string|max:30',
+        'institution' => in_array('sc-institution', $fields) ? 'required|string|max:255' : 'nullable|string|max:255',
+        'photo' => in_array('sc-photo', $fields) ? 'required|string' : 'nullable|string',
+        'signature' => in_array('sc-signature', $fields) ? 'required|string' : 'nullable|string',
+    ];
+
+    $rules['nip'] = ($request->tipe_peserta === 'pegawai') ? 'required|size:18' : 'nullable|size:18';
+
+    if ($event->custom_fields) {
+        foreach ($event->custom_fields as $cf) {
+            $slug = Str::slug($cf['label'], '_');
+            $isKhususPegawai = (stripos($cf['label'], 'khusus pegawai') !== false);
+            $isKhususTamu = (stripos($cf['label'], 'khusus tamu') !== false || stripos($cf['label'], 'khusus masyarakat') !== false || stripos($cf['label'], 'khusus umum') !== false);
+            
+            if ($event->audience_type === 'semua') {
+                if ($isKhususPegawai && $request->input('tipe_peserta') === 'umum') {
+                    $rules[$slug] = 'nullable';
+                } elseif ($isKhususTamu && $request->input('tipe_peserta') === 'pegawai') {
+                    $rules[$slug] = 'nullable';
+                } else {
+                    $rules[$slug] = 'required';
+                }
+            } else {
+                $rules[$slug] = 'required';
+            }
+        }
+    }
+
+    $request->validate($rules);
+
+    // LOGIKA PENCEGAHAN DUPLIKASI
+    $isAlreadyPresence = Presence::where('event_id', $event->id)
+        ->where(function ($q) use ($request) {
+            $q->where('nik', $request->nik);
+            if ($request->filled('nip') && $request->tipe_peserta === 'pegawai') {
+                $q->orWhere('nip', $request->nip);
+            }
+        })->exists();
+
+    if ($isAlreadyPresence) {
+        return back()->withInput()->with('warning', 'Anda sudah melakukan presensi pada event ini!');
+    }
+    // Simpan data...
+}</pre>
+
+        <h3>3.2.6 Logika Audit Log (Keamanan Aktivitas Administrator)</h3>
+        <p>Sistem mengimplementasikan Model Helper dinamis <code>ActivityLog::log</code> untuk menyimpan aksi admin ke database relasional lengkap dengan detail alamat IP (*IP Address*) dan jenis browser (*User Agent*) yang digunakan:</p>
+
+        <pre>
+// app/Models/ActivityLog.php
+public static function log($activity, $description)
+{
+    self::create([
+        'user_id' => auth()->id(),
+        'user_name' => auth()->user() ? auth()->user()->name : 'Tamu (Guest)',
+        'activity' => $activity,
+        'description' => $description,
+        'ip_address' => request()->ip(),
+        'user_agent' => request()->userAgent(),
+    ]);
+}</pre>
+
+        <h3>3.2.7 Logika Middleware dan Routing Sistem</h3>
+        <p>Sistem mengamankan rute aplikasi melalui pemetaan routing terstruktur dan penyaringan request menggunakan middleware pada berkas <code>routes/web.php</code> dan <code>app/Http/Middleware/RoleMiddleware.php</code>.</p>
+        <p>Rute dibedakan menjadi tiga kategori utama:</p>
+        <ol>
+            <li><strong>Rute Publik</strong>: Dapat diakses bebas oleh semua pengunjung/peserta tanpa perlu melakukan login (misalnya halaman pengisian presensi dan submit kehadiran).</li>
+            <li><strong>Rute Creator (Staf)</strong>: Diperlukan otentikasi login terlebih dahulu melalui middleware <code>auth</code> bawaan Laravel untuk mengelola event/kegiatan yang mereka buat sendiri.</li>
+            <li><strong>Rute Super Admin</strong>: Membutuhkan hak akses administrator tingkat tinggi melalui gabungan middleware <code>auth</code> dan middleware kustom <code>role:admin</code>.</li>
+        </ol>
+
+        <p>Berikut adalah kode deklarasi middleware kustom <code>RoleMiddleware.php</code> untuk membatasi hak akses role tertentu:</p>
+        <pre>
+// app/Http/Middleware/RoleMiddleware.php
+class RoleMiddleware
+{
+    public function handle(Request $request, Closure $next, string $role): Response
+    {
+        if (!Auth::check() || Auth::user()->role !== $role) {
+            return redirect('/login')->with('warning', 'Akses ditolak: Area ini memerlukan hak akses ' . strtoupper($role));
+        }
+
+        return $next($request);
+    }
+}</pre>
+
+        <p>Middleware ini didaftarkan sebagai alias <code>'role'</code> pada berkas <code>bootstrap/app.php</code> di Laravel 11:</p>
+        <pre>
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->alias([
+        'role' => \App\Http\Middleware\RoleMiddleware::class,
+    ]);
+})</pre>
+
+        <p>Rute-rute kemudian dikelompokkan secara terstruktur pada <code>routes/web.php</code> menggunakan grup middleware:</p>
+        <pre>
+// Rute Publik Presensi
+Route::get('/presensi/{event_id}', [PresenceController::class, 'showForm'])->name('presence.form');
+Route::post('/presensi/{event_id}', [PresenceController::class, 'submitForm']);
+
+// Rute Terproteksi Staf Creator (Wajib Login)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'userIndex'])->name('dashboard.user');
+    Route::post('/dashboard/event/create', [DashboardController::class, 'storeEvent'])->name('event.store');
+});
+
+// Rute Proteksi Ketat Super Admin (Wajib Login & Memiliki Role Admin)
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->name('dashboard.admin');
+    Route::post('/admin/blacklist/create', [DashboardController::class, 'addManualBlacklist'])->name('admin.blacklist.store');
+});</pre>
+
+
+        <!-- ================= BAB IV ================= -->
+        <h1 class="page-break">BAB IV HASIL DAN EVALUASI</h1>
+
+        <h2>4.1 Deskripsi Hasil Pekerjaan</h2>
+
+        <h3>4.1.1 Produk/Sistem yang Dihasilkan:</h3>
+        <p>Sistem E-Presensi ini menghasilkan aplikasi web mandiri (*self-service*) yang terdiri atas beberapa modul antarmuka utama:</p>
+        <ol>
+            <li><strong>Halaman Publik Landing Page</strong>: Menampilkan daftar event aktif saat ini secara real-time lengkap dengan tautan pengisian.</li>
+            <li><strong>Formulir Kehadiran Dinamis</strong>: Menyesuaikan tipe isian secara dinamis (Pegawai vs Umum) menggunakan frontend JS toggle. Dilengkapi dengan tangkapan Webcam wajah serta kanvas tanda tangan grafis touchscreen responsif.</li>
+            <li><strong>Dasbor Manajemen Event</strong>: Memungkinkan staf menambah kegiatan baru, merancang custom fields dinamis (seperti "Golongan" atau "Alamat"), memantau audit logs, serta mem-blacklist identitas staf/admin yang melanggar.</li>
+            <li><strong>Rekapitulasi & Ekspor Laporan Excel</strong>: Menampilkan database rekapitulasi secara dinamis sesuai kolom event, dan mengekspornya ke berkas Excel <code>.xls</code> lengkap dengan data biner gambar foto wajah dan tanda tangan yang tersemat otomatis pada baris sel spreadsheet (apabila diuji di localhost/Laragon).</li>
+        </ol>
+
+        <h3>4.1.2 Dokumentasi Pekerjaan:</h3>
+        <p>Seluruh kode program sistem ini telah ditulis menggunakan standar framework Laravel 11. Untuk keandalan sistem, pengujian unit test dan integrasi test dijalankan dan berhasil lulus (<em>passed</em>). Sistem ini juga telah diunggah ke repositori GitHub dan di-deploy secara online pada hosting gratis InfinityFree di alamat URL <a href="http://presensi-diskominfo.kesug.com/" target="_blank">http://presensi-diskominfo.kesug.com/</a>.</p>
+
+        <h2>4.2 Analisis Hasil (Pencapaian)</h2>
+        <p>Penerapan sistem baru ini memberikan peningkatan performa dan efisiensi yang signifikan dibandingkan dengan aplikasi e-presensi lama di Diskominfo Kota Malang:</p>
+        <ol>
+            <li><strong>Sentralisasi Event</strong>: Menghilangkan kebutuhan membuka banyak tab browser yang berbeda pada komputer panitia; sekarang seluruh presensi dikelola terpusat dari satu dasbor <em>all-in-one</em>.</li>
+            <li><strong>Tanda Tangan Fleksibel</strong>: Peserta kini dapat membubuhkan tanda tangan dengan mudah secara digital melalui perangkat touchscreen seperti HP dan tablet.</li>
+            <li><strong>Ekspor Excel Utuh</strong>: Panitia tidak perlu lagi menempelkan foto/TTD secara manual satu per satu setelah ekspor Excel; sistem di localhost telah terbukti secara otomatis menyisipkan data gambar tersebut langsung ke lembar kerja Excel secara instan.</li>
+        </ol>
+
+        <h2>4.3 Evaluasi</h2>
+
+        <h3>4.3.1 Evaluasi Teknis (Pengujian)</h3>
+        <p>Evaluasi teknis dilakukan menggunakan metode Black Box Testing untuk menguji fungsionalitas input dan output antarmuka pengguna pada sistem E-Presensi. Hasil pengujian dirangkum pada tabel berikut:</p>
+
+        <p style="text-align: center; text-indent: 0; font-weight: bold; margin-top: 20px;">Tabel 4.1 Hasil Pengujian Black Box</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Fitur yang Diuji</th>
+                    <th>Skenario Pengujian</th>
+                    <th>Hasil yang Diharapkan</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Login & Blacklist</td>
+                    <td>Akun staf yang terdaftar NIK/NIP-nya di blacklist mencoba untuk login.</td>
+                    <td>Sistem menolak masuk, mengeluarkan status ditangguhkan, dan mencatat log audit kegagalan.</td>
+                    <td>Sukses</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Bypass Akses</td>
+                    <td>Pembuat event mengakses form kegiatan yang statusnya belum mulai atau sudah ditutup.</td>
+                    <td>Staf pembuat event berhasil membuka formulir secara langsung tanpa halaman error akses ditolak.</td>
+                    <td>Sukses</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Gate Password</td>
+                    <td>Membuka link event privat tanpa status session gate.</td>
+                    <td>Halaman redirect otomatis ke form input password kegiatan.</td>
+                    <td>Sukses</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Validasi Waktu</td>
+                    <td>Peserta umum mengakses link event di luar jadwal pelaksanaan.</td>
+                    <td>Akses diblokir, memunculkan halaman gate bertuliskan "Kegiatan belum dimulai atau sudah berakhir!".</td>
+                    <td>Sukses</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Custom Field CRUD</td>
+                    <td>Membuat event baru, menambah 3 custom field, lalu menghapus 1 baris menggunakan tombol hapus.</td>
+                    <td>Baris custom field terhapus dari dokumen HTML secara instan tanpa me-refresh halaman.</td>
+                    <td>Sukses</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Validasi Kondisional</td>
+                    <td>Memilih kategori "Masyarakat Umum" pada event gabungan (*semua*).</td>
+                    <td>Kolom kustom berlabel <code>(khusus pegawai)</code> disembunyikan dan diabaikan saat validasi backend.</td>
+                    <td>Sukses</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Cek Duplikasi</td>
+                    <td>Peserta dengan NIK yang sama melakukan absen ulang pada event yang sama.</td>
+                    <td>Pengiriman ditolak, sistem melakukan redirect back dan menampilkan notifikasi: <em>"Anda sudah melakukan presensi pada event ini!"</em>.</td>
+                    <td>Sukses</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>Rekap & Ekspor Excel</td>
+                    <td>Melakukan ekspor data presensi ke MS Excel di localhost.</td>
+                    <td>Struktur kolom Excel sesuai persis dengan kolom dinamis, dan gambar foto wajah serta tanda tangan langsung ter-render otomatis di sel Excel.</td>
+                    <td>Sukses</td>
+                </tr>
+            </tbody>
+        </table>
+
+
+        <!-- ================= BAB V ================= -->
+        <h1 class="page-break">BAB V KESIMPULAN</h1>
+
+        <h2>5.1 Kesimpulan</h2>
+        <ol>
+            <li>Telah berhasil dibangun sebuah aplikasi e-presensi terintegrasi berbasis event (<em>event management</em>) yang mempermudah staf mengelola absensi multi-event dalam satu dasbor terpadu, menghilangkan kebutuhan membuka banyak tab browser yang membingungkan.</li>
+            <li>Fitur tanda tangan digital interaktif berbasis touchscreen (<em>HTML5 Canvas</em>) dan webcam capture wajah telah sukses diimplementasikan langsung pada web browser peserta tanpa memerlukan aplikasi tambahan.</li>
+            <li>Fitur ekspor rekapitulasi data presensi ke format Microsoft Excel (.xls) telah berhasil disempurnakan untuk merender kolom secara dinamis dan menampilkan gambar foto wajah serta tanda tangan secara inline (langsung di dalam sel tabel).</li>
+            <li>Logika validasi pencegahan duplikasi data kehadiran berhasil menangkal pengiriman absensi ganda oleh peserta yang sama pada event yang sama.</li>
+        </ol>
+
+        <h2>5.2 Saran</h2>
+        <ol>
+            <li>Menerapkan verifikasi lokasi kehadiran menggunakan teknologi <em>Geofencing</em> (GPS) agar presensi hanya dapat dilakukan jika peserta berada di radius lokasi kegiatan yang telah ditentukan.</li>
+            <li>Meningkatkan sistem keamanan server dan migrasi hosting ke server PaaS/VPS mandiri agar proses integrasi ekspor Excel berjalan lebih optimal tanpa hambatan proteksi server eksternal.</li>
+        </ol>
+
+
+        <!-- ================= DAFTAR PUSTAKA ================= -->
+        <h1 class="page-break">DAFTAR PUSTAKA</h1>
+        <ol>
+            <li><strong>Laravel</strong>: Laravel Documentation (v11.x) - <em>https://laravel.com/docs/11.x</em>.</li>
+            <li><strong>Mozilla Developer Network (MDN)</strong>: MediaDevices API Reference - <em>https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices</em>.</li>
+            <li><strong>HTML5 Canvas</strong>: HTML Canvas Graphics Reference - <em>https://www.w3schools.com/html/html5_canvas.asp</em>.</li>
+            <li><strong>Bcrypt</strong>: Bcrypt Hashing Function Specifications - <em>https://en.wikipedia.org/wiki/Bcrypt</em>.</li>
+            <li><strong>Spreadsheet Exports</strong>: Excel HTML-Based Spreadsheet Generation - <em>https://github.com/PHPOffice/PhpSpreadsheet</em>.</li>
+        </ol>
+
+
+        <!-- ================= LAMPIRAN ================= -->
+        <h1 class="page-break">LAMPIRAN</h1>
+        <p style="text-indent: 0; text-align: center; color: #666; margin-top: 50px; font-style: italic;">
+            (Bagian ini dapat diisi dengan dokumen pendukung seperti tangkapan layar antarmuka sistem, surat bukti PKL, logbook kegiatan, atau dokumentasi foto selama magang)
+        </p>
+
+    </div>
+
+    <!-- Pemuatan Pustaka Mermaid JS CDN untuk me-render diagram -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html>

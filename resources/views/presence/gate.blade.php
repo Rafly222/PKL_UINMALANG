@@ -25,7 +25,7 @@
           </div>
         @else
           <p class="text-sm text-muted text-center">Masukkan password event dari penyelenggara untuk membuka formulir presensi.</p>
-          <form action="{{ route('presence.gate', $event->id) }}" method="POST">
+          <form action="{{ route('presence.gate', $event->uuid) }}" method="POST">
             @csrf
             <div class="input-group mb-3">
               <input type="password" name="password" id="gate-password" class="form-control text-center" placeholder="Password event" required style="border-right: 0;">

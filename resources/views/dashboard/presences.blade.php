@@ -23,7 +23,7 @@
             </div>
           </div>
           <div class="d-flex gap-2">
-            <a href="{{ route('event.presences.excel', $event->id) }}" class="btn bg-gradient-success mb-0 shadow">
+            <a href="{{ route('event.presences.excel', $event->uuid) }}" class="btn bg-gradient-success mb-0 shadow">
               <i class="fas fa-file-excel me-1"></i> Ekspor ke Excel
             </a>
             <a href="{{ Auth::user()->role === 'admin' ? route('dashboard.admin') : route('dashboard.user') }}" class="btn btn-outline-secondary mb-0">

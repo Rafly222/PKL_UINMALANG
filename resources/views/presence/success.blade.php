@@ -168,7 +168,7 @@
             </div>
             
             <div class="card-footer text-center bg-transparent border-top py-3">
-              <a href="{{ route('presence.form', $presence->event_id) }}" class="btn bg-gradient-success mb-0 me-2">
+              <a href="{{ route('presence.form', $presence->event->uuid) }}" class="btn bg-gradient-success mb-0 me-2">
                 <i class="fas fa-plus-circle me-1"></i> Presensi Berikutnya
               </a>
               <a href="{{ route('home') }}" class="btn btn-outline-secondary mb-0">

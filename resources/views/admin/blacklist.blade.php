@@ -29,12 +29,8 @@
         <form action="{{ route('admin.blacklist.store') }}" method="POST">
           @csrf
           <div class="mb-3">
-            <label class="form-control-label text-xs">NIK (Nomor Induk Kependudukan)</label>
-            <input name="nik" class="form-control" placeholder="NIK 16 digit (opsional)">
-          </div>
-          <div class="mb-3">
-            <label class="form-control-label text-xs">NIP (Nomor Induk Pegawai)</label>
-            <input name="nip" class="form-control" placeholder="NIP 18 digit (opsional)">
+            <label class="form-control-label text-xs">NIP (Nomor Induk Pegawai) <span class="text-danger">*</span></label>
+            <input name="nip" class="form-control" placeholder="Masukkan 18 digit NIP" required>
           </div>
           <button class="btn bg-gradient-dark w-100 mb-0 shadow">Blokir Identitas</button>
         </form>
@@ -46,7 +42,7 @@
     <div class="card ep-card h-100">
       <div class="card-header pb-0 bg-transparent">
         <h6 class="mb-0">Daftar Identitas Terblokir</h6>
-        <p class="text-xs text-muted mb-0">List NIP/NIK yang saat ini diblokir dari sistem E-Presensi.</p>
+        <p class="text-xs text-muted mb-0">List NIP yang saat ini diblokir dari sistem E-Presensi.</p>
       </div>
       <div class="card-body">
         <div class="table-responsive p-3">
@@ -62,8 +58,7 @@
                 <tr>
                   <td class="text-sm ps-3">
                     <span class="badge bg-gradient-warning me-2">Terblokir</span>
-                    <strong>NIK:</strong> {{ $blacklist->nik ?? '-' }} <br>
-                    <span class="text-xs text-muted ms-7"><strong>NIP:</strong> {{ $blacklist->nip ?? '-' }}</span>
+                    <strong>NIP:</strong> {{ $blacklist->nip ?? '-' }}
                   </td>
                   <td class="text-end">
                     <form action="{{ route('admin.blacklist.delete', $blacklist->id) }}" method="POST" onsubmit="return confirm('Pulihkan identitas ini?')">

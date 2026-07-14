@@ -219,10 +219,10 @@
                     <span class="text-xs text-muted">{{ \Carbon\Carbon::parse($event->time_start)->format('H:i') }} - {{ \Carbon\Carbon::parse($event->time_end)->format('H:i') }}</span>
                   </td>
                   <td class="text-center">
-                    <a href="{{ route('event.presences', $event->id) }}" class="btn btn-xs bg-gradient-success mb-1">Rekap</a>
+                    <a href="{{ route('event.presences', $event->uuid) }}" class="btn btn-xs bg-gradient-success mb-1">Rekap</a>
                     <button type="button" class="btn btn-xs bg-gradient-info mb-1" data-bs-toggle="modal" data-bs-target="#editEventModal-{{ $event->id }}">Edit</button>
-                    <a href="{{ route('presence.form', $event->id) }}" class="btn btn-xs bg-gradient-primary mb-1">Buka</a>
-                    <button type="button" class="btn btn-xs btn-outline-secondary mb-1" onclick="navigator.clipboard.writeText('{{ route('presence.form', $event->id) }}')">Salin</button>
+                    <a href="{{ route('presence.form', $event->uuid) }}" class="btn btn-xs bg-gradient-primary mb-1">Buka</a>
+                    <button type="button" class="btn btn-xs btn-outline-secondary mb-1" onclick="navigator.clipboard.writeText('{{ route('presence.form', $event->uuid) }}')">Salin</button>
                     <form action="{{ route('event.destroy', $event) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus event ini?')">
                       @csrf
                       @method('DELETE')

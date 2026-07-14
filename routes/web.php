@@ -11,11 +11,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [PresenceController::class, 'index'])->name('home');
 
 // Rute Presensi Publik (Tahap 3 & 5)
-Route::get('/presensi/{event_id}', [PresenceController::class, 'showForm'])->name('presence.form');
-Route::post('/presensi/{event_id}', [PresenceController::class, 'submitForm']);
-Route::get('/presensi/{event_id}/gate', [PresenceController::class, 'showGate'])->name('presence.gate');
-Route::post('/presensi/{event_id}/gate', [PresenceController::class, 'checkGatePassword']);
-Route::get('/presensi/sukses/{presence_id}', [PresenceController::class, 'showSuccess'])->name('presence.success');
+Route::get('/presensi/{event_uuid}', [PresenceController::class, 'showForm'])->name('presence.form');
+Route::post('/presensi/{event_uuid}', [PresenceController::class, 'submitForm']);
+Route::get('/presensi/{event_uuid}/gate', [PresenceController::class, 'showGate'])->name('presence.gate');
+Route::post('/presensi/{event_uuid}/gate', [PresenceController::class, 'checkGatePassword']);
+Route::get('/presensi/sukses/{presence_uuid}', [PresenceController::class, 'showSuccess'])->name('presence.success');
 
 // Mock API Integrasi NIP Pegawai Malang
 Route::get('/api/pegawai/{nip}', [PresenceController::class, 'mockEmployeeApi']);
@@ -42,8 +42,8 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/dashboard/event/{event}', [DashboardController::class, 'destroyEvent'])->name('event.destroy');
     
     // Fitur melihat daftar kehadiran & ekspor excel per event
-    Route::get('/dashboard/event/{event_id}/presence', [DashboardController::class, 'eventPresences'])->name('event.presences');
-    Route::get('/dashboard/event/{event_id}/presence/excel', [DashboardController::class, 'exportPresenceExcel'])->name('event.presences.excel');
+    Route::get('/dashboard/event/{event_uuid}/presence', [DashboardController::class, 'eventPresences'])->name('event.presences');
+    Route::get('/dashboard/event/{event_uuid}/presence/excel', [DashboardController::class, 'exportPresenceExcel'])->name('event.presences.excel');
 });
 
 // Akses publik untuk melihat foto & TTD hasil presensi (agar bisa diakses langsung via link Excel)

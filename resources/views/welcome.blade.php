@@ -211,7 +211,7 @@
                 </div>
               </div>
               <div class="card-footer bg-transparent border-0 pt-0 p-3">
-                <a href="{{ route('presence.form', $ev->id) }}" class="btn bg-gradient-dark w-100 mb-0">
+                <a href="{{ route('presence.form', $ev->uuid) }}" class="btn bg-gradient-dark w-100 mb-0">
                   <i class="fas fa-file-signature me-1"></i> Masuk Presensi
                 </a>
               </div>

@@ -184,7 +184,7 @@
             </div>
             
             <div class="card-body p-3">
-              <form action="{{ route('presence.form', $event->id) }}" method="POST" id="presence-main-form">
+              <form action="{{ route('presence.form', $event->uuid) }}" method="POST" id="presence-main-form">
                 @csrf
                 <input type="hidden" name="photo" id="photo-base64">
                 <input type="hidden" name="signature" id="signature-base64">

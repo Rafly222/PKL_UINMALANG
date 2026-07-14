@@ -7,9 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class Event extends Model
 {
     protected $fillable = [
-        'user_id', 'name', 'date', 'time_start', 'time_end', 
+        'uuid', 'user_id', 'name', 'date', 'time_start', 'time_end', 
         'access_type', 'password', 'audience_type', 'fields', 'custom_fields'
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($event) {
+            if (empty($event->uuid)) {
+                $event->uuid = (string) \Illuminate\Support\Str::uuid();
+            }
+        });
+    }
 
     // Mengubah data JSON otomatis menjadi tipe Array di PHP
     protected $casts = [

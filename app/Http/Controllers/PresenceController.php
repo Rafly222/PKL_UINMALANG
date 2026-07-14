@@ -27,9 +27,9 @@ class PresenceController extends Controller
         return view('welcome', compact('events'));
     }
 
-    public function showForm($event_id)
+    public function showForm($event_uuid)
     {
-        $event = Event::findOrFail($event_id);
+        $event = Event::where('uuid', $event_uuid)->firstOrFail();
         
         // Tahap 3: Aturan Bypass Pembuat (User) / Admin
         $isBypassed = false;
@@ -55,16 +55,16 @@ class PresenceController extends Controller
 
             // Jika event bertipe privat, minta password
             if ($event->access_type === 'privat' && !session("event_gate_passed_{$event->id}")) {
-                return redirect()->route('presence.gate', $event->id);
+                return redirect()->route('presence.gate', $event->uuid);
             }
         }
 
         return view('presence.form', compact('event', 'isBypassed'));
     }
 
-    public function showGate($event_id)
+    public function showGate($event_uuid)
     {
-        $event = Event::findOrFail($event_id);
+        $event = Event::where('uuid', $event_uuid)->firstOrFail();
 
         // Tahap 3: Aturan Bypass Pembuat (User) / Admin
         $isBypassed = false;
@@ -91,19 +91,19 @@ class PresenceController extends Controller
 
         // Jika user dibypass atau sudah memasukkan password, langsung ke form
         if ($isBypassed || session("event_gate_passed_{$event->id}")) {
-            return redirect()->route('presence.form', $event->id);
+            return redirect()->route('presence.form', $event->uuid);
         }
 
         return view('presence.gate', compact('event'));
     }
 
-    public function checkGatePassword(Request $request, $event_id)
+    public function checkGatePassword(Request $request, $event_uuid)
     {
         $request->validate([
             'password' => 'required|string',
         ]);
 
-        $event = Event::findOrFail($event_id);
+        $event = Event::where('uuid', $event_uuid)->firstOrFail();
 
         // Tahap 3: Aturan Bypass Pembuat (User) / Admin
         $isBypassed = false;
@@ -130,15 +130,15 @@ class PresenceController extends Controller
 
         if (Hash::check($request->password, $event->password) || $request->password === $event->password) {
             session(["event_gate_passed_{$event->id}" => true]);
-            return redirect()->route('presence.form', $event->id)->with('success', 'Akses diberikan!');
+            return redirect()->route('presence.form', $event->uuid)->with('success', 'Akses diberikan!');
         }
 
         return back()->with('warning', 'Kata Sandi yang Anda masukkan salah.');
     }
 
-    public function submitForm(Request $request, $event_id)
+    public function submitForm(Request $request, $event_uuid)
     {
-        $event = Event::findOrFail($event_id);
+        $event = Event::where('uuid', $event_uuid)->firstOrFail();
 
         // Tahap 3: Aturan Bypass Pembuat (User) / Admin
         $isBypassed = false;
@@ -283,12 +283,12 @@ class PresenceController extends Controller
         $identityLog = $presence->nip ? "NIP: {$presence->nip}" : "Umum";
         \App\Models\ActivityLog::log('submit_presence', "Tamu '{$presence->name}' ({$identityLog}) berhasil mengisi presensi untuk kegiatan '{$event->name}'.");
 
-        return redirect()->route('presence.success', $presence->id);
+        return redirect()->route('presence.success', $presence->uuid);
     }
 
-    public function showSuccess($presence_id)
+    public function showSuccess($presence_uuid)
     {
-        $presence = Presence::with('event')->findOrFail($presence_id);
+        $presence = Presence::with('event')->where('uuid', $presence_uuid)->firstOrFail();
         return view('presence.success', compact('presence'));
     }
 

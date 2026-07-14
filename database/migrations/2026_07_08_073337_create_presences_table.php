@@ -11,6 +11,7 @@ return new class extends Migration
     {
         Schema::create('presences', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
             $table->string('name');
             $table->string('institution')->nullable();

@@ -240,7 +240,7 @@ class DashboardController extends Controller
 
         $user->delete();
 
-        return back()->with('success', 'Akun pengguna sukses dihapus & NIP/NIK dimasukkan ke BLACKLIST!');
+        return back()->with('success', 'Akun pengguna sukses dihapus & NIP dimasukkan ke BLACKLIST!');
     }
 
     public function removeBlacklist($id)
@@ -248,9 +248,8 @@ class DashboardController extends Controller
         $blacklist = Blacklist::findOrFail($id);
         
         // Catat Log Aktivitas
-        $blNik = $blacklist->nik ?? '-';
         $blNip = $blacklist->nip ?? '-';
-        \App\Models\ActivityLog::log('blacklist_remove', "Admin memulihkan identitas dari Blacklist (NIK: {$blNik}, NIP: {$blNip}).");
+        \App\Models\ActivityLog::log('blacklist_remove', "Admin memulihkan identitas dari Blacklist (NIP: {$blNip}).");
 
         $blacklist->delete();
         return back()->with('info', 'Blokir identitas berhasil dipulihkan.');
@@ -259,31 +258,19 @@ class DashboardController extends Controller
     public function addManualBlacklist(Request $request)
     {
         $request->validate([
-            'nik' => 'nullable|size:16',
-            'nip' => 'nullable|size:18'
+            'nip' => 'required|size:18'
         ]);
 
-        if (!$request->nik && !$request->nip) {
-            return back()->with('warning', 'Masukkan NIK atau NIP untuk diblokir!');
-        }
-
-        // Hindari duplikasi untuk mencegah crash unique key
-        if ($request->nik && Blacklist::where('nik', $request->nik)->exists()) {
-            return back()->with('warning', 'NIK tersebut sudah terdaftar di Blacklist.');
-        }
-        if ($request->nip && Blacklist::where('nip', $request->nip)->exists()) {
+        if (Blacklist::where('nip', $request->nip)->exists()) {
             return back()->with('warning', 'NIP tersebut sudah terdaftar di Blacklist.');
         }
 
         Blacklist::create([
-            'nik' => $request->nik,
             'nip' => $request->nip
         ]);
 
         // Catat Log Aktivitas
-        $reqNik = $request->nik ?? '-';
-        $reqNip = $request->nip ?? '-';
-        \App\Models\ActivityLog::log('blacklist_add', "Admin mem-blacklist identitas secara manual (NIK: {$reqNik}, NIP: {$reqNip}).");
+        \App\Models\ActivityLog::log('blacklist_add', "Admin mem-blacklist identitas secara manual (NIP: {$request->nip}).");
 
         return back()->with('success', 'Identitas manual berhasil ditambahkan ke Blacklist.');
     }
@@ -303,9 +290,9 @@ class DashboardController extends Controller
     }
 
     // Melihat daftar kehadiran per event
-    public function eventPresences($event_id)
+    public function eventPresences($event_uuid)
     {
-        $event = Event::findOrFail($event_id);
+        $event = Event::where('uuid', $event_uuid)->firstOrFail();
 
         // Otorisasi: Pembuat event atau Admin
         if (Auth::user()->role !== 'admin' && $event->user_id !== Auth::id()) {
@@ -318,9 +305,9 @@ class DashboardController extends Controller
     }
 
     // Ekspor rekapan presensi ke excel per event
-    public function exportPresenceExcel($event_id)
+    public function exportPresenceExcel($event_uuid)
     {
-        $event = Event::findOrFail($event_id);
+        $event = Event::where('uuid', $event_uuid)->firstOrFail();
 
         // Otorisasi: Pembuat event atau Admin
         if (Auth::user()->role !== 'admin' && $event->user_id !== Auth::id()) {

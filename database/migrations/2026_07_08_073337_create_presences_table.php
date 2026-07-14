@@ -13,7 +13,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
             $table->string('name');
-            $table->string('nik', 16)->nullable();
             $table->string('institution')->nullable();
             $table->string('phone')->nullable();
             $table->string('nip', 18)->nullable();

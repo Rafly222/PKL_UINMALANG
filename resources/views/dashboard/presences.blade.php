@@ -38,7 +38,6 @@
             <thead>
               <tr>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-3">No</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">NIK</th>
                 @if($event->audience_type === 'pegawai' || $event->audience_type === 'semua')
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder">NIP</th>
                 @endif
@@ -52,8 +51,8 @@
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Jenis Kelamin</th>
                 @endif
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Instansi</th>
-                @if(in_array('sc-address', $event->fields ?? []))
-                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Alamat Domisili</th>
+                @if(in_array('sc-email', $event->fields ?? []))
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Email</th>
                 @endif
 
                 {{-- Dynamic Custom Columns --}}
@@ -81,7 +80,6 @@
               @foreach($presences as $index => $presence)
                 <tr>
                   <td class="text-sm font-weight-bold ps-3">{{ $index + 1 }}</td>
-                  <td class="text-sm">{{ $presence->nik }}</td>
                   @if($event->audience_type === 'pegawai' || $event->audience_type === 'semua')
                     <td class="text-sm">{{ $presence->nip ?? '-' }}</td>
                   @endif
@@ -99,9 +97,9 @@
                   
                   <td class="text-sm">{{ $presence->institution }}</td>
                   
-                  {{-- Address --}}
-                  @if(in_array('sc-address', $event->fields ?? []))
-                    <td class="text-sm">{{ $presence->data_presensi['Alamat'] ?? '-' }}</td>
+                  {{-- Email --}}
+                  @if(in_array('sc-email', $event->fields ?? []))
+                    <td class="text-sm">{{ $presence->data_presensi['Email'] ?? '-' }}</td>
                   @endif
 
                   {{-- Custom Fields --}}

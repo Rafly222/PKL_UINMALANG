@@ -22,10 +22,16 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Moch Rafly R.A (Super Admin)',
             'nip' => '199807212023031002', 
-            'nik' => '3573012345670002',
             'email' => 'rafly.admin@malangkota.go.id',
             'password' => Hash::make('passwordadmin2'),
             'role' => 'admin',
+        ]);
+        User::create([
+            'name' => ' anjani (staff)',
+            'nip' => '199807212023031001', 
+            'email' => 'user.user@malangkota.go.id',
+            'password' => Hash::make('passworduser'),
+            'role' => 'user',
         ]);
     }
 }

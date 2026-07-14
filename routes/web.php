@@ -38,6 +38,7 @@ Route::middleware(['auth'])->group(function () {
     // Masuk ke dashboard creator untuk kelola form absensi sendiri
     Route::get('/dashboard', [DashboardController::class, 'userIndex'])->name('dashboard.user');
     Route::post('/dashboard/event/create', [DashboardController::class, 'storeEvent'])->name('event.store');
+    Route::put('/dashboard/event/{event}', [DashboardController::class, 'updateEvent'])->name('event.update');
     Route::delete('/dashboard/event/{event}', [DashboardController::class, 'destroyEvent'])->name('event.destroy');
     
     // Fitur melihat daftar kehadiran & ekspor excel per event
@@ -53,6 +54,9 @@ Route::get('/presence/{id}/signature', [DashboardController::class, 'showPresenc
 Route::middleware(['auth', 'role:admin'])->group(function () {
     // Halaman Dashboard Utama Admin
     Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->name('dashboard.admin');
+    Route::get('/admin/blacklist', [DashboardController::class, 'adminBlacklist'])->name('admin.blacklist');
+    Route::get('/admin/users', [DashboardController::class, 'adminUsers'])->name('admin.users');
+    Route::get('/admin/logs', [DashboardController::class, 'adminLogs'])->name('admin.logs');
     // Fitur CRUD & Akses Manajemen Admin
     Route::post('/admin/event/create', [DashboardController::class, 'storeEvent'])->name('admin.event.store');
     Route::post('/admin/users/create', [DashboardController::class, 'storeUserByAdmin'])->name('admin.users.store');

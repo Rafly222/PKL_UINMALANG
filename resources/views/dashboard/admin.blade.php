@@ -59,7 +59,7 @@
         <div class="d-flex">
           <div>
             <p class="text-sm mb-0 text-uppercase font-weight-bold">User</p>
-            <h5 class="font-weight-bolder mb-0">{{ $users->count() }}</h5>
+            <h5 class="font-weight-bolder mb-0">{{ $totalUsers }}</h5>
           </div>
           <div class="icon icon-shape bg-gradient-info shadow-info text-center rounded-circle ms-auto">
             <i class="ni ni-single-02 text-lg opacity-10"></i>
@@ -74,7 +74,7 @@
         <div class="d-flex">
           <div>
             <p class="text-sm mb-0 text-uppercase font-weight-bold">Blacklist</p>
-            <h5 class="font-weight-bolder mb-0">{{ $blacklists->count() }}</h5>
+            <h5 class="font-weight-bolder mb-0">{{ $totalBlacklists }}</h5>
           </div>
           <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle ms-auto">
             <i class="ni ni-lock-circle-open text-lg opacity-10"></i>
@@ -89,7 +89,7 @@
         <div class="d-flex">
           <div>
             <p class="text-sm mb-0 text-uppercase font-weight-bold">Log</p>
-            <h5 class="font-weight-bolder mb-0">{{ $systemLogs->count() }}</h5>
+            <h5 class="font-weight-bolder mb-0">{{ $totalLogs }}</h5>
           </div>
           <div class="icon icon-shape bg-gradient-dark shadow-dark text-center rounded-circle ms-auto">
             <i class="ni ni-bullet-list-67 text-lg opacity-10"></i>
@@ -151,14 +151,14 @@
               'sc-phone' => 'No HP',
               'sc-gender' => 'Gender',
               'sc-institution' => 'Instansi',
-              'sc-address' => 'Alamat',
+              'sc-email' => 'Email',
               'sc-nip' => 'NIP',
               'sc-photo' => 'Foto',
               'sc-signature' => 'TTD',
             ] as $value => $label)
               <div class="col-6">
                 <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" name="{{ $value }}" value="1" id="admin-{{ $value }}">
+                  <input class="form-check-input" type="checkbox" name="{{ $value }}" value="1" id="admin-{{ $value }}" @checked(old() ? old($value) : true)>
                   <label class="form-check-label text-sm" for="admin-{{ $value }}">{{ $label }}</label>
                 </div>
               </div>
@@ -220,6 +220,7 @@
                   </td>
                   <td class="text-center">
                     <a href="{{ route('event.presences', $event->id) }}" class="btn btn-xs bg-gradient-success mb-1">Rekap</a>
+                    <button type="button" class="btn btn-xs bg-gradient-info mb-1" data-bs-toggle="modal" data-bs-target="#editEventModal-{{ $event->id }}">Edit</button>
                     <a href="{{ route('presence.form', $event->id) }}" class="btn btn-xs bg-gradient-primary mb-1">Buka</a>
                     <button type="button" class="btn btn-xs btn-outline-secondary mb-1" onclick="navigator.clipboard.writeText('{{ route('presence.form', $event->id) }}')">Salin</button>
                     <form action="{{ route('event.destroy', $event) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus event ini?')">
@@ -229,168 +230,10 @@
                     </form>
                   </td>
                 </tr>
+                @include('partials.edit_event_modal', ['event' => $event])
               @empty
                 <tr><td colspan="4" class="text-center text-sm text-muted py-5">Belum ada event.</td></tr>
               @endforelse
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-lg-6 mb-4">
-    <div class="card ep-card ep-form-card h-100">
-      <div class="card-header pb-0 bg-transparent">
-        <h6 class="mb-0">Manajemen User</h6>
-        <p class="text-xs text-muted mb-0">Tambah akun user atau admin, serta hapus dan blacklist identitas.</p>
-      </div>
-      <div class="card-body">
-        <form action="{{ route('admin.users.store') }}" method="POST" class="mb-4">
-          @csrf
-          <div class="row">
-            <div class="col-md-6"><input name="name" class="form-control mb-2" placeholder="Nama" required></div>
-            <div class="col-md-6"><input name="email" type="email" class="form-control mb-2" placeholder="Email" required></div>
-            <div class="col-md-6"><input name="nik" class="form-control mb-2" placeholder="NIK 16 digit" required></div>
-            <div class="col-md-6"><input name="nip" class="form-control mb-2" placeholder="NIP 18 digit"></div>
-            <div class="col-md-6"><input name="password" type="password" class="form-control mb-2" placeholder="Password" required></div>
-            <div class="col-md-6">
-              <select name="role" class="form-control mb-2">
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
-          </div>
-          <button class="btn bg-gradient-primary mb-0 shadow">Tambah User</button>
-        </form>
-
-        <div class="table-responsive p-3">
-          <table class="table mb-0" id="users-table-admin">
-            <thead>
-              <tr>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-3">User</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-end">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach($users as $user)
-                <tr>
-                  <td>
-                    <div class="d-flex align-items-center">
-                      <div class="avatar avatar-sm bg-gradient-info text-white rounded-circle me-3 d-flex align-items-center justify-content-center">
-                        {{ strtoupper(substr($user->name, 0, 1)) }}
-                      </div>
-                      <div>
-                        <h6 class="text-sm mb-0">{{ $user->name }}</h6>
-                        <span class="text-xs text-muted">{{ $user->email }} · {{ $user->role }}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="text-end">
-                    <form action="{{ route('admin.users.delete', $user->id) }}" method="POST" onsubmit="return confirm('Hapus dan blacklist user ini?')">
-                      @csrf
-                      @method('DELETE')
-                      <button class="btn btn-xs btn-outline-danger mb-0">Hapus + Blacklist</button>
-                    </form>
-                  </td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-lg-6 mb-4">
-    <div class="card ep-card ep-form-card h-100">
-      <div class="card-header pb-0 bg-transparent">
-        <h6 class="mb-0">Blacklist NIK/NIP</h6>
-        <p class="text-xs text-muted mb-0">Blokir identitas yang tidak boleh melakukan registrasi kembali.</p>
-      </div>
-      <div class="card-body">
-        <form action="{{ route('admin.blacklist.store') }}" method="POST" class="row mb-4">
-          @csrf
-          <div class="col-md-5"><input name="nik" class="form-control mb-2" placeholder="NIK"></div>
-          <div class="col-md-5"><input name="nip" class="form-control mb-2" placeholder="NIP"></div>
-          <div class="col-md-2"><button class="btn bg-gradient-dark w-100 mb-0">Blokir</button></div>
-        </form>
-
-        <div class="table-responsive p-3">
-          <table class="table mb-0" id="blacklists-table-admin">
-            <thead>
-              <tr>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-3">Identitas</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-end">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach($blacklists as $blacklist)
-                <tr>
-                  <td class="text-sm">
-                    <span class="badge bg-gradient-warning me-1">Blacklist</span>
-                    NIK: {{ $blacklist->nik ?? '-' }}<br>
-                    <span class="ms-6 text-muted">NIP: {{ $blacklist->nip ?? '-' }}</span>
-                  </td>
-                  <td class="text-end">
-                    <form action="{{ route('admin.blacklist.delete', $blacklist->id) }}" method="POST">
-                      @csrf
-                      @method('DELETE')
-                      <button class="btn btn-xs btn-outline-secondary mb-0">Pulihkan</button>
-                    </form>
-                  </td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row mt-4">
-  <div class="col-12">
-    <div class="card ep-card mb-4">
-      <div class="card-header pb-0 bg-transparent">
-        <h6 class="mb-0">Log Aktivitas Sistem</h6>
-        <!-- <p class="text-xs text-muted mb-0">Audit trail aktivitas penting dalam aplikasi E-Presensi.</p> -->
-      </div>
-      <div class="card-body px-0 pt-0 pb-2 mt-3">
-        <div class="table-responsive p-4">
-          <table class="table align-items-center mb-0" id="activity-logs-table">
-            <thead>
-              <tr>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-3">Waktu</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Pengguna</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Aktivitas</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Keterangan</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">IP Address</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach($systemLogs as $log)
-                <tr>
-                  <td class="text-sm ps-3">{{ $log->created_at->timezone('Asia/Jakarta')->format('d/m/Y H:i:s') }} WIB</td>
-                  <td class="text-sm font-weight-bold">{{ $log->user_name }}</td>
-                  <td>
-                    @php
-                      $color = 'bg-gradient-secondary';
-                      if ($log->activity === 'login') $color = 'bg-gradient-success';
-                      elseif ($log->activity === 'logout') $color = 'bg-gradient-dark';
-                      elseif ($log->activity === 'create_event') $color = 'bg-gradient-primary';
-                      elseif ($log->activity === 'delete_event') $color = 'bg-gradient-danger';
-                      elseif ($log->activity === 'submit_presence') $color = 'bg-gradient-info';
-                      elseif (in_array($log->activity, ['blacklist_add', 'delete_user'])) $color = 'bg-gradient-warning';
-                    @endphp
-                    <span class="badge badge-sm {{ $color }}">{{ ucfirst(str_replace('_', ' ', $log->activity)) }}</span>
-                  </td>
-                  <td class="text-sm text-wrap" style="max-width: 350px;">{{ $log->description }}</td>
-                  <td class="text-sm">{{ $log->ip_address }}</td>
-                </tr>
-              @endforeach
             </tbody>
           </table>
         </div>
@@ -468,48 +311,6 @@
           placeholder: "Cari...",
           perPage: "",
           noRows: "Tidak ada data ditemukan",
-          info: "Menampilkan {start} sampai {end} dari {rows} entri",
-        }
-      });
-    }
-
-    if (document.getElementById('users-table-admin')) {
-      new simpleDatatables.DataTable("#users-table-admin", {
-        searchable: true,
-        fixedHeight: false,
-        perPage: 5,
-        labels: {
-          placeholder: "Cari...",
-          perPage: "",
-          noRows: "Tidak ada data ditemukan",
-          info: "Menampilkan {start} sampai {end} dari {rows} entri",
-        }
-      });
-    }
-
-    if (document.getElementById('blacklists-table-admin')) {
-      new simpleDatatables.DataTable("#blacklists-table-admin", {
-        searchable: true,
-        fixedHeight: false,
-        perPage: 5,
-        labels: {
-          placeholder: "Cari...",
-          perPage: "",
-          noRows: "Tidak ada data ditemukan",
-          info: "Menampilkan {start} sampai {end} dari {rows} entri",
-        }
-      });
-    }
-
-    if (document.getElementById('activity-logs-table')) {
-      new simpleDatatables.DataTable("#activity-logs-table", {
-        searchable: true,
-        fixedHeight: false,
-        perPage: 10,
-        labels: {
-          placeholder: "Cari log...",
-          perPage: "",
-          noRows: "Tidak ada log aktivitas ditemukan",
           info: "Menampilkan {start} sampai {end} dari {rows} entri",
         }
       });

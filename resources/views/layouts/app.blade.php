@@ -159,18 +159,42 @@
             <li class="nav-item">
               <a class="nav-link {{ request()->routeIs('dashboard.admin') ? 'active' : '' }}" href="{{ route('dashboard.admin') }}">
                 <div class="icon icon-shape icon-sm text-center me-2 d-flex align-items-center justify-content-center">
-                  <i class="ni ni-settings-gear-65 text-danger text-sm opacity-10"></i>
+                  <i class="ni ni-calendar-grid-58 text-primary text-sm opacity-10"></i>
                 </div>
-                <span class="nav-link-text ms-1">Dashboard Admin</span>
+                <span class="nav-link-text ms-1">Pembuatan Event</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {{ request()->routeIs('admin.blacklist') ? 'active' : '' }}" href="{{ route('admin.blacklist') }}">
+                <div class="icon icon-shape icon-sm text-center me-2 d-flex align-items-center justify-content-center">
+                  <i class="ni ni-lock-circle-open text-warning text-sm opacity-10"></i>
+                </div>
+                <span class="nav-link-text ms-1">Manajemen Blacklist</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {{ request()->routeIs('admin.users') ? 'active' : '' }}" href="{{ route('admin.users') }}">
+                <div class="icon icon-shape icon-sm text-center me-2 d-flex align-items-center justify-content-center">
+                  <i class="ni ni-single-02 text-info text-sm opacity-10"></i>
+                </div>
+                <span class="nav-link-text ms-1">Manajemen Akun</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {{ request()->routeIs('admin.logs') ? 'active' : '' }}" href="{{ route('admin.logs') }}">
+                <div class="icon icon-shape icon-sm text-center me-2 d-flex align-items-center justify-content-center">
+                  <i class="ni ni-bullet-list-67 text-dark text-sm opacity-10"></i>
+                </div>
+                <span class="nav-link-text ms-1">Manajemen Log Aktivitas</span>
               </a>
             </li>
           @else
             <li class="nav-item">
               <a class="nav-link {{ request()->routeIs('dashboard.user') ? 'active' : '' }}" href="{{ route('dashboard.user') }}">
                 <div class="icon icon-shape icon-sm text-center me-2 d-flex align-items-center justify-content-center">
-                  <i class="ni ni-calendar-grid-58 text-info text-sm opacity-10"></i>
+                  <i class="ni ni-calendar-grid-58 text-primary text-sm opacity-10"></i>
                 </div>
-                <span class="nav-link-text ms-1">Dashboard User</span>
+                <span class="nav-link-text ms-1">Pembuatan Event</span>
               </a>
             </li>
           @endif

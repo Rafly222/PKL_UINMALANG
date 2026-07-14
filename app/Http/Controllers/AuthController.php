@@ -28,13 +28,11 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
-            // Cek apakah NIK atau NIP user terdaftar di database Blacklist
-            $isBlacklisted = \App\Models\Blacklist::where('nik', $user->nik)
-                ->orWhere(function($query) use ($user) {
-                    if ($user->nip) {
-                        $query->where('nip', $user->nip);
-                    }
-                })->exists();
+            // Cek apakah NIP user terdaftar di database Blacklist
+            $isBlacklisted = false;
+            if ($user->nip) {
+                $isBlacklisted = \App\Models\Blacklist::where('nip', $user->nip)->exists();
+            }
 
             if ($isBlacklisted) {
                 // Catat Log Aktivitas Percobaan Login Ditolak
@@ -76,27 +74,23 @@ class AuthController extends Controller
     public function handleRegister(Request $request)
     {
         $request->validate([
-            'nik' => 'required|size:16',
             'nip' => 'nullable|size:18',
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed'
         ]);
 
-        // Tahap 2: Logika Validasi Blacklist NIP/NIK
-        $isBlacklisted = Blacklist::where('nik', $request->nik)
-            ->orWhere(function($query) use ($request) {
-                if ($request->nip) {
-                    $query->where('nip', $request->nip);
-                }
-            })->exists();
+        // Tahap 2: Logika Validasi Blacklist NIP
+        $isBlacklisted = false;
+        if ($request->filled('nip')) {
+            $isBlacklisted = Blacklist::where('nip', $request->nip)->exists();
+        }
 
         if ($isBlacklisted) {
             return back()->with('warning', 'Registrasi Gagal: Akun NIK/NIP Anda telah di-blacklist oleh Super Admin!');
         }
 
         $user = User::create([
-            'nik' => $request->nik,
             'nip' => $request->nip,
             'name' => $request->name,
             'email' => $request->email,
@@ -109,7 +103,7 @@ class AuthController extends Controller
             'user_id' => $user->id,
             'user_name' => $user->name,
             'activity' => 'register',
-            'description' => "Pendaftaran mandiri akun baru oleh '{$user->name}' (Email: {$user->email}, NIK: {$user->nik}).",
+            'description' => "Pendaftaran mandiri akun baru oleh '{$user->name}' (Email: {$user->email}).",
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent()
         ]);

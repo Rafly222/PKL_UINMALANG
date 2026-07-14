@@ -37,7 +37,6 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>NIK</th>
                 @if($event->audience_type === 'pegawai' || $event->audience_type === 'semua')
                     <th>NIP</th>
                 @endif
@@ -51,8 +50,8 @@
                     <th>Jenis Kelamin</th>
                 @endif
                 <th>Instansi</th>
-                @if(in_array('sc-address', $event->fields ?? []))
-                    <th>Alamat Domisili</th>
+                @if(in_array('sc-email', $event->fields ?? []))
+                    <th>Email</th>
                 @endif
 
                 {{-- Dynamic Custom Columns --}}
@@ -66,7 +65,7 @@
                     <th>Kategori Peserta</th>
                 @endif
 
-                <th>Waktu Presensi</th>
+
 
                 @if(in_array('sc-photo', $event->fields ?? []))
                     <th style="width: 80px; text-align: center;">Foto Wajah</th>
@@ -80,7 +79,6 @@
             @foreach($presences as $index => $presence)
                 <tr style="height: 120px;">
                     <td>{{ $index + 1 }}</td>
-                    <td>'{{ $presence->nik }}</td>
                     @if($event->audience_type === 'pegawai' || $event->audience_type === 'semua')
                         <td>'{{ $presence->nip ?? '-' }}</td>
                     @endif
@@ -98,9 +96,9 @@
                     
                     <td>{{ $presence->institution }}</td>
                     
-                    {{-- Address --}}
-                    @if(in_array('sc-address', $event->fields ?? []))
-                        <td>{{ $presence->data_presensi['Alamat'] ?? '-' }}</td>
+                    {{-- Email --}}
+                    @if(in_array('sc-email', $event->fields ?? []))
+                        <td>{{ $presence->data_presensi['Email'] ?? '-' }}</td>
                     @endif
 
                     {{-- Custom Fields --}}
@@ -114,7 +112,7 @@
                         <td>{{ $presence->nip ? 'Pegawai Pemerintah' : 'Masyarakat Umum' }}</td>
                     @endif
 
-                    <td>{{ $presence->created_at->timezone('Asia/Jakarta')->format('d-m-Y H:i:s') }} WIB</td>
+
 
                     {{-- Photo --}}
                     @if(in_array('sc-photo', $event->fields ?? []))

@@ -178,9 +178,9 @@ class PresenceController extends Controller
 
         $rules = [
             'name' => 'required|string',
-            'nik' => 'required|size:16',
             'tipe_peserta' => 'required|in:pegawai,umum',
             'phone' => in_array('sc-phone', $fields) ? 'required|string|max:30' : 'nullable|string|max:30',
+            'email' => in_array('sc-email', $fields) ? 'required|email|max:255' : 'nullable|email|max:255',
             'institution' => in_array('sc-institution', $fields) ? 'required|string|max:255' : 'nullable|string|max:255',
             'photo' => in_array('sc-photo', $fields) ? 'required|string' : 'nullable|string',
             'signature' => in_array('sc-signature', $fields) ? 'required|string' : 'nullable|string',
@@ -214,14 +214,23 @@ class PresenceController extends Controller
 
         $request->validate($rules);
 
-        // Cek apakah NIK atau NIP sudah melakukan presensi untuk event ini
-        $isAlreadyPresence = Presence::where('event_id', $event->id)
-            ->where(function ($q) use ($request) {
-                $q->where('nik', $request->nik);
-                if ($request->filled('nip') && $request->tipe_peserta === 'pegawai') {
-                    $q->orWhere('nip', $request->nip);
-                }
-            })->exists();
+        // Cek apakah NIP atau Nama & Phone sudah melakukan presensi untuk event ini
+        $isAlreadyPresence = false;
+        if ($request->tipe_peserta === 'pegawai' && $request->filled('nip')) {
+            $isAlreadyPresence = Presence::where('event_id', $event->id)
+                ->where('nip', $request->nip)
+                ->exists();
+        } else {
+            // Tipe umum
+            $query = Presence::where('event_id', $event->id)->where('name', $request->name);
+            if ($request->filled('phone')) {
+                $query->where('phone', $request->phone);
+            }
+            if ($request->filled('email')) {
+                $query->where('data_presensi->Email', $request->email);
+            }
+            $isAlreadyPresence = $query->exists();
+        }
 
         if ($isAlreadyPresence) {
             return back()->withInput()->with('warning', 'Anda sudah melakukan presensi pada event ini!');
@@ -257,12 +266,11 @@ class PresenceController extends Controller
         // Simpan inputan bawaan lainnya
         $data_presensi['WhatsApp'] = $request->phone;
         $data_presensi['Jenis Kelamin'] = $request->gender;
-        $data_presensi['Alamat'] = $request->address;
+        $data_presensi['Email'] = $request->email;
 
         $presence = Presence::create([
             'event_id' => $event->id,
             'name' => $request->name,
-            'nik' => $request->nik,
             'institution' => $institution,
             'phone' => $request->phone,
             'nip' => $request->tipe_peserta === 'pegawai' ? $request->nip : null,
@@ -272,7 +280,8 @@ class PresenceController extends Controller
         ]);
 
         // Catat Log Aktivitas
-        \App\Models\ActivityLog::log('submit_presence', "Tamu '{$presence->name}' (NIK: {$presence->nik}) berhasil mengisi presensi untuk kegiatan '{$event->name}'.");
+        $identityLog = $presence->nip ? "NIP: {$presence->nip}" : "Umum";
+        \App\Models\ActivityLog::log('submit_presence', "Tamu '{$presence->name}' ({$identityLog}) berhasil mengisi presensi untuk kegiatan '{$event->name}'.");
 
         return redirect()->route('presence.success', $presence->id);
     }

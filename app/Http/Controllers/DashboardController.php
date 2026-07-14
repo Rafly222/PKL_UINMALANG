@@ -37,7 +37,7 @@ class DashboardController extends Controller
 
         // Ambil isian checklist semi-custom
         $fields = ['sc-name'];
-        foreach (['sc-phone', 'sc-gender', 'sc-institution', 'sc-address', 'sc-photo', 'sc-signature'] as $field) {
+        foreach (['sc-phone', 'sc-gender', 'sc-institution', 'sc-email', 'sc-photo', 'sc-signature'] as $field) {
             if ($request->boolean($field)) {
                 $fields[] = $field;
             }
@@ -81,17 +81,108 @@ class DashboardController extends Controller
         return back()->with('success', 'Event baru berhasil didaftarkan & siap digunakan!');
     }
 
+    public function updateEvent(Request $request, Event $event)
+    {
+        if (Auth::user()->role !== 'admin' && $event->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'name' => 'required|string',
+            'date' => 'required|date',
+            'time_start' => 'required|date_format:H:i',
+            'time_end' => 'required|date_format:H:i|after:time_start',
+            'access_type' => 'required|in:publik,privat',
+            'password' => 'nullable|string|min:4',
+            'audience_type' => 'required|in:umum,pegawai,semua',
+            'custom_labels' => 'nullable|array',
+            'custom_types' => 'nullable|array',
+        ]);
+
+        if ($request->access_type === 'privat' && !$event->password && !$request->filled('password')) {
+            return back()->withErrors(['password' => 'Password wajib diisi jika merubah akses menjadi privat.']);
+        }
+
+        // Ambil isian checklist semi-custom
+        $fields = ['sc-name'];
+        foreach (['sc-phone', 'sc-gender', 'sc-institution', 'sc-email', 'sc-photo', 'sc-signature'] as $field) {
+            if ($request->boolean($field)) {
+                $fields[] = $field;
+            }
+        }
+
+        if ($request->has('sc-nip') || $request->audience_type === 'pegawai') {
+            $fields[] = 'sc-nip';
+        }
+
+        $fields = array_values(array_unique($fields));
+
+        // Ambil isian dinamis full-custom
+        $custom_fields = [];
+        if ($request->has('custom_labels')) {
+            foreach ($request->custom_labels as $index => $label) {
+                if (!empty($label)) {
+                    $custom_fields[] = [
+                        'label' => $label,
+                        'type' => $request->custom_types[$index] ?? 'text'
+                    ];
+                }
+            }
+        }
+
+        $data = [
+            'name' => $request->name,
+            'date' => $request->date,
+            'time_start' => $request->time_start,
+            'time_end' => $request->time_end,
+            'access_type' => $request->access_type,
+            'audience_type' => $request->audience_type,
+            'fields' => $fields,
+            'custom_fields' => $custom_fields
+        ];
+
+        if ($request->access_type === 'privat') {
+            if ($request->filled('password')) {
+                $data['password'] = Hash::make($request->password);
+            }
+        } else {
+            $data['password'] = null;
+        }
+
+        $event->update($data);
+
+        // Catat Log Aktivitas
+        \App\Models\ActivityLog::log('update_event', "Pengguna memperbarui event: '{$event->name}' (ID: {$event->id}).");
+
+        return back()->with('success', 'Event berhasil diperbarui!');
+    }
+
     // Dashboard Super Admin
     public function adminIndex()
     {
-        $users = User::where('id', '!=', auth::id())->latest()->get();
-        $blacklists = Blacklist::latest()->get();
         $events = Event::with('creator')->latest()->get();
-        
-        // Ambil data log aktivitas dari database untuk ditampilkan di Datatables
-        $systemLogs = \App\Models\ActivityLog::latest()->take(150)->get();
-        
-        return view('dashboard.admin', compact('users', 'blacklists', 'events', 'systemLogs'));
+        $totalUsers = User::count();
+        $totalBlacklists = Blacklist::count();
+        $totalLogs = \App\Models\ActivityLog::count();
+        return view('dashboard.admin', compact('events', 'totalUsers', 'totalBlacklists', 'totalLogs'));
+    }
+
+    public function adminBlacklist()
+    {
+        $blacklists = Blacklist::latest()->get();
+        return view('admin.blacklist', compact('blacklists'));
+    }
+
+    public function adminUsers()
+    {
+        $users = User::where('id', '!=', auth::id())->latest()->get();
+        return view('admin.users', compact('users'));
+    }
+
+    public function adminLogs()
+    {
+        $systemLogs = \App\Models\ActivityLog::latest()->take(200)->get();
+        return view('admin.logs', compact('systemLogs'));
     }
 
     public function storeUserByAdmin(Request $request)
@@ -101,17 +192,14 @@ class DashboardController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
             'role' => 'required|in:user,admin',
-            'nik' => 'required|size:16',
             'nip' => 'nullable|size:18'
         ]);
 
-        // Cek blacklist
-        $isBlacklisted = Blacklist::where('nik', $request->nik)
-            ->orWhere(function($query) use ($request) {
-                if ($request->nip) {
-                    $query->where('nip', $request->nip);
-                }
-            })->exists();
+        // Cek blacklist NIP
+        $isBlacklisted = false;
+        if ($request->filled('nip')) {
+            $isBlacklisted = Blacklist::where('nip', $request->nip)->exists();
+        }
 
         if ($isBlacklisted) {
             return back()->with('warning', 'Identitas terdaftar di database Blacklist!');
@@ -122,12 +210,11 @@ class DashboardController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
-            'nik' => $request->nik,
             'nip' => $request->nip
         ]);
 
         // Catat Log Aktivitas
-        \App\Models\ActivityLog::log('create_user', "Admin mendaftarkan akun baru: '{$newUser->name}' (Role: {$newUser->role}, NIK: {$newUser->nik}).");
+        \App\Models\ActivityLog::log('create_user', "Admin mendaftarkan akun baru: '{$newUser->name}' (Role: {$newUser->role}).");
 
         return back()->with('success', 'Akun pengguna baru sukses ditambahkan!');
     }
@@ -136,24 +223,20 @@ class DashboardController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // Tahap 2: Daftarkan identitas user ke database Blacklist sebelum dihapus (jika belum ada)
-        $alreadyBlacklisted = Blacklist::where('nik', $user->nik)
-            ->orWhere(function($query) use ($user) {
-                if ($user->nip) {
-                    $query->where('nip', $user->nip);
-                }
-            })->exists();
+        // Tahap 2: Daftarkan identitas user ke database Blacklist sebelum dihapus (jika belum ada dan user memiliki NIP)
+        if ($user->nip) {
+            $alreadyBlacklisted = Blacklist::where('nip', $user->nip)->exists();
 
-        if (!$alreadyBlacklisted) {
-            Blacklist::create([
-                'nik' => $user->nik,
-                'nip' => $user->nip
-            ]);
+            if (!$alreadyBlacklisted) {
+                Blacklist::create([
+                    'nip' => $user->nip
+                ]);
+            }
         }
 
         // Catat Log Aktivitas
         $userNip = $user->nip ?? '-';
-        \App\Models\ActivityLog::log('delete_user', "Admin menghapus & mem-blacklist pengguna: '{$user->name}' (NIK: {$user->nik}, NIP: {$userNip}).");
+        \App\Models\ActivityLog::log('delete_user', "Admin menghapus & mem-blacklist pengguna: '{$user->name}' (NIP: {$userNip}).");
 
         $user->delete();
 

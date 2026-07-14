@@ -158,14 +158,14 @@
               'sc-phone' => 'No HP',
               'sc-gender' => 'Jenis kelamin',
               'sc-institution' => 'Instansi',
-              'sc-address' => 'Alamat',
+              'sc-email' => 'Email',
               'sc-nip' => 'NIP',
               'sc-photo' => 'Foto wajah',
               'sc-signature' => 'TTD digital',
             ] as $value => $label)
               <div class="col-md-6 mb-1">
                 <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" name="{{ $value }}" value="1" id="{{ $value }}" @checked(old($value))>
+                  <input class="form-check-input" type="checkbox" name="{{ $value }}" value="1" id="{{ $value }}" @checked(old() ? old($value) : true)>
                   <label class="form-check-label text-sm" for="{{ $value }}">{{ $label }}</label>
                 </div>
               </div>
@@ -227,6 +227,7 @@
                   </td>
                   <td class="text-center">
                     <a href="{{ route('event.presences', $event->id) }}" class="btn btn-xs bg-gradient-success mb-1">Rekap</a>
+                    <button type="button" class="btn btn-xs bg-gradient-info mb-1" data-bs-toggle="modal" data-bs-target="#editEventModal-{{ $event->id }}">Edit</button>
                     <a href="{{ route('presence.form', $event->id) }}" class="btn btn-xs bg-gradient-primary mb-1">Buka</a>
                     <button type="button" class="btn btn-xs btn-outline-secondary mb-1" onclick="navigator.clipboard.writeText('{{ route('presence.form', $event->id) }}')">Salin</button>
                     <form action="{{ route('event.destroy', $event) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus event ini?')">
@@ -236,6 +237,7 @@
                     </form>
                   </td>
                 </tr>
+                @include('partials.edit_event_modal', ['event' => $event])
               @empty
                 <tr>
                   <td colspan="3" class="text-center py-5">

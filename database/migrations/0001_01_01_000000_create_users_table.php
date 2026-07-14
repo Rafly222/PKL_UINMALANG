@@ -16,8 +16,6 @@ return new class extends Migration
     $table->timestamp('email_verified_at')->nullable();
     $table->string('password');
 
-    // Tambahkan baris ini di sini:
-    $table->string('nik', 16)->unique(); 
     $table->string('nip', 18)->unique()->nullable(); 
     $table->enum('role', ['user', 'admin'])->default('user'); 
     $table->rememberToken();

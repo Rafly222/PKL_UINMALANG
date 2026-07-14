@@ -55,15 +55,9 @@
               @includeWhen(session('success') || session('warning') || session('info') || $errors->any(), 'partials.flash')
               <form action="{{ route('register') }}" method="POST" role="form">
                 @csrf
-                <div class="row">
-                  <div class="col-md-6 mb-3">
-                    <label>NIP</label>
-                    <input type="text" name="nip" required class="form-control" placeholder="18 digit NIP">
-                  </div>
-                  <div class="col-md-6 mb-3">
-                    <label>NIK</label>
-                    <input type="text" name="nik" required class="form-control" placeholder="16 digit NIK">
-                  </div>
+                <div class="mb-3">
+                  <label>NIP (Nomor Induk Pegawai)</label>
+                  <input type="text" name="nip" required class="form-control" placeholder="18 digit NIP">
                 </div>
                 <label>Nama Lengkap</label>
                 <div class="mb-3">

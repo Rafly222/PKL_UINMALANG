@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Presence extends Model
 {
     protected $fillable = [
-        'event_id', 'name', 'nik', 'institution', 'phone', 'nip', 'data_presensi', 'photo', 'signature'
+        'event_id', 'name', 'institution', 'phone', 'nip', 'data_presensi', 'photo', 'signature'
     ];
 
     protected $casts = [

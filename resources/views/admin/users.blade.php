@@ -38,7 +38,7 @@
           </div>
           <div class="mb-3">
             <label class="form-control-label text-xs">NIP (Nomor Induk Pegawai)</label>
-            <input name="nip" class="form-control" placeholder="NIP 18 digit (opsional)">
+            <input name="nip" class="form-control" placeholder="NIP 18 digit">
           </div>
           <div class="mb-3">
             <label class="form-control-label text-xs">Password</label>

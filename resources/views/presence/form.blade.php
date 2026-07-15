@@ -170,8 +170,8 @@
           <div class="card ep-card ep-form-card">
             <div class="card-header bg-transparent pb-0 pt-3">
               <div class="d-flex align-items-center">
-                <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md me-3 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-                  <i class="ni ni-single-copy-04 text-white text-sm"></i>
+                <div class="me-3">
+                  <img src="{{ asset('assets/argon-dashboard-pro-html-v2.0.5/assets/img/icons/flags/logo.png') }}" alt="Logo" style="width: 38px; height: 38px; object-fit: contain;">
                 </div>
                 <div>
                   <h5 class="mb-0 text-md font-weight-bolder">{{ $event->name }}</h5>

@@ -74,25 +74,30 @@
             <table class="table mb-0 align-items-center">
               <thead>
                 <tr>
-                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-3">Informasi Pendaftar</th>
-                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-end">Aksi</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-3">Nama</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Email</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">NIP</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-end pe-3">Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 @foreach($pendingUsers as $pUser)
                   <tr>
-                    <td>
-                      <div class="d-flex align-items-center ps-2">
+                    <td class="ps-3">
+                      <div class="d-flex align-items-center">
                         <div class="avatar avatar-sm bg-gradient-warning text-white rounded-circle me-3 d-flex align-items-center justify-content-center">
                           {{ strtoupper(substr($pUser->name, 0, 1)) }}
                         </div>
-                        <div>
-                          <h6 class="text-sm mb-0 font-weight-bold">{{ $pUser->name }}</h6>
-                          <span class="text-xs text-muted">{{ $pUser->email }} · NIP: {{ $pUser->nip ?? '-' }}</span>
-                        </div>
+                        <h6 class="text-sm mb-0 font-weight-bold">{{ $pUser->name }}</h6>
                       </div>
                     </td>
-                    <td class="text-end">
+                    <td>
+                      <span class="text-sm text-secondary font-weight-bold">{{ $pUser->email }}</span>
+                    </td>
+                    <td>
+                      <span class="text-sm text-secondary font-weight-bold">{{ $pUser->nip ?? '-' }}</span>
+                    </td>
+                    <td class="text-end pe-3">
                       <div class="d-flex justify-content-end gap-1">
                         <form action="{{ route('admin.users.approve', $pUser->id) }}" method="POST" class="d-inline">
                           @csrf
@@ -123,30 +128,89 @@
           <table class="table mb-0 align-items-center" id="users-table-admin">
             <thead>
               <tr>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-3">Informasi user</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-end">Aksi</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-3">Nama</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Email</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">NIP</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Hak Akses</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-end pe-3">Aksi</th>
               </tr>
             </thead>
             <tbody>
               @foreach($users as $user)
                 <tr>
-                  <td>
-                    <div class="d-flex align-items-center ps-2">
+                  <td class="ps-3">
+                    <div class="d-flex align-items-center">
                       <div class="avatar avatar-sm bg-gradient-info text-white rounded-circle me-3 d-flex align-items-center justify-content-center">
                         {{ strtoupper(substr($user->name, 0, 1)) }}
                       </div>
-                      <div>
-                        <h6 class="text-sm mb-0">{{ $user->name }}</h6>
-                        <span class="text-xs text-muted">{{ $user->email }} · <span class="badge badge-xs bg-gradient-secondary">{{ $user->role }}</span></span>
-                      </div>
+                      <h6 class="text-sm mb-0 font-weight-bold">{{ $user->name }}</h6>
                     </div>
                   </td>
-                  <td class="text-end">
-                    <form action="{{ route('admin.users.delete', $user->id) }}" method="POST" onsubmit="return confirm('Hapus dan blacklist user ini?')">
-                      @csrf
-                      @method('DELETE')
-                      <button class="btn btn-xs btn-outline-danger mb-0 shadow-sm">Hapus + Blacklist</button>
-                    </form>
+                  <td>
+                    <span class="text-sm text-secondary font-weight-bold">{{ $user->email }}</span>
+                  </td>
+                  <td>
+                    <span class="text-sm text-secondary font-weight-bold">{{ $user->nip ?? '-' }}</span>
+                  </td>
+                  <td>
+                    <span class="badge badge-xs bg-gradient-secondary">{{ $user->role }}</span>
+                  </td>
+                  <td class="text-end pe-3">
+                    <div class="d-flex justify-content-end gap-1">
+                      <button class="btn btn-xs btn-outline-warning mb-0 shadow-sm" data-bs-toggle="modal" data-bs-target="#editUserModal-{{ $user->id }}">Edit</button>
+                      <form action="{{ route('admin.users.delete', $user->id) }}" method="POST" onsubmit="return confirm('Hapus akun user ini?')">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-xs btn-outline-danger mb-0 shadow-sm">Hapus</button>
+                      </form>
+                    </div>
+
+                    <!-- Modal Edit User -->
+                    <div class="modal fade" id="editUserModal-{{ $user->id }}" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel-{{ $user->id }}" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content border-0 ep-card">
+                          <div class="modal-header">
+                            <h5 class="modal-title font-weight-bolder text-start" id="editUserModalLabel-{{ $user->id }}">Edit Akun Pengguna</h5>
+                            <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body text-start">
+                            <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
+                              @csrf
+                              @method('PUT')
+                              <div class="mb-3">
+                                <label class="form-control-label text-xs">Nama Lengkap</label>
+                                <input name="name" class="form-control" value="{{ $user->name }}" required>
+                              </div>
+                              <div class="mb-3">
+                                <label class="form-control-label text-xs">Email Resmi</label>
+                                <input name="email" type="email" class="form-control" value="{{ $user->email }}" required>
+                              </div>
+                              <div class="mb-3">
+                                <label class="form-control-label text-xs">NIP (Nomor Induk Pegawai)</label>
+                                <input name="nip" class="form-control" value="{{ $user->nip }}" placeholder="NIP 18 digit (opsional)">
+                              </div>
+                              <div class="mb-3">
+                                <label class="form-control-label text-xs">Password Baru (Kosongkan jika tidak ingin diubah)</label>
+                                <input name="password" type="password" class="form-control" placeholder="Minimal 6 karakter (opsional)">
+                              </div>
+                              <div class="mb-3">
+                                <label class="form-control-label text-xs">Hak Akses (Role)</label>
+                                <select name="role" class="form-control">
+                                  <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>User / Staff Creator</option>
+                                  <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Super Admin</option>
+                                </select>
+                              </div>
+                              <div class="d-flex justify-content-end gap-2 mt-4">
+                                <button type="button" class="btn btn-outline-secondary mb-0 shadow-sm" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn bg-gradient-primary mb-0 shadow-sm">Simpan Perubahan</button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               @endforeach

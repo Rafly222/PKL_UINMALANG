@@ -43,7 +43,7 @@
 <body class="bg-gray-100">
   <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute top-0 z-index-3 w-100 shadow-none my-3">
     <div class="container">
-      <a class="navbar-brand text-white font-weight-bolder" href="{{ route('home') }}">E-Presensi Diskominfo</a>
+      <a class="navbar-brand text-white font-weight-bolder" href="{{ route('home') }}">E-Presensi</a>
       <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#landingNav">
         <span class="navbar-toggler-icon mt-2">
           <span class="navbar-toggler-bar bar1 bg-white"></span>
@@ -76,9 +76,9 @@
     <div class="container position-relative z-index-2">
       <div class="row align-items-center">
         <div class="col-lg-7">
-          <span class="badge bg-white text-primary shadow-sm mb-3">Sistem Presensi Digital Pemerintah Kota Malang</span>
+          <span class="badge bg-white text-primary shadow-sm mb-3">Sistem Presensi Digital</span>
           <h1 class="text-white font-weight-bolder mb-3" style="font-size: clamp(2.25rem, 5vw, 4rem); letter-spacing: 0;">
-            E-Presensi Diskominfo
+            E-Presensi
           </h1>
           <p class="text-white text-lg opacity-9 mb-4">
         
@@ -274,7 +274,7 @@
             </div>
             <h5 class="text-white">Maklumat Integritas</h5>
             <p class="text-white opacity-8 text-sm mb-0">
-              Data yang dikirimkan menjadi bukti kehadiran resmi pada agenda Diskominfo Kota Malang. Pastikan identitas, foto, dan tanda tangan sesuai dengan peserta yang hadir.
+              <!-- Data yang dikirimkan menjadi bukti kehadiran resmi pada agenda Diskominfo Kota Malang. Pastikan identitas, foto, dan tanda tangan sesuai dengan peserta yang hadir. -->
             </p>
           </div>
         </div>

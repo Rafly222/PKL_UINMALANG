@@ -170,7 +170,7 @@ class DashboardController extends Controller
 
     public function adminBlacklist()
     {
-        $blacklists = Blacklist::latest()->get();
+        $blacklists = Blacklist::with('user')->latest()->get();
         return view('admin.blacklist', compact('blacklists'));
     }
 
@@ -243,28 +243,55 @@ class DashboardController extends Controller
         return back()->with('success', 'Akun pengguna baru sukses ditambahkan!');
     }
 
-    public function deleteAndBlacklistUser($id)
+    public function destroyUserByAdmin($id)
     {
         $user = User::findOrFail($id);
+        $name = $user->name;
 
-        // Tahap 2: Daftarkan identitas user ke database Blacklist sebelum dihapus (jika belum ada dan user memiliki NIP)
-        if ($user->nip) {
-            $alreadyBlacklisted = Blacklist::where('nip', $user->nip)->exists();
-
-            if (!$alreadyBlacklisted) {
-                Blacklist::create([
-                    'nip' => $user->nip
-                ]);
-            }
-        }
-
-        // Catat Log Aktivitas
-        $userNip = $user->nip ?? '-';
-        \App\Models\ActivityLog::log('delete_user', "Admin menghapus & mem-blacklist pengguna: '{$user->name}' (NIP: {$userNip}).");
+        \App\Models\ActivityLog::log('delete_user', "Admin menghapus akun pengguna: '{$name}'.");
 
         $user->delete();
 
-        return back()->with('success', 'Akun pengguna sukses dihapus & NIP dimasukkan ke BLACKLIST!');
+        return back()->with('success', 'Akun pengguna berhasil dihapus!');
+    }
+
+    public function updateUserByAdmin(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|min:6',
+            'role' => 'required|in:user,admin',
+            'nip' => 'nullable|size:18|unique:users,nip,' . $user->id
+        ]);
+
+        // Cek blacklist jika NIP diubah
+        if ($request->filled('nip') && $request->nip !== $user->nip) {
+            $isBlacklisted = Blacklist::where('nip', $request->nip)->exists();
+            if ($isBlacklisted) {
+                return back()->with('warning', 'NIP baru tersebut terdaftar di database Blacklist!');
+            }
+        }
+
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => $request->role,
+            'nip' => $request->nip
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
+
+        // Catat Log Aktivitas
+        \App\Models\ActivityLog::log('update_user', "Admin memperbarui data akun pengguna: '{$user->name}' (Role: {$user->role}).");
+
+        return back()->with('success', 'Akun pengguna berhasil diperbarui!');
     }
 
     public function removeBlacklist($id)

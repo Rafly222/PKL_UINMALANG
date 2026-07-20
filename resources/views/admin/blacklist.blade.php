@@ -49,18 +49,26 @@
           <table class="table mb-0 align-items-center" id="blacklists-table-admin">
             <thead>
               <tr>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-3">Identitas terblokir</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-end">Aksi</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-3">NIP</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Nama</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Email</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-end pe-3">Aksi</th>
               </tr>
             </thead>
             <tbody>
               @foreach($blacklists as $blacklist)
                 <tr>
-                  <td class="text-sm ps-3">
+                  <td class="ps-3 text-sm">
                     <span class="badge bg-gradient-warning me-2">Terblokir</span>
-                    <strong>NIP:</strong> {{ $blacklist->nip ?? '-' }}
+                    <strong>{{ $blacklist->nip ?? '-' }}</strong>
                   </td>
-                  <td class="text-end">
+                  <td>
+                    <span class="text-sm text-secondary font-weight-bold">{{ $blacklist->user->name ?? '-' }}</span>
+                  </td>
+                  <td>
+                    <span class="text-sm text-secondary font-weight-bold">{{ $blacklist->user->email ?? '-' }}</span>
+                  </td>
+                  <td class="text-end pe-3">
                     <form action="{{ route('admin.blacklist.delete', $blacklist->id) }}" method="POST" onsubmit="return confirm('Pulihkan identitas ini?')">
                       @csrf
                       @method('DELETE')

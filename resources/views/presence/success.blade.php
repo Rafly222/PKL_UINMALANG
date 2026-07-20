@@ -132,7 +132,7 @@
                 <div class="col-md-4 mb-3 mb-md-0">
                   <div class="ep-media-frame bg-gray-100" style="aspect-ratio: 3 / 4; max-height: 200px; margin: 0 auto;">
                     @if($presence->photo)
-                      <img src="{{ $presence->photo }}" alt="Foto wajah" class="w-100 h-100" style="object-fit: cover;">
+                      <img src="{{ route('presence.photo', $presence->id) }}" alt="Foto wajah" class="w-100 h-100" style="object-fit: cover;">
                     @else
                       <div class="h-100 d-flex align-items-center justify-content-center text-muted text-sm bg-gray-100">
                         <i class="fas fa-user-circle fa-3x opacity-4"></i>
@@ -158,7 +158,7 @@
                       <div class="col-12">
                         <p class="ep-section-label mb-1">Tanda tangan</p>
                         <div class="ep-signature-frame p-2 d-inline-block bg-white">
-                          <img src="{{ $presence->signature }}" alt="Tanda tangan" style="max-height: 70px; max-width: 220px; object-fit: contain;">
+                          <img src="{{ route('presence.signature', $presence->id) }}" alt="Tanda tangan" style="max-height: 70px; max-width: 220px; object-fit: contain;">
                         </div>
                       </div>
                     @endif

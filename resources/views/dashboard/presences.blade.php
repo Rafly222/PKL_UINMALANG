@@ -122,7 +122,7 @@
                     <td class="text-center">
                       @if($presence->photo)
                         <button type="button" class="btn btn-link p-0 mb-0" data-bs-toggle="modal" data-bs-target="#photoModal-{{ $presence->id }}">
-                          <img src="{{ $presence->photo }}" class="avatar avatar-sm rounded-circle shadow-sm border border-2 border-success" alt="foto">
+                          <img src="{{ route('presence.photo', $presence->id) }}" class="avatar avatar-sm rounded-circle shadow-sm border border-2 border-success" alt="foto">
                         </button>
                       @else
                         <span class="text-xs text-muted">-</span>
@@ -157,7 +157,7 @@
                           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body p-0 text-center bg-dark">
-                          <img src="{{ $presence->photo }}" class="w-100" style="max-height: 480px; object-fit: contain;" alt="Foto Wajah">
+                          <img src="{{ route('presence.photo', $presence->id) }}" class="w-100" style="max-height: 480px; object-fit: contain;" alt="Foto Wajah">
                         </div>
                       </div>
                     </div>
@@ -175,7 +175,7 @@
                         </div>
                         <div class="modal-body p-4 text-center">
                           <div class="border border-radius-lg p-3 bg-white shadow-sm d-inline-block">
-                            <img src="{{ $presence->signature }}" style="max-height: 160px; max-width: 100%; object-fit: contain;" alt="Tanda Tangan">
+                            <img src="{{ route('presence.signature', $presence->id) }}" style="max-height: 160px; max-width: 100%; object-fit: contain;" alt="Tanda Tangan">
                           </div>
                         </div>
                       </div>

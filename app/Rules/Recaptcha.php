@@ -16,9 +16,10 @@ class Recaptcha implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $secretKey = config('services.recaptcha.secret_key');
+        $siteKey = config('services.recaptcha.site_key');
         
-        if (empty($secretKey)) {
-            // Bypass verification if key is not configured (for local dev/testing)
+        if (empty($secretKey) || $siteKey === '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI') {
+            // Bypass verification if key is not configured or using Google's test key (for local dev/testing)
             return;
         }
 

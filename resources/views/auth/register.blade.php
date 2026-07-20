@@ -23,6 +23,9 @@
       border-color: #5e72e4 !important;
       box-shadow: none !important;
     }
+    .grecaptcha-badge {
+      visibility: hidden;
+    }
   </style>
 </head>
 
@@ -82,6 +85,13 @@
                   </span>
                 </div>
                 <button type="submit" class="btn bg-gradient-primary w-100 mt-3 mb-0 shadow">Daftar Akun Staff</button>
+                @if(config('services.recaptcha.site_key'))
+                  <div class="text-center mt-3">
+                    <small class="text-muted" style="font-size: 11px; line-height: 1.4;">
+                      Situs ini dilindungi oleh reCAPTCHA dan berlaku <a href="https://policies.google.com/privacy" target="_blank" class="text-secondary font-weight-bold">Kebijakan Privasi</a> serta <a href="https://policies.google.com/terms" target="_blank" class="text-secondary font-weight-bold">Ketentuan Layanan</a> Google.
+                    </small>
+                  </div>
+                @endif
               </form>
             </div>
             <div class="card-footer text-center pt-0">

@@ -387,9 +387,27 @@ class DashboardController extends Controller
             abort(404);
         }
 
-        $data = explode(',', $presence->photo);
-        $image = base64_decode($data[1] ?? $data[0]);
-        return response($image)->header('Content-Type', 'image/jpeg');
+        // Kompatibilitas mundur: Cek jika data berupa string base64 panjang
+        if (str_starts_with($presence->photo, 'data:image') || !str_contains($presence->photo, '/')) {
+            $data = explode(',', $presence->photo);
+            $image = base64_decode($data[1] ?? $data[0]);
+            return response($image)->header('Content-Type', 'image/jpeg');
+        }
+
+        // Ambil dari file storage disk local (storage/app/private/)
+        if (\Illuminate\Support\Facades\Storage::exists($presence->photo)) {
+            $image = \Illuminate\Support\Facades\Storage::get($presence->photo);
+            return response($image)->header('Content-Type', 'image/jpeg');
+        }
+
+        // Fallback ke storage/app/ (untuk data test sebelum dikembalikan ke default laravel)
+        $fallbackPath = storage_path('app/' . $presence->photo);
+        if (file_exists($fallbackPath)) {
+            $image = file_get_contents($fallbackPath);
+            return response($image)->header('Content-Type', 'image/jpeg');
+        }
+
+        abort(404);
     }
 
     // Menampilkan tanda tangan presensi dalam bentuk gambar biner (Akses Publik via Link Excel)
@@ -401,8 +419,26 @@ class DashboardController extends Controller
             abort(404);
         }
 
-        $data = explode(',', $presence->signature);
-        $image = base64_decode($data[1] ?? $data[0]);
-        return response($image)->header('Content-Type', 'image/png');
+        // Kompatibilitas mundur: Cek jika data berupa string base64 panjang
+        if (str_starts_with($presence->signature, 'data:image') || !str_contains($presence->signature, '/')) {
+            $data = explode(',', $presence->signature);
+            $image = base64_decode($data[1] ?? $data[0]);
+            return response($image)->header('Content-Type', 'image/png');
+        }
+
+        // Ambil dari file storage disk local (storage/app/private/)
+        if (\Illuminate\Support\Facades\Storage::exists($presence->signature)) {
+            $image = \Illuminate\Support\Facades\Storage::get($presence->signature);
+            return response($image)->header('Content-Type', 'image/png');
+        }
+
+        // Fallback ke storage/app/
+        $fallbackPath = storage_path('app/' . $presence->signature);
+        if (file_exists($fallbackPath)) {
+            $image = file_get_contents($fallbackPath);
+            return response($image)->header('Content-Type', 'image/png');
+        }
+
+        abort(404);
     }
 }

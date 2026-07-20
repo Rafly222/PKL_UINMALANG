@@ -108,6 +108,14 @@ class PresenceController extends Controller
 
         $event = Event::where('uuid', $event_uuid)->firstOrFail();
 
+        $throttleKey = 'gate_pass|' . $event->id . '|' . $request->ip();
+
+        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($throttleKey, 3)) {
+            $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($throttleKey);
+            $minutes = ceil($seconds / 60);
+            return back()->with('warning', "Terlalu banyak percobaan salah password. Akses Anda dibekukan sementara. Silakan coba lagi dalam {$minutes} menit.");
+        }
+
         // Tahap 3: Aturan Bypass Pembuat (User) / Admin
         $isBypassed = false;
         if (Auth::check()) {
@@ -132,10 +140,12 @@ class PresenceController extends Controller
         }
 
         if (Hash::check($request->password, $event->password) || $request->password === $event->password) {
+            \Illuminate\Support\Facades\RateLimiter::clear($throttleKey);
             session(["event_gate_passed_{$event->id}" => true]);
             return redirect()->route('presence.form', $event->uuid)->with('success', 'Akses diberikan!');
         }
 
+        \Illuminate\Support\Facades\RateLimiter::hit($throttleKey, 180); // Freeze for 3 minutes (180 seconds)
         return back()->with('warning', 'Kata Sandi yang Anda masukkan salah.');
     }
 
@@ -271,14 +281,49 @@ class PresenceController extends Controller
         $data_presensi['Jenis Kelamin'] = $request->gender;
         $data_presensi['Email'] = $request->email;
 
+        // Simpan photo dan signature ke storage jika berupa data Base64
+        $photoPath = null;
+        if ($request->filled('photo')) {
+            $photoData = $request->photo;
+            if (preg_match('/^data:image\/(\w+);base64,/', $photoData, $type)) {
+                $photoData = substr($photoData, strpos($photoData, ',') + 1);
+                $ext = strtolower($type[1]);
+            } else {
+                $ext = 'jpeg';
+            }
+            $photoData = base64_decode($photoData);
+            if ($photoData !== false) {
+                $photoName = (string) \Illuminate\Support\Str::uuid() . '.' . $ext;
+                $photoPath = 'presences/photos/' . $photoName;
+                \Illuminate\Support\Facades\Storage::put($photoPath, $photoData);
+            }
+        }
+
+        $signaturePath = null;
+        if ($request->filled('signature')) {
+            $sigData = $request->signature;
+            if (preg_match('/^data:image\/(\w+);base64,/', $sigData, $type)) {
+                $sigData = substr($sigData, strpos($sigData, ',') + 1);
+                $ext = strtolower($type[1]);
+            } else {
+                $ext = 'png';
+            }
+            $sigData = base64_decode($sigData);
+            if ($sigData !== false) {
+                $sigName = (string) \Illuminate\Support\Str::uuid() . '.' . $ext;
+                $signaturePath = 'presences/signatures/' . $sigName;
+                \Illuminate\Support\Facades\Storage::put($signaturePath, $sigData);
+            }
+        }
+
         $presence = Presence::create([
             'event_id' => $event->id,
             'name' => $request->name,
             'institution' => $institution,
             'phone' => $request->phone,
             'nip' => $request->tipe_peserta === 'pegawai' ? $request->nip : null,
-            'photo' => $request->photo, // Data Base64 Image
-            'signature' => $request->signature, // Data Base64 PNG
+            'photo' => $photoPath ?? $request->photo,
+            'signature' => $signaturePath ?? $request->signature,
             'data_presensi' => $data_presensi
         ]);
 

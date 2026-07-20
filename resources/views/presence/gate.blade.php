@@ -37,6 +37,9 @@
     .ep-card:hover {
       box-shadow: 0 18px 45px rgba(50, 50, 93, .12), 0 7px 18px rgba(0, 0, 0, .07);
     }
+    .grecaptcha-badge {
+      visibility: hidden;
+    }
 
     @media (min-width: 992px) {
       body {
@@ -82,7 +85,7 @@
           </div>
         @else
           <p class="text-sm text-muted text-center">Masukkan password event dari penyelenggara untuk membuka formulir presensi.</p>
-          <form action="{{ route('presence.gate', $event->uuid) }}" method="POST">
+          <form action="{{ route('presence.gate', $event->uuid) }}" method="POST" id="gate-form">
             @csrf
             <div class="input-group mb-3">
               <input type="password" name="password" id="gate-password" class="form-control text-center" placeholder="Password event" required style="border-right: 0;">
@@ -91,15 +94,20 @@
               </span>
             </div>
             <button type="submit" class="btn bg-gradient-primary w-100 mb-0 shadow">Buka Formulir</button>
+            @if(config('services.recaptcha.site_key'))
+              <div class="text-center mt-3">
+                <small class="text-muted" style="font-size: 11px; line-height: 1.4;">
+                  Situs ini dilindungi oleh reCAPTCHA dan berlaku <a href="https://policies.google.com/privacy" target="_blank" class="text-secondary font-weight-bold">Kebijakan Privasi</a> serta <a href="https://policies.google.com/terms" target="_blank" class="text-secondary font-weight-bold">Ketentuan Layanan</a> Google.
+                </small>
+              </div>
+            @endif
           </form>
         @endif
       </div>
     </div>
   </div>
 </div>
-@endsection
 
-@section('scripts')
 <script>
   const toggleGateBtn = document.getElementById('toggle-gate-password');
   const gatePasswordInput = document.getElementById('gate-password');
@@ -117,4 +125,29 @@
     }
   });
 </script>
-@endsection
+
+@if(config('services.recaptcha.site_key'))
+  <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
+  <script>
+    document.getElementById('gate-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const form = this;
+      if (form.checkValidity() === false) {
+        form.reportValidity();
+        return;
+      }
+      grecaptcha.ready(function() {
+        grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {action: 'gate'}).then(function(token) {
+          let input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'g-recaptcha-response';
+          input.value = token;
+          form.appendChild(input);
+          form.submit();
+        });
+      });
+    });
+  </script>
+@endif
+</body>
+</html>

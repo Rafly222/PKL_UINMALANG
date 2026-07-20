@@ -78,6 +78,50 @@
             <div class="card-body p-4 text-center">
               @includeWhen(session('warning') || $errors->any(), 'partials.flash')
 
+              @if(session('lockout_seconds'))
+                <div class="mt-2 mb-3 py-2 px-3 border-radius-lg bg-gray-100 text-dark text-center border d-flex align-items-center justify-content-center gap-2" style="max-width: 280px; margin: 0 auto;">
+                  <i class="fas fa-clock text-warning text-sm"></i>
+                  <span class="text-xs text-muted font-weight-bold">Coba lagi dalam:</span>
+                  <span class="font-weight-bolder text-dark text-sm mb-0" id="lockout-timer" style="font-family: monospace; font-size: 14px;">--:--</span>
+                </div>
+                <script>
+                  document.addEventListener('DOMContentLoaded', function() {
+                    let secondsLeft = parseInt("{{ session('lockout_seconds') }}") || 180;
+                    const timerElement = document.getElementById('lockout-timer');
+                    const submitBtn = document.querySelector('#gate-form button[type="submit"]');
+                    const passwordInput = document.getElementById('gate-password');
+
+                    if (submitBtn) submitBtn.disabled = true;
+                    if (passwordInput) passwordInput.disabled = true;
+
+                    function updateTimer() {
+                      if (secondsLeft <= 0) {
+                        timerElement.innerText = "00:00";
+                        if (submitBtn) submitBtn.disabled = false;
+                        if (passwordInput) passwordInput.disabled = false;
+                        window.location.reload();
+                        return;
+                      }
+
+                      const mins = Math.floor(secondsLeft / 60);
+                      const secs = secondsLeft % 60;
+                      timerElement.innerText = 
+                        (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+
+                      secondsLeft--;
+                    }
+
+                    updateTimer();
+                    const interval = setInterval(function() {
+                      updateTimer();
+                      if (secondsLeft < 0) {
+                        clearInterval(interval);
+                      }
+                    }, 1000);
+                  });
+                </script>
+              @endif
+
         @if(isset($error))
           <div class="alert alert-danger text-white text-center shadow">{{ $error }}</div>
           <div class="text-center">

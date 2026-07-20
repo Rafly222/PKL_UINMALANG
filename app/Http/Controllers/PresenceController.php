@@ -113,7 +113,8 @@ class PresenceController extends Controller
         if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($throttleKey, 3)) {
             $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($throttleKey);
             $minutes = ceil($seconds / 60);
-            return back()->with('warning', "Terlalu banyak percobaan salah password. Akses Anda dibekukan sementara. Silakan coba lagi dalam {$minutes} menit.");
+            return back()->with('warning', "Terlalu banyak percobaan salah password. Akses Anda dibekukan sementara. Silakan coba lagi dalam {$minutes} menit.")
+                         ->with('lockout_seconds', $seconds);
         }
 
         // Tahap 3: Aturan Bypass Pembuat (User) / Admin
@@ -146,6 +147,15 @@ class PresenceController extends Controller
         }
 
         \Illuminate\Support\Facades\RateLimiter::hit($throttleKey, 180); // Freeze for 3 minutes (180 seconds)
+
+        // Jika setelah kegagalan ini sudah mencapai 3 kali salah, langsung aktifkan freeze
+        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($throttleKey, 3)) {
+            $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($throttleKey);
+            $minutes = ceil($seconds / 60);
+            return back()->with('warning', "Terlalu banyak percobaan salah password. Akses Anda dibekukan sementara. Silakan coba lagi dalam {$minutes} menit.")
+                         ->with('lockout_seconds', $seconds);
+        }
+
         return back()->with('warning', 'Kata Sandi yang Anda masukkan salah.');
     }
 

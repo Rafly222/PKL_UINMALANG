@@ -25,7 +25,7 @@
           </div>
         @else
           <p class="text-sm text-muted text-center">Masukkan password event dari penyelenggara untuk membuka formulir presensi.</p>
-          <form action="{{ route('presence.gate', $event->uuid) }}" method="POST">
+          <form action="{{ route('presence.gate', $event->uuid) }}" method="POST" id="gate-form">
             @csrf
             <div class="input-group mb-3">
               <input type="password" name="password" id="gate-password" class="form-control text-center" placeholder="Password event" required style="border-right: 0;">
@@ -60,4 +60,28 @@
     }
   });
 </script>
+
+@if(config('services.recaptcha.site_key'))
+  <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
+  <script>
+    document.getElementById('gate-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const form = this;
+      if (form.checkValidity() === false) {
+        form.reportValidity();
+        return;
+      }
+      grecaptcha.ready(function() {
+        grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {action: 'gate'}).then(function(token) {
+          let input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'g-recaptcha-response';
+          input.value = token;
+          form.appendChild(input);
+          form.submit();
+        });
+      });
+    });
+  </script>
+@endif
 @endsection

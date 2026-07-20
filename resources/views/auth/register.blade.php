@@ -53,7 +53,7 @@
             </div>
             <div class="card-body">
               @includeWhen(session('success') || session('warning') || session('info') || $errors->any(), 'partials.flash')
-              <form action="{{ route('register') }}" method="POST" role="form">
+              <form action="{{ route('register') }}" method="POST" role="form" id="register-form">
                 @csrf
                 <div class="mb-3">
                   <label>NIP (Nomor Induk Pegawai)</label>
@@ -116,6 +116,29 @@
     setupPasswordToggle('toggle-password', 'password');
     setupPasswordToggle('toggle-password-confirm', 'password_confirmation');
   </script>
+  @if(config('services.recaptcha.site_key'))
+    <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
+    <script>
+      document.getElementById('register-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const form = this;
+        if (form.checkValidity() === false) {
+          form.reportValidity();
+          return;
+        }
+        grecaptcha.ready(function() {
+          grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {action: 'register'}).then(function(token) {
+            let input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'g-recaptcha-response';
+            input.value = token;
+            form.appendChild(input);
+            form.submit();
+          });
+        });
+      });
+    </script>
+  @endif
 </body>
 
 </html>

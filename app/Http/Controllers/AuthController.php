@@ -20,10 +20,15 @@ class AuthController extends Controller
 
     public function handleLogin(Request $request)
     {
-        $credentials = $request->validate([
+        $request->validate([
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
+            'g-recaptcha-response' => config('services.recaptcha.secret_key') ? ['required', new \App\Rules\Recaptcha] : ['nullable']
+        ], [
+            'g-recaptcha-response.required' => 'Verifikasi reCAPTCHA wajib diisi.'
         ]);
+
+        $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
@@ -35,7 +40,7 @@ class AuthController extends Controller
                 $request->session()->regenerateToken();
 
                 if ($user->status === 'pending') {
-                    return back()->with('warning', 'Pendaftaran akun Anda masih menunggu persetujuan (approval) dari Super Admin.');
+                    return back()->with('warning', 'Pendaftaran akun Anda masih menunggu persetujuan (approval) dari Super Admin. Silakan hubungi admin via WhatsApp/Telepon ke nomor 085756654123 untuk konfirmasi persetujuan akun Anda.');
                 } else {
                     return back()->with('warning', 'Pendaftaran akun Anda telah ditolak oleh Admin.');
                 }
@@ -90,7 +95,10 @@ class AuthController extends Controller
             'nip' => 'nullable|size:18',
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6|confirmed'
+            'password' => 'required|min:6|confirmed',
+            'g-recaptcha-response' => config('services.recaptcha.secret_key') ? ['required', new \App\Rules\Recaptcha] : ['nullable']
+        ], [
+            'g-recaptcha-response.required' => 'Verifikasi reCAPTCHA wajib diisi.'
         ]);
 
         // Tahap 2: Logika Validasi Blacklist NIP
@@ -122,7 +130,7 @@ class AuthController extends Controller
             'user_agent' => $request->userAgent()
         ]);
 
-        return redirect('/login')->with('info', 'Pendaftaran mandiri berhasil! Akun Anda sedang menunggu persetujuan (approval) dari Super Admin sebelum dapat digunakan.');
+        return redirect('/login')->with('info', 'Pendaftaran mandiri berhasil! Akun Anda sedang menunggu persetujuan (approval) dari Super Admin sebelum dapat digunakan. Silakan hubungi admin via WhatsApp/Telepon ke nomor 085756654123 untuk konfirmasi persetujuan akun Anda.');
     }
 
     public function logout(Request $request)

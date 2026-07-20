@@ -101,6 +101,9 @@ class PresenceController extends Controller
     {
         $request->validate([
             'password' => 'required|string',
+            'g-recaptcha-response' => config('services.recaptcha.secret_key') ? ['required', new \App\Rules\Recaptcha] : ['nullable']
+        ], [
+            'g-recaptcha-response.required' => 'Verifikasi reCAPTCHA wajib diisi.'
         ]);
 
         $event = Event::where('uuid', $event_uuid)->firstOrFail();

@@ -203,10 +203,20 @@
                       @if($event->audience_type === 'semua')
                         <div class="mb-2">
                           <label class="form-control-label text-xs">Kategori Kehadiran <span class="text-danger">*</span></label>
-                          <select name="tipe_peserta" id="tipe_peserta" class="form-control form-control-sm" onchange="toggleParticipantType()">
-                            <option value="umum" @selected(old('tipe_peserta') === 'umum')>Masyarakat Umum (Warga Biasa)</option>
-                            <option value="pegawai" @selected(old('tipe_peserta') === 'pegawai')>Pegawai Pemerintah (ASN/Non-ASN)</option>
-                          </select>
+                          <div class="d-flex gap-3 mt-1">
+                            <div class="form-check">
+                              <input class="form-check-input" type="radio" name="tipe_peserta" id="tipe_peserta_umum" value="umum" @checked(old('tipe_peserta', 'umum') === 'umum') onchange="toggleParticipantType()">
+                              <label class="form-check-label text-xs font-weight-bold" for="tipe_peserta_umum" style="cursor: pointer;">
+                                Masyarakat Umum (Warga Biasa)
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="radio" name="tipe_peserta" id="tipe_peserta_pegawai" value="pegawai" @checked(old('tipe_peserta') === 'pegawai') onchange="toggleParticipantType()">
+                              <label class="form-check-label text-xs font-weight-bold" for="tipe_peserta_pegawai" style="cursor: pointer;">
+                                Pegawai Pemerintah (ASN/Non-ASN)
+                              </label>
+                            </div>
+                          </div>
                         </div>
                       @elseif($event->audience_type === 'pegawai')
                         <input type="hidden" name="tipe_peserta" id="tipe_peserta" value="pegawai">
@@ -232,9 +242,16 @@
                                 <input type="text" name="nip" id="form-nip" placeholder="18 digit NIP" class="form-control form-control-sm" maxlength="18">
                               </div>
                               <div class="col-4">
-                                <button type="button" onclick="fetchEmployeeApi()" class="btn btn-xs bg-gradient-info w-100 mb-0 shadow">
+                                <button type="button" onclick="fetchEmployeeApi(this)" class="btn btn-xs bg-gradient-info w-100 mb-0 shadow">
                                   Cari NIP
                                 </button>
+                              </div>
+                            </div>
+                            <!-- Indikator Loading NIP -->
+                            <div class="nip-loading-indicator mt-2 text-start" style="display: none;">
+                              <div class="d-flex align-items-center gap-2">
+                                <div class="spinner-border text-info" role="status" style="width: 12px; height: 12px; border-width: 1.5px; margin: 0;"></div>
+                                <span class="text-xxs text-info font-weight-bold">Sedang memverifikasi data NIP, mohon tunggu sebentar...</span>
                               </div>
                             </div>
                           </div>
@@ -363,10 +380,20 @@
                       @if($event->audience_type === 'semua')
                         <div class="mb-3">
                           <label class="form-control-label text-xs">Kategori Kehadiran <span class="text-danger">*</span></label>
-                          <select name="tipe_peserta" id="tipe_peserta" class="form-control form-control-sm" onchange="toggleParticipantType()">
-                            <option value="umum" @selected(old('tipe_peserta') === 'umum')>Masyarakat Umum (Warga Biasa)</option>
-                            <option value="pegawai" @selected(old('tipe_peserta') === 'pegawai')>Pegawai Pemerintah (ASN/Non-ASN)</option>
-                          </select>
+                          <div class="d-flex gap-3 mt-1">
+                            <div class="form-check">
+                              <input class="form-check-input" type="radio" name="tipe_peserta" id="tipe_peserta_umum" value="umum" @checked(old('tipe_peserta', 'umum') === 'umum') onchange="toggleParticipantType()">
+                              <label class="form-check-label text-xs font-weight-bold" for="tipe_peserta_umum" style="cursor: pointer;">
+                                Masyarakat Umum (Warga Biasa)
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="radio" name="tipe_peserta" id="tipe_peserta_pegawai" value="pegawai" @checked(old('tipe_peserta') === 'pegawai') onchange="toggleParticipantType()">
+                              <label class="form-check-label text-xs font-weight-bold" for="tipe_peserta_pegawai" style="cursor: pointer;">
+                                Pegawai Pemerintah (ASN/Non-ASN)
+                              </label>
+                            </div>
+                          </div>
                         </div>
                       @elseif($event->audience_type === 'pegawai')
                         <input type="hidden" name="tipe_peserta" id="tipe_peserta" value="pegawai">
@@ -392,9 +419,16 @@
                                 <input type="text" name="nip" id="form-nip" placeholder="18 digit NIP" class="form-control form-control-sm" maxlength="18">
                               </div>
                               <div class="col-4">
-                                <button type="button" onclick="fetchEmployeeApi()" class="btn btn-xs bg-gradient-info w-100 mb-0 shadow">
+                                <button type="button" onclick="fetchEmployeeApi(this)" class="btn btn-xs bg-gradient-info w-100 mb-0 shadow">
                                   Cari NIP
                                 </button>
+                              </div>
+                            </div>
+                            <!-- Indikator Loading NIP -->
+                            <div class="nip-loading-indicator mt-2 text-start" style="display: none;">
+                              <div class="d-flex align-items-center gap-2">
+                                <div class="spinner-border text-info" role="status" style="width: 12px; height: 12px; border-width: 1.5px; margin: 0;"></div>
+                                <span class="text-xxs text-info font-weight-bold">Sedang memverifikasi data NIP, mohon tunggu sebentar...</span>
                               </div>
                             </div>
                           </div>
@@ -484,9 +518,23 @@
 
   <script>
     function toggleParticipantType() {
-      const tipePesertaSelect = document.getElementById('tipe_peserta');
-      if (!tipePesertaSelect) return;
-      const tipePeserta = tipePesertaSelect.value;
+      let tipePeserta = 'umum';
+      const radioPegawai = document.getElementById('tipe_peserta_pegawai');
+      const radioUmum = document.getElementById('tipe_peserta_umum');
+      
+      if (radioPegawai && radioPegawai.checked) {
+        tipePeserta = 'pegawai';
+      } else if (radioUmum && radioUmum.checked) {
+        tipePeserta = 'umum';
+      } else {
+        const hiddenTipe = document.getElementById('tipe_peserta');
+        if (hiddenTipe) {
+          tipePeserta = hiddenTipe.value;
+        } else {
+          return;
+        }
+      }
+      
       const nipWrapper = document.getElementById('nip-card-wrapper');
       const nipInput = document.getElementById('form-nip');
       
@@ -542,16 +590,37 @@
       toggleParticipantType();
     });
 
-    function fetchEmployeeApi() {
-      const nip = document.getElementById('form-nip').value.trim();
+    function fetchEmployeeApi(btn) {
+      const nipInput = document.getElementById('form-nip');
+      if (!nipInput) return;
+      const nip = nipInput.value.trim();
       if(!nip) {
         alert('Masukkan nomor NIP pegawai terlebih dahulu!');
         return;
       }
 
+      const parentCard = nipInput.closest('.card-body');
+      const loadingIndicator = parentCard ? parentCard.querySelector('.nip-loading-indicator') : null;
+      
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Mencari...';
+      }
+      if (loadingIndicator) {
+        loadingIndicator.style.display = 'block';
+      }
+
       fetch(`/api/pegawai/${nip}`)
         .then(res => res.json())
         .then(data => {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = 'Cari NIP';
+          }
+          if (loadingIndicator) {
+            loadingIndicator.style.display = 'none';
+          }
+
           if(data.success) {
             document.getElementById('form-name').value = data.data.name;
             if(document.getElementById('form-phone')) document.getElementById('form-phone').value = data.data.phone;
@@ -560,6 +629,16 @@
           } else {
             alert('Identitas pegawai tidak ditemukan di pangkalan data Kota Malang.');
           }
+        })
+        .catch(err => {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = 'Cari NIP';
+          }
+          if (loadingIndicator) {
+            loadingIndicator.style.display = 'none';
+          }
+          alert('Terjadi kesalahan jaringan atau server saat mencari NIP.');
         });
     }
 

@@ -92,12 +92,15 @@ class AuthController extends Controller
     public function handleRegister(Request $request)
     {
         $request->validate([
-            'nip' => 'nullable|size:18',
+            'nip' => 'nullable|size:18|unique:users,nip',
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed',
             'g-recaptcha-response' => config('services.recaptcha.secret_key') ? ['required', new \App\Rules\Recaptcha] : ['nullable']
         ], [
+            'nip.unique' => 'NIP tersebut sudah terdaftar pada akun lain.',
+            'nip.size' => 'NIP harus berisi tepat 18 digit.',
+            'email.unique' => 'Alamat email tersebut sudah terdaftar.',
             'g-recaptcha-response.required' => 'Verifikasi reCAPTCHA wajib diisi.'
         ]);
 

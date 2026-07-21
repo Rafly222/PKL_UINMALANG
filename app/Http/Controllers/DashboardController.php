@@ -216,7 +216,11 @@ class DashboardController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
             'role' => 'required|in:user,admin',
-            'nip' => 'nullable|size:18'
+            'nip' => 'nullable|size:18|unique:users,nip'
+        ], [
+            'nip.unique' => 'NIP tersebut sudah terdaftar pada akun pengguna lain.',
+            'nip.size' => 'NIP harus berisi tepat 18 digit.',
+            'email.unique' => 'Alamat email tersebut sudah terdaftar.'
         ]);
 
         // Cek blacklist NIP
@@ -265,6 +269,10 @@ class DashboardController extends Controller
             'password' => 'nullable|min:6',
             'role' => 'required|in:user,admin',
             'nip' => 'nullable|size:18|unique:users,nip,' . $user->id
+        ], [
+            'nip.unique' => 'NIP tersebut sudah terdaftar pada akun pengguna lain.',
+            'nip.size' => 'NIP harus berisi tepat 18 digit.',
+            'email.unique' => 'Alamat email tersebut sudah terdaftar.'
         ]);
 
         // Cek blacklist jika NIP diubah

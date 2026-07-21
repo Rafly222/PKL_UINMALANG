@@ -54,7 +54,6 @@ Route::get('/presence/{id}/signature', [DashboardController::class, 'showPresenc
 Route::middleware(['auth', 'role:admin'])->group(function () {
     // Halaman Dashboard Utama Admin
     Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->name('dashboard.admin');
-    Route::get('/admin/blacklist', [DashboardController::class, 'adminBlacklist'])->name('admin.blacklist');
     Route::get('/admin/users', [DashboardController::class, 'adminUsers'])->name('admin.users');
     Route::get('/admin/logs', [DashboardController::class, 'adminLogs'])->name('admin.logs');
     // Fitur CRUD & Akses Manajemen Admin
@@ -64,6 +63,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/admin/users/reject/{id}', [DashboardController::class, 'rejectUser'])->name('admin.users.reject');
     Route::put('/admin/users/update/{id}', [DashboardController::class, 'updateUserByAdmin'])->name('admin.users.update');
     Route::delete('/admin/users/delete/{id}', [DashboardController::class, 'destroyUserByAdmin'])->name('admin.users.delete');
-    Route::post('/admin/blacklist/create', [DashboardController::class, 'addManualBlacklist'])->name('admin.blacklist.store');
-    Route::delete('/admin/blacklist/delete/{id}', [DashboardController::class, 'removeBlacklist'])->name('admin.blacklist.delete');
+    Route::post('/admin/users/block/{id}', [DashboardController::class, 'blockUser'])->name('admin.users.block');
+    Route::post('/admin/users/unblock/{id}', [DashboardController::class, 'unblockUser'])->name('admin.users.unblock');
+    Route::post('/admin/users/restore/{id}', [DashboardController::class, 'restoreUserByAdmin'])->name('admin.users.restore');
 });

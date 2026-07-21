@@ -81,6 +81,15 @@ class AuthController extends Controller
             return redirect('/dashboard')->with('success', "Selamat datang, {$user->name}!");
         }
 
+        \App\Models\ActivityLog::create([
+            'user_id' => null,
+            'user_name' => $request->email ?? 'Tamu (Guest)',
+            'activity' => 'login_failed',
+            'description' => "Percobaan login gagal untuk email: '{$request->email}'.",
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ]);
+
         return back()->with('warning', 'Kredensial login salah atau tidak terdaftar.');
     }
 

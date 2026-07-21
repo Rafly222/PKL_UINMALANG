@@ -253,14 +253,6 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {{ request()->routeIs('admin.blacklist') ? 'active' : '' }}" href="{{ route('admin.blacklist') }}">
-                <div class="icon icon-shape icon-sm text-center me-2 d-flex align-items-center justify-content-center">
-                  <i class="ni ni-lock-circle-open text-warning text-sm opacity-10"></i>
-                </div>
-                <span class="nav-link-text ms-1">Manajemen Blacklist</span>
-              </a>
-            </li>
-            <li class="nav-item">
               <a class="nav-link {{ request()->routeIs('admin.users') ? 'active' : '' }}" href="{{ route('admin.users') }}">
                 <div class="icon icon-shape icon-sm text-center me-2 d-flex align-items-center justify-content-center">
                   <i class="ni ni-single-02 text-info text-sm opacity-10"></i>

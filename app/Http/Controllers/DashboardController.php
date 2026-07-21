@@ -174,15 +174,44 @@ class DashboardController extends Controller
 
     public function adminBlacklist()
     {
-        $blacklists = Blacklist::with('user')->latest()->get();
-        return view('admin.blacklist', compact('blacklists'));
+        return redirect()->route('admin.users');
     }
 
-    public function adminUsers()
+    public function adminUsers(Request $request)
     {
-        $users = User::where('status', 'approved')->where('id', '!=', Auth::id())->latest()->get();
+        $filter = $request->query('status_filter', 'all');
+        $blacklistedNips = Blacklist::pluck('nip')->filter()->toArray();
+
+        $query = User::where('id', '!=', Auth::id());
+
+        if ($filter === 'approved') {
+            $query->where('status', 'approved')->whereNotIn('nip', $blacklistedNips);
+        } elseif ($filter === 'pending') {
+            $query->where('status', 'pending');
+        } elseif ($filter === 'blacklisted') {
+            $query->whereIn('nip', $blacklistedNips);
+        } elseif ($filter === 'trashed') {
+            $query->onlyTrashed();
+        }
+
+        $users = $query->latest()->get();
         $pendingUsers = User::where('status', 'pending')->latest()->get();
-        return view('admin.users', compact('users', 'pendingUsers'));
+
+        $countActive = User::where('status', 'approved')->whereNotIn('nip', $blacklistedNips)->count();
+        $countPending = User::where('status', 'pending')->count();
+        $countBlacklisted = Blacklist::count();
+        $countTrashed = User::onlyTrashed()->count();
+
+        return view('admin.users', compact(
+            'users', 
+            'pendingUsers', 
+            'blacklistedNips', 
+            'filter',
+            'countActive',
+            'countPending',
+            'countBlacklisted',
+            'countTrashed'
+        ));
     }
 
     public function approveUser($id)
@@ -207,10 +236,54 @@ class DashboardController extends Controller
         return back()->with('info', "Pendaftaran akun '{$name}' ditolak dan data dihapus.");
     }
 
-    public function adminLogs()
+    public function adminLogs(Request $request)
     {
-        $systemLogs = \App\Models\ActivityLog::latest()->take(200)->get();
-        return view('admin.logs', compact('systemLogs'));
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+        $activityFilter = $request->query('activity_filter', 'all');
+
+        $baseQuery = \App\Models\ActivityLog::query();
+
+        if ($startDate && $endDate) {
+            $baseQuery->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+        } elseif ($startDate) {
+            $baseQuery->where('created_at', '>=', $startDate . ' 00:00:00');
+        } elseif ($endDate) {
+            $baseQuery->where('created_at', '<=', $endDate . ' 23:59:59');
+        }
+
+        $countTotalEvents = \App\Models\Event::count();
+        $countLoginSuccess = (clone $baseQuery)->where('activity', 'login')->count();
+        $countLoginFailed = (clone $baseQuery)->where('activity', 'login_failed')->count();
+        $countBlocked = (clone $baseQuery)->whereIn('activity', ['blacklist_add', 'login_blocked'])->count();
+        $countLogout = (clone $baseQuery)->where('activity', 'logout')->count();
+        $countUniqueIps = (clone $baseQuery)->whereNotNull('ip_address')->where('ip_address', '!=', '')->distinct('ip_address')->count('ip_address');
+
+        $logQuery = clone $baseQuery;
+        if ($activityFilter === 'login') {
+            $logQuery->where('activity', 'login');
+        } elseif ($activityFilter === 'login_failed') {
+            $logQuery->where('activity', 'login_failed');
+        } elseif ($activityFilter === 'blocked') {
+            $logQuery->whereIn('activity', ['blacklist_add', 'login_blocked']);
+        } elseif ($activityFilter === 'logout') {
+            $logQuery->where('activity', 'logout');
+        }
+
+        $systemLogs = $logQuery->latest()->take(500)->get();
+
+        return view('admin.logs', compact(
+            'systemLogs',
+            'countTotalEvents',
+            'countLoginSuccess',
+            'countLoginFailed',
+            'countBlocked',
+            'countLogout',
+            'countUniqueIps',
+            'startDate',
+            'endDate',
+            'activityFilter'
+        ));
     }
 
     public function storeUserByAdmin(Request $request)
@@ -261,6 +334,42 @@ class DashboardController extends Controller
         $user->delete();
 
         return back()->with('success', 'Akun pengguna berhasil dihapus!');
+    }
+
+    public function blockUser($id)
+    {
+        $user = User::findOrFail($id);
+        if (!$user->nip) {
+            return back()->with('warning', 'Pengguna ini tidak memiliki NIP. Harap isi NIP terlebih dahulu melalui menu Edit Akun.');
+        }
+
+        Blacklist::firstOrCreate(['nip' => $user->nip]);
+
+        \App\Models\ActivityLog::log('blacklist_add', "Admin mem-blacklist akun pengguna: '{$user->name}' (NIP: {$user->nip}).");
+
+        return back()->with('success', "Akun '{$user->name}' berhasil diblokir!");
+    }
+
+    public function unblockUser($id)
+    {
+        $user = User::findOrFail($id);
+        if ($user->nip) {
+            Blacklist::where('nip', $user->nip)->delete();
+        }
+
+        \App\Models\ActivityLog::log('blacklist_remove', "Admin memulihkan akses akun pengguna: '{$user->name}' (NIP: {$user->nip}).");
+
+        return back()->with('info', "Akses akun '{$user->name}' berhasil dipulihkan.");
+    }
+
+    public function restoreUserByAdmin($id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        $user->restore();
+
+        \App\Models\ActivityLog::log('restore_user', "Admin memulihkan akun terhapus: '{$user->name}' (Email: {$user->email}).");
+
+        return back()->with('success', "Akun '{$user->name}' berhasil dipulihkan!");
     }
 
     public function updateUserByAdmin(Request $request, $id)

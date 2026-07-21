@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('institution')->nullable();
             $table->string('phone')->nullable();
-            $table->string('nip', 18)->nullable();
+            $table->string('nip', 100)->nullable();
             $table->json('data_presensi')->nullable(); // Menyimpan isian dinamis & custom fields lainnya
             $table->text('photo')->nullable(); // Menyimpan base64 String foto wajah
             $table->text('signature')->nullable(); // Menyimpan base64 String tanda tangan

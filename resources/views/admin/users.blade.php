@@ -23,7 +23,7 @@
               <h4 class="font-weight-bolder mb-0 text-dark">{{ $countActive ?? 0 }}</h4>
             </div>
             <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
-              <i class="ni ni-badge text-lg opacity-10 text-white"></i>
+              <i class="ni ni-badge text-lg opacity-10 text-white" style="top: 0 !important;"></i>
             </div>
           </div>
         </div>
@@ -41,7 +41,7 @@
               <h4 class="font-weight-bolder mb-0 text-dark">{{ $countPending ?? 0 }}</h4>
             </div>
             <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
-              <i class="ni ni-time-alarm text-lg opacity-10 text-white"></i>
+              <i class="ni ni-time-alarm text-lg opacity-10 text-white" style="top: 0 !important;"></i>
             </div>
           </div>
         </div>
@@ -59,7 +59,7 @@
               <h4 class="font-weight-bolder mb-0 text-dark">{{ $countBlacklisted ?? 0 }}</h4>
             </div>
             <div class="icon icon-shape bg-gradient-danger shadow-danger text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
-              <i class="ni ni-lock-circle-open text-lg opacity-10 text-white"></i>
+              <i class="ni ni-lock-circle-open text-lg opacity-10 text-white" style="top: 0 !important;"></i>
             </div>
           </div>
         </div>
@@ -77,7 +77,7 @@
               <h4 class="font-weight-bolder mb-0 text-dark">{{ $countTrashed ?? 0 }}</h4>
             </div>
             <div class="icon icon-shape bg-gradient-secondary shadow-secondary text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
-              <i class="ni ni-basket text-lg opacity-10 text-white"></i>
+              <i class="ni ni-basket text-lg opacity-10 text-white" style="top: 0 !important;"></i>
             </div>
           </div>
         </div>

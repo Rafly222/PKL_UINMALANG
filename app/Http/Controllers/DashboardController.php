@@ -232,10 +232,54 @@ class DashboardController extends Controller
         return back()->with('info', "Pendaftaran akun '{$name}' ditolak dan data dihapus.");
     }
 
-    public function adminLogs()
+    public function adminLogs(Request $request)
     {
-        $systemLogs = \App\Models\ActivityLog::latest()->take(200)->get();
-        return view('admin.logs', compact('systemLogs'));
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+        $activityFilter = $request->query('activity_filter', 'all');
+
+        $baseQuery = \App\Models\ActivityLog::query();
+
+        if ($startDate && $endDate) {
+            $baseQuery->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+        } elseif ($startDate) {
+            $baseQuery->where('created_at', '>=', $startDate . ' 00:00:00');
+        } elseif ($endDate) {
+            $baseQuery->where('created_at', '<=', $endDate . ' 23:59:59');
+        }
+
+        $countTotalEvents = \App\Models\Event::count();
+        $countLoginSuccess = (clone $baseQuery)->where('activity', 'login')->count();
+        $countLoginFailed = (clone $baseQuery)->where('activity', 'login_failed')->count();
+        $countBlocked = (clone $baseQuery)->whereIn('activity', ['blacklist_add', 'login_blocked'])->count();
+        $countLogout = (clone $baseQuery)->where('activity', 'logout')->count();
+        $countUniqueIps = (clone $baseQuery)->whereNotNull('ip_address')->where('ip_address', '!=', '')->distinct('ip_address')->count('ip_address');
+
+        $logQuery = clone $baseQuery;
+        if ($activityFilter === 'login') {
+            $logQuery->where('activity', 'login');
+        } elseif ($activityFilter === 'login_failed') {
+            $logQuery->where('activity', 'login_failed');
+        } elseif ($activityFilter === 'blocked') {
+            $logQuery->whereIn('activity', ['blacklist_add', 'login_blocked']);
+        } elseif ($activityFilter === 'logout') {
+            $logQuery->where('activity', 'logout');
+        }
+
+        $systemLogs = $logQuery->latest()->take(500)->get();
+
+        return view('admin.logs', compact(
+            'systemLogs',
+            'countTotalEvents',
+            'countLoginSuccess',
+            'countLoginFailed',
+            'countBlocked',
+            'countLogout',
+            'countUniqueIps',
+            'startDate',
+            'endDate',
+            'activityFilter'
+        ));
     }
 
     public function storeUserByAdmin(Request $request)

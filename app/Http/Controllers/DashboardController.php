@@ -170,15 +170,44 @@ class DashboardController extends Controller
 
     public function adminBlacklist()
     {
-        $blacklists = Blacklist::with('user')->latest()->get();
-        return view('admin.blacklist', compact('blacklists'));
+        return redirect()->route('admin.users');
     }
 
-    public function adminUsers()
+    public function adminUsers(Request $request)
     {
-        $users = User::where('status', 'approved')->where('id', '!=', Auth::id())->latest()->get();
+        $filter = $request->query('status_filter', 'all');
+        $blacklistedNips = Blacklist::pluck('nip')->filter()->toArray();
+
+        $query = User::where('id', '!=', Auth::id());
+
+        if ($filter === 'approved') {
+            $query->where('status', 'approved')->whereNotIn('nip', $blacklistedNips);
+        } elseif ($filter === 'pending') {
+            $query->where('status', 'pending');
+        } elseif ($filter === 'blacklisted') {
+            $query->whereIn('nip', $blacklistedNips);
+        } elseif ($filter === 'trashed') {
+            $query->onlyTrashed();
+        }
+
+        $users = $query->latest()->get();
         $pendingUsers = User::where('status', 'pending')->latest()->get();
-        return view('admin.users', compact('users', 'pendingUsers'));
+
+        $countActive = User::where('status', 'approved')->whereNotIn('nip', $blacklistedNips)->count();
+        $countPending = User::where('status', 'pending')->count();
+        $countBlacklisted = Blacklist::count();
+        $countTrashed = User::onlyTrashed()->count();
+
+        return view('admin.users', compact(
+            'users', 
+            'pendingUsers', 
+            'blacklistedNips', 
+            'filter',
+            'countActive',
+            'countPending',
+            'countBlacklisted',
+            'countTrashed'
+        ));
     }
 
     public function approveUser($id)
@@ -257,6 +286,42 @@ class DashboardController extends Controller
         $user->delete();
 
         return back()->with('success', 'Akun pengguna berhasil dihapus!');
+    }
+
+    public function blockUser($id)
+    {
+        $user = User::findOrFail($id);
+        if (!$user->nip) {
+            return back()->with('warning', 'Pengguna ini tidak memiliki NIP. Harap isi NIP terlebih dahulu melalui menu Edit Akun.');
+        }
+
+        Blacklist::firstOrCreate(['nip' => $user->nip]);
+
+        \App\Models\ActivityLog::log('blacklist_add', "Admin mem-blacklist akun pengguna: '{$user->name}' (NIP: {$user->nip}).");
+
+        return back()->with('success', "Akun '{$user->name}' berhasil diblokir!");
+    }
+
+    public function unblockUser($id)
+    {
+        $user = User::findOrFail($id);
+        if ($user->nip) {
+            Blacklist::where('nip', $user->nip)->delete();
+        }
+
+        \App\Models\ActivityLog::log('blacklist_remove', "Admin memulihkan akses akun pengguna: '{$user->name}' (NIP: {$user->nip}).");
+
+        return back()->with('info', "Akses akun '{$user->name}' berhasil dipulihkan.");
+    }
+
+    public function restoreUserByAdmin($id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        $user->restore();
+
+        \App\Models\ActivityLog::log('restore_user', "Admin memulihkan akun terhapus: '{$user->name}' (Email: {$user->email}).");
+
+        return back()->with('success', "Akun '{$user->name}' berhasil dipulihkan!");
     }
 
     public function updateUserByAdmin(Request $request, $id)

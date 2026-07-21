@@ -12,6 +12,78 @@
       </div>
     </div>
   </div>
+<div class="row mb-4">
+  <div class="col-xl-3 col-md-6 mb-3 mb-xl-0">
+    <a href="{{ route('admin.users', ['status_filter' => 'approved']) }}" class="text-decoration-none">
+      <div class="card ep-card {{ ($filter ?? '') === 'approved' ? 'border border-2 border-success' : '' }}">
+        <div class="card-body p-3">
+          <div class="d-flex align-items-center">
+            <div>
+              <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">User Aktif</p>
+              <h4 class="font-weight-bolder mb-0 text-dark">{{ $countActive ?? 0 }}</h4>
+            </div>
+            <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
+              <i class="ni ni-badge text-lg opacity-10 text-white"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-xl-3 col-md-6 mb-3 mb-xl-0">
+    <a href="{{ route('admin.users', ['status_filter' => 'pending']) }}" class="text-decoration-none">
+      <div class="card ep-card {{ ($filter ?? '') === 'pending' ? 'border border-2 border-warning' : '' }}">
+        <div class="card-body p-3">
+          <div class="d-flex align-items-center">
+            <div>
+              <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">User Pending</p>
+              <h4 class="font-weight-bolder mb-0 text-dark">{{ $countPending ?? 0 }}</h4>
+            </div>
+            <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
+              <i class="ni ni-time-alarm text-lg opacity-10 text-white"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-xl-3 col-md-6 mb-3 mb-xl-0">
+    <a href="{{ route('admin.users', ['status_filter' => 'blacklisted']) }}" class="text-decoration-none">
+      <div class="card ep-card {{ ($filter ?? '') === 'blacklisted' ? 'border border-2 border-danger' : '' }}">
+        <div class="card-body p-3">
+          <div class="d-flex align-items-center">
+            <div>
+              <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">User Terblokir</p>
+              <h4 class="font-weight-bolder mb-0 text-dark">{{ $countBlacklisted ?? 0 }}</h4>
+            </div>
+            <div class="icon icon-shape bg-gradient-danger shadow-danger text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
+              <i class="ni ni-lock-circle-open text-lg opacity-10 text-white"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-xl-3 col-md-6">
+    <a href="{{ route('admin.users', ['status_filter' => 'trashed']) }}" class="text-decoration-none">
+      <div class="card ep-card {{ ($filter ?? '') === 'trashed' ? 'border border-2 border-secondary' : '' }}">
+        <div class="card-body p-3">
+          <div class="d-flex align-items-center">
+            <div>
+              <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">User Terhapus</p>
+              <h4 class="font-weight-bolder mb-0 text-dark">{{ $countTrashed ?? 0 }}</h4>
+            </div>
+            <div class="icon icon-shape bg-gradient-secondary shadow-secondary text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
+              <i class="ni ni-basket text-lg opacity-10 text-white"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
 </div>
 
 <div class="row">
@@ -120,8 +192,29 @@
 
     <div class="card ep-card">
       <div class="card-header pb-0 bg-transparent">
-        <h6 class="mb-0">Daftar Pengguna Aktif</h6>
-        <p class="text-xs text-muted mb-0">List seluruh administrator dan staff terdaftar dalam sistem.</p>
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+          <div>
+            <h6 class="mb-0">Daftar Pengguna Sistem</h6>
+            <p class="text-xs text-muted mb-0">Kelola akun administrator, staff creator, pendaftar, dan identitas terblokir.</p>
+          </div>
+          <div id="header-filter-container" class="d-flex align-items-center gap-2">
+            <!-- Filter Status Dropdown (Selalu Kelihatan) -->
+            <form action="{{ route('admin.users') }}" method="GET" class="d-flex align-items-center m-0">
+              <div class="input-group input-group-sm shadow-xs" style="border-radius: 0.5rem; overflow: hidden; border: 1px solid #d2d6da; background: #fff;">
+                <span class="input-group-text bg-white border-0 text-secondary pe-1 ps-2">
+                  <i class="fas fa-filter text-xs text-primary"></i>
+                </span>
+                <select name="status_filter" class="form-select form-select-sm border-0 ps-1 text-xs font-weight-bold text-dark" onchange="this.form.submit()" style="cursor: pointer; min-width: 170px; box-shadow: none;">
+                  <option value="all" {{ ($filter ?? 'all') === 'all' ? 'selected' : '' }}>Semua Status</option>
+                  <option value="approved" {{ ($filter ?? '') === 'approved' ? 'selected' : '' }}>Aktif (Disetujui)</option>
+                  <option value="pending" {{ ($filter ?? '') === 'pending' ? 'selected' : '' }}>Tidak Aktif / Pending</option>
+                  <option value="blacklisted" {{ ($filter ?? '') === 'blacklisted' ? 'selected' : '' }}>Terblokir (Blacklist)</option>
+                  <option value="trashed" {{ ($filter ?? '') === 'trashed' ? 'selected' : '' }}>Terhapus (Soft Deleted)</option>
+                </select>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
       <div class="card-body">
         <div class="table-responsive p-3">
@@ -132,18 +225,24 @@
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Email</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">NIP</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Hak Akses</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Status</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-end pe-3">Aksi</th>
               </tr>
             </thead>
             <tbody>
               @foreach($users as $user)
+                <?php 
+                  $isTrashed = method_exists($user, 'trashed') && $user->trashed();
+                  $isBlacklisted = !$isTrashed && !empty($user->nip) && in_array($user->nip, $blacklistedNips);
+                  $isPending = !$isTrashed && $user->status === 'pending';
+                ?>
                 <tr>
                   <td class="ps-3">
                     <div class="d-flex align-items-center">
-                      <div class="avatar avatar-sm bg-gradient-info text-white rounded-circle me-3 d-flex align-items-center justify-content-center">
+                      <div class="avatar avatar-sm {{ $isTrashed ? 'bg-gradient-secondary' : ($isBlacklisted ? 'bg-gradient-danger' : ($isPending ? 'bg-gradient-warning' : 'bg-gradient-info')) }} text-white rounded-circle me-3 d-flex align-items-center justify-content-center">
                         {{ strtoupper(substr($user->name, 0, 1)) }}
                       </div>
-                      <h6 class="text-sm mb-0 font-weight-bold">{{ $user->name }}</h6>
+                      <h6 class="text-sm mb-0 font-weight-bold {{ $isTrashed ? 'text-decoration-line-through text-muted' : '' }}">{{ $user->name }}</h6>
                     </div>
                   </td>
                   <td>
@@ -155,14 +254,92 @@
                   <td>
                     <span class="badge badge-xs bg-gradient-secondary">{{ $user->role }}</span>
                   </td>
+                  <td>
+                    @if($isTrashed)
+                      <span class="badge badge-xs bg-gradient-secondary">Terhapus</span>
+                    @elseif($isBlacklisted)
+                      <span class="badge badge-xs bg-gradient-danger">Terblokir</span>
+                    @elseif($isPending)
+                      <span class="badge badge-xs bg-gradient-warning">Pending</span>
+                    @else
+                      <span class="badge badge-xs bg-gradient-success">Aktif</span>
+                    @endif
+                  </td>
                   <td class="text-end pe-3">
                     <div class="d-flex justify-content-end gap-1">
-                      <button class="btn btn-xs btn-outline-warning mb-0 shadow-sm" data-bs-toggle="modal" data-bs-target="#editUserModal-{{ $user->id }}">Edit</button>
-                      <form action="{{ route('admin.users.delete', $user->id) }}" method="POST" onsubmit="return confirm('Hapus akun user ini?')">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-xs btn-outline-danger mb-0 shadow-sm">Hapus</button>
-                      </form>
+                      @if($isTrashed)
+                        <form action="{{ route('admin.users.restore', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Pulihkan kembali akun terhapus ini?')">
+                          @csrf
+                          <button type="submit" class="btn btn-xs bg-gradient-success text-white mb-0 shadow-sm">Pulihkan Akun</button>
+                        </form>
+                      @else
+                        <button class="btn btn-xs btn-outline-info mb-0 shadow-sm" data-bs-toggle="modal" data-bs-target="#previewUserModal-{{ $user->id }}">Preview</button>
+                        <button class="btn btn-xs btn-outline-warning mb-0 shadow-sm" data-bs-toggle="modal" data-bs-target="#editUserModal-{{ $user->id }}">Edit</button>
+                        <form action="{{ route('admin.users.delete', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus akun user ini?')">
+                          @csrf
+                          @method('DELETE')
+                          <button class="btn btn-xs btn-outline-danger mb-0 shadow-sm">Hapus</button>
+                        </form>
+                        @if($isBlacklisted)
+                          <form action="{{ route('admin.users.unblock', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Pulihkan akses akun pengguna ini?')">
+                            @csrf
+                            <button type="submit" class="btn btn-xs bg-gradient-success text-white mb-0 shadow-sm">Pulihkan</button>
+                          </form>
+                        @else
+                          <form action="{{ route('admin.users.block', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Blokir akses identitas NIP akun pengguna ini?')">
+                            @csrf
+                            <button type="submit" class="btn btn-xs bg-gradient-danger text-white mb-0 shadow-sm" {{ empty($user->nip) ? 'disabled title="NIP tidak tersedia"' : '' }}>Blokir</button>
+                          </form>
+                        @endif
+                      @endif
+                    </div>
+
+                    <!-- Modal Preview User -->
+                    <div class="modal fade" id="previewUserModal-{{ $user->id }}" tabindex="-1" role="dialog" aria-labelledby="previewUserModalLabel-{{ $user->id }}" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content border-0 ep-card">
+                          <div class="modal-header bg-gradient-info text-white">
+                            <h5 class="modal-title font-weight-bolder text-white" id="previewUserModalLabel-{{ $user->id }}">Detail Profil Pengguna</h5>
+                            <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body text-start p-4">
+                            <div class="text-center mb-4">
+                              <div class="avatar avatar-xl {{ $isBlacklisted ? 'bg-gradient-danger' : 'bg-gradient-info' }} text-white rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center fs-3 font-weight-bold" style="width: 64px; height: 64px;">
+                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                              </div>
+                              <h5 class="font-weight-bolder mb-0">{{ $user->name }}</h5>
+                              <p class="text-xs text-muted mb-0">{{ $user->email }}</p>
+                            </div>
+                            <ul class="list-group list-group-flush border-radius-lg">
+                              <li class="list-group-item d-flex justify-content-between align-items-center px-0 text-sm">
+                                <span class="text-muted font-weight-bold">Nomor Induk Pegawai (NIP):</span>
+                                <span class="font-weight-bolder text-dark">{{ $user->nip ?? '-' }}</span>
+                              </li>
+                              <li class="list-group-item d-flex justify-content-between align-items-center px-0 text-sm">
+                                <span class="text-muted font-weight-bold">Hak Akses (Role):</span>
+                                <span class="badge bg-gradient-secondary text-uppercase">{{ $user->role }}</span>
+                              </li>
+                              <li class="list-group-item d-flex justify-content-between align-items-center px-0 text-sm">
+                                <span class="text-muted font-weight-bold">Status Keaktifan:</span>
+                                @if($isBlacklisted)
+                                  <span class="badge bg-gradient-danger">Terblokir (Blacklist)</span>
+                                @else
+                                  <span class="badge bg-gradient-success">Aktif (Approved)</span>
+                                @endif
+                              </li>
+                              <li class="list-group-item d-flex justify-content-between align-items-center px-0 text-sm">
+                                <span class="text-muted font-weight-bold">Tanggal Pendaftaran:</span>
+                                <span class="font-weight-bold text-dark">{{ $user->created_at ? $user->created_at->format('d M Y H:i') : '-' }}</span>
+                              </li>
+                            </ul>
+                            <div class="text-end mt-4">
+                              <button type="button" class="btn btn-outline-secondary mb-0 shadow-sm" data-bs-dismiss="modal">Tutup</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     <!-- Modal Edit User -->
@@ -228,7 +405,7 @@
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('users-table-admin')) {
-      new simpleDatatables.DataTable("#users-table-admin", {
+      const dataTable = new simpleDatatables.DataTable("#users-table-admin", {
         searchable: true,
         fixedHeight: false,
         perPage: 5,
@@ -239,6 +416,21 @@
           info: "Menampilkan {start} sampai {end} dari {rows} entri",
         }
       });
+
+      // Pindahkan input "Cari user..." ke samping Filter Status pada header kartu
+      setTimeout(() => {
+        const dtSearch = document.querySelector('.datatable-search');
+        const filterContainer = document.getElementById('header-filter-container');
+        if (dtSearch && filterContainer) {
+          filterContainer.appendChild(dtSearch);
+          
+          // Bersihkan sisa margin datatable-top jika kosong
+          const dtTop = document.querySelector('.datatable-top');
+          if (dtTop && dtTop.children.length === 0) {
+            dtTop.style.display = 'none';
+          }
+        }
+      }, 50);
     }
   });
 </script>

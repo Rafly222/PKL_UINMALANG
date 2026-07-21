@@ -24,19 +24,100 @@
 
     body {
       color: #344767;
-      background: #f8f9fe;
+      background: #0f172a;
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
     }
 
+    /* Aurora Waves Background Canvas */
+    .ep-aurora-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      background: radial-gradient(circle at 50% 30%, #1a2b56 0%, #0b1329 70%, #050a17 100%);
+      overflow: hidden;
+    }
+
+    .ep-wave-container {
+      position: absolute;
+      width: 200%;
+      height: 100%;
+      bottom: 0;
+      left: -50%;
+      pointer-events: none;
+      opacity: 0.85;
+    }
+
+    .ep-wave {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 65vh;
+      will-change: transform;
+    }
+
+    .ep-wave-1 {
+      fill: rgba(94, 114, 228, 0.35);
+      animation: epWaveMove1 14s ease-in-out infinite alternate;
+    }
+
+    .ep-wave-2 {
+      fill: rgba(17, 205, 239, 0.28);
+      animation: epWaveMove2 18s ease-in-out infinite alternate;
+    }
+
+    .ep-wave-3 {
+      fill: rgba(130, 94, 228, 0.22);
+      animation: epWaveMove3 22s ease-in-out infinite alternate;
+    }
+
+    .ep-wave-4 {
+      fill: rgba(33, 212, 253, 0.18);
+      animation: epWaveMove4 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes epWaveMove1 {
+      0% { transform: translateX(0) scaleY(1); }
+      50% { transform: translateX(8%) scaleY(1.15) rotate(1deg); }
+      100% { transform: translateX(-5%) scaleY(0.95); }
+    }
+
+    @keyframes epWaveMove2 {
+      0% { transform: translateX(0) scaleY(1.05); }
+      50% { transform: translateX(-10%) scaleY(0.9) rotate(-1.5deg); }
+      100% { transform: translateX(6%) scaleY(1.1); }
+    }
+
+    @keyframes epWaveMove3 {
+      0% { transform: translateX(0) scaleY(0.95); }
+      50% { transform: translateX(7%) scaleY(1.2) rotate(1deg); }
+      100% { transform: translateX(-8%) scaleY(1); }
+    }
+
+    @keyframes epWaveMove4 {
+      0% { transform: translateX(0) scaleY(1.1); }
+      50% { transform: translateX(-6%) scaleY(0.85) rotate(-1deg); }
+      100% { transform: translateX(9%) scaleY(1.15); }
+    }
+
+    /* Glassmorphism Card Style */
     .ep-card {
-      border: 0;
-      border-radius: 1rem;
-      box-shadow: 0 14px 35px rgba(50, 50, 93, .08), 0 4px 12px rgba(0, 0, 0, .05);
-      background: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.22) !important;
+      border-radius: 1.25rem;
+      background: rgba(255, 255, 255, 0.93) !important;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.6);
     }
 
     .ep-card:hover {
-      box-shadow: 0 18px 45px rgba(50, 50, 93, .12), 0 7px 18px rgba(0, 0, 0, .07);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.8);
     }
+
     .grecaptcha-badge {
       visibility: hidden;
     }
@@ -60,8 +141,24 @@
   </style>
 </head>
 
-<body class="bg-gray-100">
-  <div class="min-height-300 bg-primary position-absolute w-100" style="height: 35vh !important; min-height: unset !important;"></div>
+<body>
+  <!-- Aurora Wave Background Layer -->
+  <div class="ep-aurora-bg">
+    <div class="ep-wave-container">
+      <svg class="ep-wave ep-wave-1" viewBox="0 0 1440 320" preserveAspectRatio="none">
+        <path d="M0,192L48,176C96,160,192,128,288,138.7C384,149,480,203,576,213.3C672,224,768,192,864,165.3C960,139,1056,117,1152,128C1248,139,1344,181,1392,202.7L1440,224L1440,320L0,320Z"></path>
+      </svg>
+      <svg class="ep-wave ep-wave-2" viewBox="0 0 1440 320" preserveAspectRatio="none">
+        <path d="M0,128L60,149.3C120,171,240,213,360,208C480,203,600,149,720,138.7C840,128,960,160,1080,170.7C1200,181,1320,171,1380,165.3L1440,160L1440,320L0,320Z"></path>
+      </svg>
+      <svg class="ep-wave ep-wave-3" viewBox="0 0 1440 320" preserveAspectRatio="none">
+        <path d="M0,224L48,213.3C96,203,192,181,288,154.7C384,128,480,96,576,106.7C672,117,768,171,864,186.7C960,203,1056,181,1152,154.7C1248,128,1344,96,1392,80L1440,64L1440,320L0,320Z"></path>
+      </svg>
+      <svg class="ep-wave ep-wave-4" viewBox="0 0 1440 320" preserveAspectRatio="none">
+        <path d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,117.3C960,107,1056,149,1152,160C1248,171,1344,149,1392,138.7L1440,128L1440,320L0,320Z"></path>
+      </svg>
+    </div>
+  </div>
 
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
     <div class="container py-4">

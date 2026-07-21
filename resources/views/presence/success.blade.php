@@ -24,45 +24,140 @@
 
     body {
       color: #344767;
-      background: #f8f9fe;
+      background: #0f172a;
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
     }
 
+    /* Aurora Waves Background Canvas */
+    .ep-aurora-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      background: radial-gradient(circle at 50% 30%, #064e3b 0%, #0b1329 70%, #042f2e 100%);
+      overflow: hidden;
+    }
+
+    .ep-wave-container {
+      position: absolute;
+      width: 200%;
+      height: 100%;
+      bottom: 0;
+      left: -50%;
+      pointer-events: none;
+      opacity: 0.85;
+    }
+
+    .ep-wave {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 65vh;
+      will-change: transform;
+    }
+
+    .ep-wave-1 {
+      fill: rgba(45, 206, 137, 0.35);
+      animation: epWaveMove1 14s ease-in-out infinite alternate;
+    }
+
+    .ep-wave-2 {
+      fill: rgba(17, 205, 239, 0.28);
+      animation: epWaveMove2 18s ease-in-out infinite alternate;
+    }
+
+    .ep-wave-3 {
+      fill: rgba(16, 185, 129, 0.22);
+      animation: epWaveMove3 22s ease-in-out infinite alternate;
+    }
+
+    .ep-wave-4 {
+      fill: rgba(94, 114, 228, 0.18);
+      animation: epWaveMove4 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes epWaveMove1 {
+      0% { transform: translateX(0) scaleY(1); }
+      50% { transform: translateX(8%) scaleY(1.15) rotate(1deg); }
+      100% { transform: translateX(-5%) scaleY(0.95); }
+    }
+
+    @keyframes epWaveMove2 {
+      0% { transform: translateX(0) scaleY(1.05); }
+      50% { transform: translateX(-10%) scaleY(0.9) rotate(-1.5deg); }
+      100% { transform: translateX(6%) scaleY(1.1); }
+    }
+
+    @keyframes epWaveMove3 {
+      0% { transform: translateX(0) scaleY(0.95); }
+      50% { transform: translateX(7%) scaleY(1.2) rotate(1deg); }
+      100% { transform: translateX(-8%) scaleY(1); }
+    }
+
+    @keyframes epWaveMove4 {
+      0% { transform: translateX(0) scaleY(1.1); }
+      50% { transform: translateX(-6%) scaleY(0.85) rotate(-1deg); }
+      100% { transform: translateX(9%) scaleY(1.15); }
+    }
+
+    /* High-Contrast Card Style */
     .ep-card {
-      border: 0;
-      border-radius: 1rem;
-      box-shadow: 0 14px 35px rgba(50, 50, 93, .08), 0 4px 12px rgba(0, 0, 0, .05);
-    }
-
-    .ep-card:hover {
-      box-shadow: 0 18px 45px rgba(50, 50, 93, .12), 0 7px 18px rgba(0, 0, 0, .07);
+      border: 1px solid rgba(255, 255, 255, 0.4) !important;
+      border-radius: 1.25rem;
+      background: #ffffff !important;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
     }
 
     .ep-form-card {
-      border: 1px solid rgba(226, 232, 240, .95);
-      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+      border: 1px solid #e2e8f0 !important;
+      background: #ffffff !important;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
     }
 
     .ep-section-label {
-      color: #8392ab;
-      font-size: .68rem;
+      color: #475569 !important;
+      font-size: .72rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: .04rem;
+      letter-spacing: .06rem;
+    }
+
+    .ep-text-title {
+      color: #0f172a !important;
+      font-weight: 800 !important;
+    }
+
+    .ep-text-subtitle {
+      color: #334155 !important;
+      font-weight: 600 !important;
+    }
+
+    .ep-text-value {
+      color: #0f172a !important;
+      font-weight: 700 !important;
     }
 
     .ep-media-frame {
-      border: 1px solid rgba(203, 213, 225, .8);
+      border: 2px solid #e2e8f0;
       border-radius: 1rem;
-      background: #111827;
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06), 0 16px 30px rgba(15, 23, 42, .14);
+      background: #0f172a;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, .2);
       overflow: hidden;
     }
 
     .ep-signature-frame {
-      border: 1px solid rgba(203, 213, 225, .8);
+      border: 1.5px solid #cbd5e1;
       border-radius: 1rem;
       background: #fff;
-      box-shadow: inset 0 1px 14px rgba(15, 23, 42, .05);
+      box-shadow: inset 0 1px 10px rgba(15, 23, 42, .06);
+    }
+
+    .main-content {
+      z-index: 1;
     }
 
     @media (min-width: 992px) {
@@ -96,8 +191,24 @@
   </style>
 </head>
 
-<body class="bg-gray-100">
-  <div class="min-height-300 bg-primary position-absolute w-100" style="height: 35vh !important; min-height: unset !important;"></div>
+<body>
+  <!-- Aurora Wave Background Layer -->
+  <div class="ep-aurora-bg">
+    <div class="ep-wave-container">
+      <svg class="ep-wave ep-wave-1" viewBox="0 0 1440 320" preserveAspectRatio="none">
+        <path d="M0,192L48,176C96,160,192,128,288,138.7C384,149,480,203,576,213.3C672,224,768,192,864,165.3C960,139,1056,117,1152,128C1248,139,1344,181,1392,202.7L1440,224L1440,320L0,320Z"></path>
+      </svg>
+      <svg class="ep-wave ep-wave-2" viewBox="0 0 1440 320" preserveAspectRatio="none">
+        <path d="M0,128L60,149.3C120,171,240,213,360,208C480,203,600,149,720,138.7C840,128,960,160,1080,170.7C1200,181,1320,171,1380,165.3L1440,160L1440,320L0,320Z"></path>
+      </svg>
+      <svg class="ep-wave ep-wave-3" viewBox="0 0 1440 320" preserveAspectRatio="none">
+        <path d="M0,224L48,213.3C96,203,192,181,288,154.7C384,128,480,96,576,106.7C672,117,768,171,864,186.7C960,203,1056,181,1152,154.7C1248,128,1344,96,1392,80L1440,64L1440,320L0,320Z"></path>
+      </svg>
+      <svg class="ep-wave ep-wave-4" viewBox="0 0 1440 320" preserveAspectRatio="none">
+        <path d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,117.3C960,107,1056,149,1152,160C1248,171,1344,149,1392,138.7L1440,128L1440,320L0,320Z"></path>
+      </svg>
+    </div>
+  </div>
   
   <main class="main-content position-relative border-radius-lg">
     <div class="container py-3">
@@ -107,11 +218,11 @@
           <!-- Success Top Alert Card -->
           <div class="card ep-card mb-3 overflow-hidden">
             <div class="card-header bg-gradient-success text-center p-4">
-              <div class="icon icon-shape bg-white shadow text-center border-radius-lg mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                <i class="ni ni-check-bold text-success text-lg"></i>
+              <div class="icon icon-shape bg-white shadow-md text-center border-radius-lg mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;">
+                <i class="ni ni-check-bold text-success text-xl font-weight-bold"></i>
               </div>
               <h3 class="text-white font-weight-bolder mb-1">Presensi Berhasil Dicatat</h3>
-              <p class="text-white opacity-8 text-sm mb-0">Data kehadiran Anda sudah tersimpan di sistem E-Presensi.</p>
+              <p class="text-white opacity-9 text-sm mb-0 font-weight-semibold">Data kehadiran Anda sudah tersimpan di sistem E-Presensi.</p>
             </div>
           </div>
 
@@ -120,10 +231,10 @@
             <div class="card-header pb-0 bg-transparent pt-3">
               <div class="d-flex align-items-center justify-content-between">
                 <div>
-                  <h6 class="mb-0 font-weight-bolder">Kartu Kehadiran Resmi</h6>
-                  <p class="text-xs text-muted mb-0">{{ $presence->event->name }}</p>
+                  <h6 class="mb-0 ep-text-title text-md">Kartu Kehadiran Resmi</h6>
+                  <p class="text-xs ep-text-subtitle mb-0">{{ $presence->event->name }}</p>
                 </div>
-                <span class="badge bg-gradient-success">Hadir</span>
+                <span class="badge bg-gradient-success font-weight-bold px-3 py-2">Hadir</span>
               </div>
             </div>
             
@@ -144,15 +255,15 @@
                   <div class="row">
                     <div class="col-sm-6 mb-3">
                       <p class="ep-section-label mb-1">Nama</p>
-                      <h5 class="mb-0 font-weight-bolder text-md">{{ $presence->name }}</h5>
+                      <h5 class="mb-0 ep-text-title text-md">{{ $presence->name }}</h5>
                     </div>
                     <div class="col-sm-6 mb-3">
                       <p class="ep-section-label mb-1">Waktu hadir</p>
-                      <p class="text-sm font-weight-bold mb-0 text-dark">{{ $presence->created_at->timezone('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</p>
+                      <p class="text-sm ep-text-value mb-0">{{ $presence->created_at->timezone('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</p>
                     </div>
                     <div class="col-12 mb-3">
                       <p class="ep-section-label mb-1">Instansi</p>
-                      <p class="text-sm text-dark mb-0 font-weight-bold">{{ $presence->institution ?? '-' }}</p>
+                      <p class="text-sm ep-text-value mb-0">{{ $presence->institution ?? '-' }}</p>
                     </div>
                     @if($presence->signature)
                       <div class="col-12">
@@ -168,10 +279,10 @@
             </div>
             
             <div class="card-footer text-center bg-transparent border-top py-3">
-              <a href="{{ route('presence.form', $presence->event->uuid) }}" class="btn bg-gradient-success mb-0 me-2">
+              <a href="{{ route('presence.form', $presence->event->uuid) }}" class="btn bg-gradient-success font-weight-bold mb-0 me-2 shadow-sm">
                 <i class="fas fa-plus-circle me-1"></i> Presensi Berikutnya
               </a>
-              <a href="{{ route('home') }}" class="btn btn-outline-secondary mb-0">
+              <a href="{{ route('home') }}" class="btn btn-outline-dark font-weight-bold mb-0" style="border-color: #cbd5e1; color: #1e293b;">
                 <i class="fas fa-home me-1"></i> Beranda
               </a>
             </div>

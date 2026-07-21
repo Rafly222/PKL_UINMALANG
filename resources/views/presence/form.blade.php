@@ -334,13 +334,19 @@
                                   <span class="text-xxs font-weight-bold">Kamera off</span>
                                 </div>
                                 <canvas id="captured-canvas" class="d-none position-absolute top-0 start-0 w-100 h-100" style="object-fit: cover;"></canvas>
+                                <!-- Indikator Deteksi Wajah Real-Time (Tanpa Bar Hitam) -->
+                                <div id="face-detection-badge" class="position-absolute bottom-0 start-0 w-100 mb-2 text-center d-none" style="z-index: 5; pointer-events: none;">
+                                  <span id="face-status-text" class="text-xxs font-weight-bold text-white">
+                                    <i class="fas fa-spinner fa-spin me-1"></i> Mendeteksi Wajah...
+                                  </span>
+                                </div>
                               </div>
                             </div>
                             <div class="col-6 col-md-5">
-                              <button type="button" onclick="activateWebcam()" class="btn btn-xs btn-outline-primary w-100 mb-1 py-1">
+                              <button type="button" id="btn-open-camera" onclick="activateWebcam()" class="btn btn-xs btn-outline-primary w-100 mb-1 py-1">
                                 Buka Kamera
                               </button>
-                              <button type="button" id="btn-snap-photo" onclick="snapPhoto()" class="btn btn-xs bg-gradient-danger text-white w-100 mb-1 py-1">
+                              <button type="button" id="btn-snap-photo" onclick="snapPhoto()" class="btn btn-xs bg-gradient-danger text-white w-100 mb-1 py-1 opacity-5" disabled>
                                 Capture Foto
                               </button>
                               <button type="button" id="btn-retake-photo" onclick="resetWebcamCapture()" class="btn btn-xs btn-outline-secondary w-100 mb-0 d-none py-1">
@@ -512,6 +518,7 @@
     </div>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
   <script src="{{ asset($argon . '/js/core/popper.min.js') }}"></script>
   <script src="{{ asset($argon . '/js/core/bootstrap.min.js') }}"></script>
   <script src="{{ asset($argon . '/js/argon-dashboard.min.js') }}"></script>
@@ -643,9 +650,112 @@
     }
 
     let activeStream = null;
+    let faceModelsLoaded = false;
+    let faceCheckInterval = null;
+    let isFacePresent = false;
+
+    async function initFaceDetector() {
+      if (window.FaceDetector) return true;
+      if (typeof faceapi !== 'undefined' && !faceModelsLoaded) {
+        try {
+          const modelUrl = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
+          await faceapi.nets.tinyFaceDetector.loadFromUri(modelUrl);
+          faceModelsLoaded = true;
+          return true;
+        } catch(e) {
+          console.warn('FaceAPI CDN model failed to load:', e);
+        }
+      }
+      return false;
+    }
+
+    function startFaceDetection(video) {
+      const badge = document.getElementById('face-detection-badge');
+      const badgeText = document.getElementById('face-status-text');
+      const btnSnap = document.getElementById('btn-snap-photo');
+
+      if(badge) badge.classList.remove('d-none');
+      if(btnSnap) {
+        btnSnap.disabled = true;
+        btnSnap.classList.add('opacity-5');
+      }
+      isFacePresent = false;
+
+      initFaceDetector().then(() => {
+        if (faceCheckInterval) clearInterval(faceCheckInterval);
+
+        faceCheckInterval = setInterval(async () => {
+          if (!activeStream || video.paused || video.ended || video.classList.contains('d-none')) {
+            clearInterval(faceCheckInterval);
+            return;
+          }
+
+          let faceDetected = false;
+
+          try {
+            if (window.FaceDetector) {
+              const detector = new window.FaceDetector({ fastMode: true, maxFaces: 5 });
+              const faces = await detector.detect(video);
+              faceDetected = faces && faces.length > 0;
+            } else if (typeof faceapi !== 'undefined' && faceModelsLoaded) {
+              const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.35 }));
+              faceDetected = detections && detections.length > 0;
+            } else {
+              faceDetected = analyzeFaceSkinContour(video);
+            }
+          } catch(e) {
+            faceDetected = analyzeFaceSkinContour(video);
+          }
+
+          isFacePresent = faceDetected;
+
+          if (faceDetected) {
+            if (badgeText) {
+              badgeText.innerHTML = '<span class="badge bg-success py-1 px-2 text-white"><i class="fas fa-user-check me-1"></i> Wajah Terdeteksi</span>';
+            }
+            if (btnSnap) {
+              btnSnap.disabled = false;
+              btnSnap.classList.remove('opacity-5');
+            }
+          } else {
+            if (badgeText) {
+              badgeText.innerHTML = '<span class="badge bg-danger py-1 px-2 text-white"><i class="fas fa-user-slash me-1"></i> Wajah Tidak Terdeteksi</span>';
+            }
+            if (btnSnap) {
+              btnSnap.disabled = true;
+              btnSnap.classList.add('opacity-5');
+            }
+          }
+        }, 300);
+      });
+    }
+
+    function analyzeFaceSkinContour(video) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 160;
+      canvas.height = 120;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, 160, 120);
+      const imgData = ctx.getImageData(0, 0, 160, 120);
+      const data = imgData.data;
+
+      let skinPixels = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i+1], b = data[i+2];
+        const cb = 128 - 0.168736 * r - 0.331264 * g + 0.5 * b;
+        const cr = 128 + 0.5 * r - 0.418688 * g - 0.081312 * b;
+        if (r > 60 && g > 40 && b > 20 && (r - Math.min(g, b)) > 15 && Math.abs(r - g) > 15 && cr > 135 && cr < 180 && cb > 85 && cb < 135) {
+          skinPixels++;
+        }
+      }
+      const ratio = skinPixels / (160 * 120);
+      return ratio >= 0.08 && ratio <= 0.70;
+    }
+
     function activateWebcam() {
       const video = document.getElementById('webcam-preview');
       const fallback = document.getElementById('webcam-fallback');
+      const btnOpen = document.getElementById('btn-open-camera');
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
           .then(stream => {
@@ -653,6 +763,8 @@
             video.srcObject = stream;
             video.classList.remove('d-none');
             fallback.classList.add('d-none');
+            if (btnOpen) btnOpen.classList.add('d-none');
+            startFaceDetection(video);
           }).catch(() => {
             alert('Akses kamera diblokir browser. Pastikan izin kamera aktif.');
           });
@@ -662,8 +774,18 @@
     function snapPhoto() {
       const canvas = document.getElementById('captured-canvas');
       const video = document.getElementById('webcam-preview');
+      const btnOpen = document.getElementById('btn-open-camera');
       const btnRetake = document.getElementById('btn-retake-photo');
       const btnSnap = document.getElementById('btn-snap-photo');
+      const badge = document.getElementById('face-detection-badge');
+
+      if (activeStream && !video.classList.contains('d-none')) {
+        if (!isFacePresent) {
+          alert('Peringatan: Wajah tidak terdeteksi oleh kamera! Harap posisikan wajah Anda tepat di depan kamera.');
+          return;
+        }
+      }
+
       const ctx = canvas.getContext('2d');
       canvas.width = 640;
       canvas.height = 480;
@@ -684,25 +806,33 @@
       canvas.classList.remove('d-none');
       document.getElementById('photo-base64').value = canvas.toDataURL('image/jpeg');
 
-      if(btnRetake) btnRetake.classList.remove('d-none');
+      if(badge) badge.classList.add('d-none');
+      if(btnOpen) btnOpen.classList.add('d-none');
       if(btnSnap) btnSnap.classList.add('d-none');
+      if(btnRetake) btnRetake.classList.remove('d-none');
     }
 
     function resetWebcamCapture() {
       const canvas = document.getElementById('captured-canvas');
       const video = document.getElementById('webcam-preview');
       const input = document.getElementById('photo-base64');
+      const btnOpen = document.getElementById('btn-open-camera');
       const btnRetake = document.getElementById('btn-retake-photo');
       const btnSnap = document.getElementById('btn-snap-photo');
+      const badge = document.getElementById('face-detection-badge');
 
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       canvas.classList.add('d-none');
       input.value = '';
 
+      if(btnOpen) btnOpen.classList.add('d-none');
       if(btnRetake) btnRetake.classList.add('d-none');
       if(btnSnap) btnSnap.classList.remove('d-none');
-      if(video) video.classList.remove('d-none');
+      if(video) {
+        video.classList.remove('d-none');
+        startFaceDetection(video);
+      }
     }
 
     let isWriting = false;
@@ -754,7 +884,14 @@
       if(sigCanvas) canvasCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
     }
 
-    document.getElementById('presence-main-form').addEventListener('submit', () => {
+    document.getElementById('presence-main-form').addEventListener('submit', (e) => {
+      const hasPhotoField = {{ $hasPhoto ? 'true' : 'false' }};
+      const photoVal = document.getElementById('photo-base64').value;
+      if (hasPhotoField && !photoVal) {
+        e.preventDefault();
+        alert('Harap ambil (capture) foto wajah Anda terlebih dahulu sebelum mengirim presensi!');
+        return false;
+      }
       if(sigCanvas) {
         document.getElementById('signature-base64').value = sigCanvas.toDataURL('image/png');
       }

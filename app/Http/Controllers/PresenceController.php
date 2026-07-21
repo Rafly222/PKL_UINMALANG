@@ -42,11 +42,11 @@ class PresenceController extends Controller
         if (!$isBypassed) {
             // Verifikasi batasan jam pelaksanaan
             $now = Carbon::now('Asia/Jakarta');
-            $eventDate = Carbon::parse($event->date, 'Asia/Jakarta');
             $start = Carbon::parse($event->date . ' ' . $event->time_start, 'Asia/Jakarta');
-            $end = Carbon::parse($event->date . ' ' . $event->time_end, 'Asia/Jakarta');
+            $endDate = $event->date_end ?? $event->date;
+            $end = Carbon::parse($endDate . ' ' . $event->time_end, 'Asia/Jakarta');
 
-            if (!$now->isSameDay($eventDate) || $now->lt($start) || $now->gt($end)) {
+            if ($now->lt($start) || $now->gt($end)) {
                 return view('presence.gate', [
                     'event' => $event,
                     'error' => 'Akses Ditolak: Kegiatan belum dimulai atau sudah berakhir!'
@@ -77,11 +77,11 @@ class PresenceController extends Controller
         if (!$isBypassed) {
             // Verifikasi batasan jam pelaksanaan
             $now = Carbon::now('Asia/Jakarta');
-            $eventDate = Carbon::parse($event->date, 'Asia/Jakarta');
             $start = Carbon::parse($event->date . ' ' . $event->time_start, 'Asia/Jakarta');
-            $end = Carbon::parse($event->date . ' ' . $event->time_end, 'Asia/Jakarta');
+            $endDate = $event->date_end ?? $event->date;
+            $end = Carbon::parse($endDate . ' ' . $event->time_end, 'Asia/Jakarta');
 
-            if (!$now->isSameDay($eventDate) || $now->lt($start) || $now->gt($end)) {
+            if ($now->lt($start) || $now->gt($end)) {
                 return view('presence.gate', [
                     'event' => $event,
                     'error' => 'Akses Ditolak: Kegiatan belum dimulai atau sudah berakhir!'
@@ -109,11 +109,12 @@ class PresenceController extends Controller
         $event = Event::where('uuid', $event_uuid)->firstOrFail();
 
         $throttleKey = 'gate_pass|' . $event->id . '|' . $request->ip();
+        $attemptsKey = 'gate_pass_attempts|' . $event->id . '|' . $request->ip();
 
-        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($throttleKey, 3)) {
+        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($throttleKey, 1)) {
             $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($throttleKey);
             $minutes = ceil($seconds / 60);
-            return back()->with('warning', "Terlalu banyak percobaan salah password. Akses Anda dibekukan sementara. Silakan coba lagi dalam {$minutes} menit.")
+            return back()->with('warning', "Kata sandi yang Anda masukkan salah. Akses Anda dibekukan sementara. Silakan coba lagi dalam {$minutes} menit.")
                          ->with('lockout_seconds', $seconds);
         }
 
@@ -128,11 +129,11 @@ class PresenceController extends Controller
         if (!$isBypassed) {
             // Verifikasi batasan jam pelaksanaan sebelum memproses password
             $now = Carbon::now('Asia/Jakarta');
-            $eventDate = Carbon::parse($event->date, 'Asia/Jakarta');
             $start = Carbon::parse($event->date . ' ' . $event->time_start, 'Asia/Jakarta');
-            $end = Carbon::parse($event->date . ' ' . $event->time_end, 'Asia/Jakarta');
+            $endDate = $event->date_end ?? $event->date;
+            $end = Carbon::parse($endDate . ' ' . $event->time_end, 'Asia/Jakarta');
 
-            if (!$now->isSameDay($eventDate) || $now->lt($start) || $now->gt($end)) {
+            if ($now->lt($start) || $now->gt($end)) {
                 return view('presence.gate', [
                     'event' => $event,
                     'error' => 'Akses Ditolak: Kegiatan belum dimulai atau sudah berakhir!'
@@ -142,21 +143,31 @@ class PresenceController extends Controller
 
         if (Hash::check($request->password, $event->password) || $request->password === $event->password) {
             \Illuminate\Support\Facades\RateLimiter::clear($throttleKey);
+            \Illuminate\Support\Facades\Cache::forget($attemptsKey);
             session(["event_gate_passed_{$event->id}" => true]);
             return redirect()->route('presence.form', $event->uuid)->with('success', 'Akses diberikan!');
         }
 
-        \Illuminate\Support\Facades\RateLimiter::hit($throttleKey, 180); // Freeze for 3 minutes (180 seconds)
+        // Hitung akumulasi percobaan salah secara bertahap
+        $attempts = \Illuminate\Support\Facades\Cache::get($attemptsKey, 0) + 1;
+        \Illuminate\Support\Facades\Cache::put($attemptsKey, $attempts, now()->addMinutes(60));
 
-        // Jika setelah kegagalan ini sudah mencapai 3 kali salah, langsung aktifkan freeze
-        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($throttleKey, 3)) {
-            $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($throttleKey);
-            $minutes = ceil($seconds / 60);
-            return back()->with('warning', "Terlalu banyak percobaan salah password. Akses Anda dibekukan sementara. Silakan coba lagi dalam {$minutes} menit.")
-                         ->with('lockout_seconds', $seconds);
+        // Durasi pembekuan bertahap (1m, 3m, 5m)
+        if ($attempts === 1) {
+            $decaySeconds = 60;   // Salah ke-1: 1 menit
+        } elseif ($attempts === 2) {
+            $decaySeconds = 180;  // Salah ke-2: 3 menit
+        } else {
+            $decaySeconds = 300;  // Salah ke-3+: 5 menit
         }
 
-        return back()->with('warning', 'Kata Sandi yang Anda masukkan salah.');
+        \Illuminate\Support\Facades\RateLimiter::hit($throttleKey, $decaySeconds);
+
+        $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($throttleKey);
+        $minutes = ceil($seconds / 60);
+
+        return back()->with('warning', "Kata sandi yang Anda masukkan salah. Akses dibekukan sementara selama {$minutes} menit (percobaan ke-{$attempts}).")
+                     ->with('lockout_seconds', $seconds);
     }
 
     public function submitForm(Request $request, $event_uuid)
@@ -174,11 +185,11 @@ class PresenceController extends Controller
         if (!$isBypassed) {
             // Verifikasi batasan jam pelaksanaan sebelum memproses submit
             $now = Carbon::now('Asia/Jakarta');
-            $eventDate = Carbon::parse($event->date, 'Asia/Jakarta');
             $start = Carbon::parse($event->date . ' ' . $event->time_start, 'Asia/Jakarta');
-            $end = Carbon::parse($event->date . ' ' . $event->time_end, 'Asia/Jakarta');
+            $endDate = $event->date_end ?? $event->date;
+            $end = Carbon::parse($endDate . ' ' . $event->time_end, 'Asia/Jakarta');
 
-            if (!$now->isSameDay($eventDate) || $now->lt($start) || $now->gt($end)) {
+            if ($now->lt($start) || $now->gt($end)) {
                 abort(403, 'Akses Ditolak: Kegiatan belum dimulai atau sudah berakhir!');
             }
 

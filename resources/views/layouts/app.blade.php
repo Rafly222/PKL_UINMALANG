@@ -28,28 +28,16 @@
     }
 
     .ep-bg-mesh {
-      background:
-        linear-gradient(135deg, rgba(94, 114, 228, .96), rgba(17, 205, 239, .88)),
-        url('{{ asset($argon . '/img/meeting.jpg') }}') center / cover;
+      background: linear-gradient(135deg, #5e72e4 0%, #11cdef 100%);
     }
 
     .ep-page-hero {
       position: relative;
       overflow: hidden;
-      min-height: 245px;
+      min-height: auto !important;
+      padding: 1.25rem 1.5rem !important;
       border-radius: 1rem;
-      box-shadow: 0 20px 45px rgba(94, 114, 228, .22);
-    }
-
-    .ep-page-hero:after {
-      content: "";
-      position: absolute;
-      right: -90px;
-      bottom: -120px;
-      width: 280px;
-      height: 280px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, .12);
+      box-shadow: 0 10px 25px rgba(94, 114, 228, .18);
     }
 
     .ep-card {
@@ -118,12 +106,112 @@
       box-shadow: inset 0 1px 14px rgba(15, 23, 42, .05);
     }
 
-    .sidenav .navbar-brand-img {
-      max-height: 34px;
+    .sidenav {
+      z-index: 1030 !important;
+      background-color: #ffffff !important;
+      transition: all 0.3s ease !important;
+    }
+    .main-content {
+      transition: all 0.3s ease !important;
     }
 
+    .sidenav .navbar-brand-img {
+      max-height: 48px !important;
+      width: auto;
+      border-radius: 0.5rem;
+    }
+
+    .sidenav .navbar-brand span {
+      font-size: 1.25rem !important;
+      font-weight: 800 !important;
+      letter-spacing: -0.02em;
+    }
+
+    .sidenav .nav-link-text {
+      font-size: 0.95rem !important;
+      font-weight: 700 !important;
+      color: #334155;
+      white-space: nowrap;
+    }
+
+    .sidenav .nav-link.active .nav-link-text {
+      color: #0f172a !important;
+      font-weight: 800 !important;
+    }
+
+    .sidenav .nav-link {
+      padding-top: 0.75rem !important;
+      padding-bottom: 0.75rem !important;
+    }
+
+    .sidenav .icon-shape {
+      width: 38px !important;
+      height: 38px !important;
+      border-radius: 0.75rem !important;
+    }
+
+    .sidenav .nav-link i {
+      font-size: 1.15rem !important;
+    }
+
+    /* Desktop Expanded & Compact Sidebar Mode */
+    @media (min-width: 1200px) {
+      .g-sidenav-show:not(.g-sidenav-hidden) .sidenav {
+        max-width: 19.5rem !important;
+        width: 19.5rem !important;
+      }
+      .g-sidenav-show:not(.g-sidenav-hidden) .main-content {
+        margin-left: 21rem !important;
+      }
+
+      body.g-sidenav-hidden .sidenav {
+        max-width: 5.5rem !important;
+        width: 5.5rem !important;
+        overflow: hidden;
+      }
+      body.g-sidenav-hidden .sidenav .nav-link-text,
+      body.g-sidenav-hidden .sidenav .navbar-brand span,
+      body.g-sidenav-hidden .sidenav .sidenav-footer .card-body div > div:last-child,
+      body.g-sidenav-hidden .sidenav .badge:not(.avatar) {
+        display: none !important;
+      }
+      body.g-sidenav-hidden .sidenav .nav-link {
+        justify-content: center !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+      }
+      body.g-sidenav-hidden .sidenav .nav-link .icon {
+        margin-right: 0 !important;
+      }
+      body.g-sidenav-hidden .sidenav .navbar-brand {
+        justify-content: center !important;
+        margin-right: 0 !important;
+        padding: 0.5rem 0 !important;
+      }
+      body.g-sidenav-hidden .sidenav .sidenav-footer {
+        margin-left: 0.5rem !important;
+        margin-right: 0.5rem !important;
+      }
+      body.g-sidenav-hidden .sidenav .sidenav-footer .card-body {
+        padding: 0.5rem !important;
+      }
+      body.g-sidenav-hidden .sidenav .sidenav-footer .card-body .d-flex {
+        justify-content: center !important;
+      }
+      body.g-sidenav-hidden .sidenav .sidenav-footer .card-body .icon {
+        margin-right: 0 !important;
+      }
+      body.g-sidenav-hidden .main-content {
+        margin-left: 7rem !important;
+      }
+    }
+
+    /* Mobile Sidebar Toggle Off-Canvas */
     @media (max-width: 1199.98px) {
-      .g-sidenav-show .main-content {
+      body.g-sidenav-hidden .sidenav {
+        transform: translateX(-21rem) !important;
+      }
+      body.g-sidenav-hidden .main-content {
         margin-left: 0 !important;
       }
     }
@@ -132,14 +220,14 @@
   @stack('styles')
 </head>
 
-<body class="g-sidenav-show bg-gray-100">
+<body class="g-sidenav-show g-sidenav-pinned bg-gray-100">
   <div class="min-height-300 bg-primary position-absolute w-100"></div>
 
   <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 shadow-lg" id="sidenav-main">
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand m-0 d-flex align-items-center" href="{{ route('home') }}">
-        <img src="{{ asset($argon . '/img/logo-ct-dark.png') }}" class="navbar-brand-img" alt="logo">
+        <img src="{{ asset($argon . '/img/epresensi-logo.png') }}" class="navbar-brand-img shadow-sm" alt="logo">
         <span class="ms-2 font-weight-bold text-dark">E-Presensi</span>
       </a>
     </div>
@@ -229,6 +317,15 @@
   <main class="main-content position-relative border-radius-lg">
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" data-scroll="false">
       <div class="container-fluid py-1 px-3">
+        <div class="d-flex align-items-center me-3">
+          <div class="sidenav-toggler sidenav-toggler-inner cursor-pointer" id="iconNavbarSidenav" style="cursor: pointer;">
+            <div class="sidenav-toggler-inner">
+              <i class="sidenav-toggler-line bg-white"></i>
+              <i class="sidenav-toggler-line bg-white"></i>
+              <i class="sidenav-toggler-line bg-white"></i>
+            </div>
+          </div>
+        </div>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
             <li class="breadcrumb-item text-sm"><a class="opacity-7 text-white" href="{{ route('home') }}">E-Presensi</a></li>
@@ -236,15 +333,6 @@
           </ol>
           <h6 class="font-weight-bolder text-white mb-0">@yield('page-title', 'Portal Presensi')</h6>
         </nav>
-        <div class="sidenav-toggler sidenav-toggler-inner d-xl-none d-block ms-auto">
-          <a href="javascript:;" class="nav-link text-white p-0" id="iconNavbarSidenav">
-            <div class="sidenav-toggler-inner">
-              <i class="sidenav-toggler-line bg-white"></i>
-              <i class="sidenav-toggler-line bg-white"></i>
-              <i class="sidenav-toggler-line bg-white"></i>
-            </div>
-          </a>
-        </div>
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
           <div class="ms-md-auto pe-md-3 d-flex align-items-center"></div>
           <ul class="navbar-nav justify-content-end">
@@ -292,9 +380,36 @@
   <script src="{{ asset($argon . '/js/core/bootstrap.min.js') }}"></script>
   <script src="{{ asset($argon . '/js/plugins/perfect-scrollbar.min.js') }}"></script>
   <script src="{{ asset($argon . '/js/plugins/smooth-scrollbar.min.js') }}"></script>
+  <script src="{{ asset($argon . '/js/plugins/qrcode.min.js') }}"></script>
   <script src="{{ asset($argon . '/js/argon-dashboard.min.js') }}"></script>
 
   @yield('scripts')
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const iconNavbarSidenav = document.getElementById('iconNavbarSidenav');
+      const iconSidenav = document.getElementById('iconSidenav');
+      const body = document.body;
+
+      function toggleSidebar(e) {
+        if (e) e.preventDefault();
+        if (body.classList.contains('g-sidenav-pinned')) {
+          body.classList.remove('g-sidenav-pinned');
+          body.classList.add('g-sidenav-hidden');
+        } else {
+          body.classList.remove('g-sidenav-hidden');
+          body.classList.add('g-sidenav-pinned');
+        }
+      }
+
+      if (iconNavbarSidenav) {
+        iconNavbarSidenav.addEventListener('click', toggleSidebar);
+      }
+      if (iconSidenav) {
+        iconSidenav.addEventListener('click', toggleSidebar);
+      }
+    });
+  </script>
 </body>
 
 </html>

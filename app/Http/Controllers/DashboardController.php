@@ -26,8 +26,9 @@ class DashboardController extends Controller
         $request->validate([
             'name' => 'required|string',
             'date' => 'required|date',
+            'date_end' => 'nullable|date|after_or_equal:date',
             'time_start' => 'required|date_format:H:i',
-            'time_end' => 'required|date_format:H:i|after:time_start',
+            'time_end' => 'required|date_format:H:i',
             'access_type' => 'required|in:publik,privat',
             'password' => 'required_if:access_type,privat|nullable|string|min:4',
             'audience_type' => 'required|in:umum,pegawai,semua',
@@ -66,6 +67,7 @@ class DashboardController extends Controller
             'user_id' => auth::id(),
             'name' => $request->name,
             'date' => $request->date,
+            'date_end' => $request->date_end ?? $request->date,
             'time_start' => $request->time_start,
             'time_end' => $request->time_end,
             'access_type' => $request->access_type,
@@ -90,8 +92,9 @@ class DashboardController extends Controller
         $request->validate([
             'name' => 'required|string',
             'date' => 'required|date',
+            'date_end' => 'nullable|date|after_or_equal:date',
             'time_start' => 'required|date_format:H:i',
-            'time_end' => 'required|date_format:H:i|after:time_start',
+            'time_end' => 'required|date_format:H:i',
             'access_type' => 'required|in:publik,privat',
             'password' => 'nullable|string|min:4',
             'audience_type' => 'required|in:umum,pegawai,semua',
@@ -133,6 +136,7 @@ class DashboardController extends Controller
         $data = [
             'name' => $request->name,
             'date' => $request->date,
+            'date_end' => $request->date_end ?? $request->date,
             'time_start' => $request->time_start,
             'time_end' => $request->time_end,
             'access_type' => $request->access_type,

@@ -4,11 +4,11 @@
 
 @section('content')
 <div class="row">
-  <div class="col-12 mb-4">
+  <div class="col-12 mb-3">
     <div class="card ep-card ep-bg-mesh">
-      <div class="card-body ep-page-hero d-flex flex-column justify-content-end p-4">
-        <h3 class="text-white font-weight-bolder mb-1">Manajemen Log Aktivitas</h3>
-        <p class="text-white opacity-8 mb-0">Audit trail aktivitas dan keamanan sistem E-Presensi.</p>
+      <div class="card-body ep-page-hero p-3 p-lg-4">
+        <h4 class="text-white font-weight-bolder mb-1">Manajemen Log Aktivitas</h4>
+        <p class="text-white opacity-9 text-sm mb-0">Audit trail aktivitas dan keamanan sistem E-Presensi.</p>
       </div>
     </div>
   </div>

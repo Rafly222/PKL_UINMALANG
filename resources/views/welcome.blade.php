@@ -17,7 +17,7 @@
     body { background: #f8f9fe; color: #344767; }
     .landing-hero {
       min-height: 540px;
-      background-image: linear-gradient(120deg, rgba(23, 43, 77, .9), rgba(94, 114, 228, .72)), url('{{ asset($argon . '/img/meeting.jpg') }}');
+      background-image: linear-gradient(180deg, rgba(20, 37, 68, .82), rgba(24, 44, 80, .85)), url('{{ asset($argon . '/img/meeting.jpg') }}');
       background-size: cover;
       background-position: center;
     }

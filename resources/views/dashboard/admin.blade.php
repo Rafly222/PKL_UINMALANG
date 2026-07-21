@@ -6,33 +6,21 @@
 
 @section('content')
 <div class="row">
-  <div class="col-12">
-    <div class="ep-page-hero ep-bg-mesh mb-4">
-      <div class="card-body position-relative z-index-2 p-4 p-lg-5">
-        <div class="row align-items-center">
-          <div class="col-lg-8">
-            <span class="badge bg-white text-danger shadow-sm mb-3">Super Admin</span>
-            <h2 class="text-white font-weight-bolder mb-2">Portal Kendali E-Presensi</h2>
-            <!-- <p class="text-white opacity-8 mb-0">Kelola event global, akun user, blacklist NIK/NIP, dan log sistem dari satu dashboard.</p> -->
-          </div>
-          <div class="col-lg-4 mt-4 mt-lg-0">
-            <div class="card bg-white shadow-lg border-0">
-              <div class="card-body p-3">
-                <div class="d-flex align-items-center">
-                  <div class="icon icon-shape bg-gradient-danger shadow text-center rounded-circle me-3">
-                    <i class="ni ni-settings-gear-65 text-lg opacity-10"></i>
-                  </div>
-                  <div>
-                    <p class="text-sm mb-0 text-uppercase font-weight-bold"></p>
-                    <h5 class="font-weight-bolder mb-0">ADMIN</h5>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+  <div class="col-12 mb-3">
+    <div class="card ep-card ep-bg-mesh">
+      <div class="card-body ep-page-hero p-3 p-lg-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div>
+          <span class="badge bg-white text-danger shadow-sm mb-1">Super Admin</span>
+          <h4 class="text-white font-weight-bolder mb-0">Portal Kendali & Pembuatan Event</h4>
+        </div>
+        <div class="badge bg-white text-dark shadow-sm px-3 py-2 font-weight-bold d-flex align-items-center gap-2">
+          <i class="ni ni-settings-gear-65 text-danger"></i>
+          <span>SUPER ADMIN</span>
         </div>
       </div>
     </div>
+  </div>
+</div>
     @includeWhen(session('success') || session('warning') || session('info') || $errors->any(), 'partials.flash')
 
     @if($pendingUsersCount > 0)
@@ -134,11 +122,26 @@
       <div class="card-body">
         <form action="{{ route('admin.event.store') }}" method="POST">
           @csrf
-          <input type="text" name="name" class="form-control mb-3" placeholder="Nama event" required>
+          <input type="text" name="name" class="form-control mb-3" placeholder="Nama event" required value="{{ old('name') }}">
           <div class="row">
-            <div class="col-6"><input type="date" name="date" class="form-control mb-3" required></div>
-            <div class="col-3"><input type="time" name="time_start" class="form-control mb-3" required></div>
-            <div class="col-3"><input type="time" name="time_end" class="form-control mb-3" required></div>
+            <div class="col-6 mb-3">
+              <label class="form-control-label text-xs">Tanggal Mulai</label>
+              <input type="date" name="date" class="form-control" required value="{{ old('date') }}">
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-control-label text-xs">Tanggal Selesai (Opsional)</label>
+              <input type="date" name="date_end" class="form-control" value="{{ old('date_end') }}" placeholder="Sama dengan tanggal mulai">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label class="form-control-label text-xs">Jam Mulai</label>
+              <input type="time" name="time_start" class="form-control" required value="{{ old('time_start') }}">
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-control-label text-xs">Jam Selesai</label>
+              <input type="time" name="time_end" class="form-control" required value="{{ old('time_end') }}">
+            </div>
           </div>
           <div class="row">
             <div class="col-6">
@@ -224,27 +227,68 @@
                         <i class="ni ni-badge text-danger"></i>
                       </div>
                       <div>
-                        <h6 class="text-sm mb-0">{{ $event->name }}</h6>
+                        <h6 class="text-sm mb-0 font-weight-bold">{{ $event->name }}</h6>
                         <span class="badge badge-sm {{ $event->access_type === 'privat' ? 'bg-gradient-warning' : 'bg-gradient-success' }}">{{ ucfirst($event->access_type) }}</span>
                         <span class="badge badge-sm {{ $event->status_absensi === 'Berlaku' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">{{ $event->status_absensi }}</span>
                       </div>
                     </div>
                   </td>
-                  <td class="text-sm">{{ $event->creator->name ?? 'Admin' }}</td>
+                  <td class="text-sm font-weight-bold">{{ $event->creator->name ?? 'Admin' }}</td>
                   <td class="text-sm">
-                    <span class="font-weight-bold">{{ \Carbon\Carbon::parse($event->date)->format('d/m/Y') }}</span><br>
-                    <span class="text-xs text-muted">{{ \Carbon\Carbon::parse($event->time_start)->format('H:i') }} - {{ \Carbon\Carbon::parse($event->time_end)->format('H:i') }}</span>
+                    <span class="font-weight-bold text-dark">{{ $event->formatted_date_range }}</span><br>
+                    <span class="text-xs text-muted">{{ \Carbon\Carbon::parse($event->time_start)->format('H:i') }} - {{ \Carbon\Carbon::parse($event->time_end)->format('H:i') }} WIB</span>
                   </td>
                   <td class="text-center">
-                    <a href="{{ route('event.presences', $event->uuid) }}" class="btn btn-xs bg-gradient-success mb-1">Rekap</a>
-                    <button type="button" class="btn btn-xs bg-gradient-info mb-1" data-bs-toggle="modal" data-bs-target="#editEventModal-{{ $event->id }}">Edit</button>
-                    <a href="{{ route('presence.form', $event->uuid) }}" class="btn btn-xs bg-gradient-primary mb-1">Buka</a>
-                    <button type="button" class="btn btn-xs btn-outline-secondary mb-1" onclick="navigator.clipboard.writeText('{{ route('presence.form', $event->uuid) }}')">Salin</button>
+                    <button type="button" class="btn btn-xs bg-gradient-dark mb-1 me-1 shadow-xs" data-bs-toggle="modal" data-bs-target="#qrModal-{{ $event->id }}">
+                      <i class="fas fa-qrcode me-1"></i> QR Code
+                    </button>
+                    <a href="{{ route('event.presences', $event->uuid) }}" class="btn btn-xs bg-gradient-success mb-1 me-1">Rekap</a>
+                    <button type="button" class="btn btn-xs bg-gradient-info mb-1 me-1" data-bs-toggle="modal" data-bs-target="#editEventModal-{{ $event->id }}">Edit</button>
+                    <a href="{{ route('presence.form', $event->uuid) }}" class="btn btn-xs bg-gradient-primary mb-1 me-1">Buka</a>
+                    <button type="button" class="btn btn-xs btn-outline-secondary mb-1 me-1" onclick="navigator.clipboard.writeText('{{ route('presence.form', $event->uuid) }}')">Salin</button>
                     <form action="{{ route('event.destroy', $event) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus event ini?')">
                       @csrf
                       @method('DELETE')
                       <button class="btn btn-xs btn-outline-danger mb-1">Hapus</button>
                     </form>
+
+                    <!-- Modal Preview QR Code -->
+                    <div class="modal fade" id="qrModal-{{ $event->id }}" tabindex="-1" role="dialog" aria-labelledby="qrModalLabel-{{ $event->id }}" aria-hidden="true" data-url="{{ route('presence.form', $event->uuid) }}">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content border-0 ep-card">
+                          <div class="modal-header bg-gradient-primary text-start">
+                            <h6 class="modal-title text-white font-weight-bolder mb-0" id="qrModalLabel-{{ $event->id }}"><i class="fas fa-qrcode me-2"></i> QR Code Event Presensi</h6>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body text-center p-4">
+                            <div class="p-3 bg-white rounded-3 border shadow-sm d-inline-block w-100" id="qrCardArea-{{ $event->id }}">
+                              <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                                <img src="{{ asset('assets/argon-dashboard-pro-html-v2.0.5/assets/img/epresensi-logo.png') }}" style="height: 32px;" alt="Logo">
+                                <h6 class="font-weight-bolder mb-0 text-dark">E-Presensi Diskominfo</h6>
+                              </div>
+                              <h5 class="font-weight-bolder text-primary mb-1">{{ $event->name }}</h5>
+                              <p class="text-xs text-muted mb-3 font-weight-bold">
+                                <i class="ni ni-calendar-grid-58 text-info me-1"></i> {{ $event->formatted_date_range }} ({{ \Carbon\Carbon::parse($event->time_start)->format('H:i') }} - {{ \Carbon\Carbon::parse($event->time_end)->format('H:i') }} WIB)
+                              </p>
+                              
+                              <div class="d-flex justify-content-center my-3">
+                                <div id="qrcode-box-{{ $event->id }}" class="p-2 bg-white rounded border shadow-xs d-inline-block"></div>
+                              </div>
+                              
+                              <p class="text-xs text-muted mb-0 text-break" style="font-size: 11px;">
+                                {{ route('presence.form', $event->uuid) }}
+                              </p>
+                            </div>
+                          </div>
+                          <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-outline-secondary mb-0 shadow-sm" data-bs-dismiss="modal">Tutup</button>
+                            <button type="button" class="btn bg-gradient-primary mb-0 shadow-sm download-qr-btn" data-event-id="{{ $event->id }}" data-event-name="{{ Str::slug($event->name) }}">
+                              <i class="fas fa-download me-1"></i> Unduh QR Code
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </td>
                 </tr>
                 @include('partials.edit_event_modal', ['event' => $event])
@@ -332,6 +376,71 @@
         }
       });
     }
+
+    const qrModals = document.querySelectorAll('.modal[id^="qrModal-"]');
+    qrModals.forEach(modal => {
+      modal.addEventListener('shown.bs.modal', function () {
+        const eventId = this.id.replace('qrModal-', '');
+        const qrBox = document.getElementById('qrcode-box-' + eventId);
+        const url = this.getAttribute('data-url');
+        if (qrBox && qrBox.children.length === 0) {
+          try {
+            if (typeof QRCode !== 'undefined') {
+              new QRCode(qrBox, {
+                text: url,
+                width: 180,
+                height: 180,
+                colorDark : "#0f172a",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+              });
+            } else {
+              qrBox.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}" alt="QR Code" class="img-fluid rounded" />`;
+            }
+          } catch (err) {
+            qrBox.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}" alt="QR Code" class="img-fluid rounded" />`;
+          }
+        }
+      });
+    });
+
+    document.querySelectorAll('.download-qr-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const eventId = this.getAttribute('data-event-id');
+        const eventName = this.getAttribute('data-event-name');
+        const qrBox = document.getElementById('qrcode-box-' + eventId);
+        if (qrBox) {
+          const canvas = qrBox.querySelector('canvas');
+          const img = qrBox.querySelector('img');
+          
+          if (canvas) {
+            const a = document.createElement('a');
+            a.href = canvas.toDataURL('image/png');
+            a.download = 'QR_Code_' + eventName + '.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          } else if (img && img.src) {
+            const tempCanvas = document.createElement('canvas');
+            const ctx = tempCanvas.getContext('2d');
+            const tempImg = new Image();
+            tempImg.crossOrigin = 'anonymous';
+            tempImg.onload = function() {
+              tempCanvas.width = tempImg.naturalWidth || 180;
+              tempCanvas.height = tempImg.naturalHeight || 180;
+              ctx.drawImage(tempImg, 0, 0);
+              const a = document.createElement('a');
+              a.href = tempCanvas.toDataURL('image/png');
+              a.download = 'QR_Code_' + eventName + '.png';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+            };
+            tempImg.src = img.src;
+          }
+        }
+      });
+    });
   });
 </script>
 @endsection

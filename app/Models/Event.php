@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Event extends Model
 {
     protected $fillable = [
-        'uuid', 'user_id', 'name', 'date', 'time_start', 'time_end', 
+        'uuid', 'user_id', 'name', 'date', 'date_end', 'time_start', 'time_end', 
         'access_type', 'password', 'audience_type', 'fields', 'custom_fields'
     ];
 
@@ -41,8 +41,23 @@ class Event extends Model
     {
         $now = \Carbon\Carbon::now('Asia/Jakarta');
         $start = \Carbon\Carbon::parse($this->date . ' ' . $this->time_start, 'Asia/Jakarta');
-        $end = \Carbon\Carbon::parse($this->date . ' ' . $this->time_end, 'Asia/Jakarta');
+        $endDate = $this->date_end ?? $this->date;
+        $end = \Carbon\Carbon::parse($endDate . ' ' . $this->time_end, 'Asia/Jakarta');
 
         return $now->between($start, $end) ? 'Berlaku' : 'Tidak Berlaku';
+    }
+
+    // Accessor untuk format rentang tanggal event (misal: 01 - 31 Juli 2026 atau 21 Juli 2026)
+    public function getFormattedDateRangeAttribute()
+    {
+        $startDate = \Carbon\Carbon::parse($this->date);
+        if ($this->date_end && $this->date_end !== $this->date) {
+            $endDate = \Carbon\Carbon::parse($this->date_end);
+            if ($startDate->format('m Y') === $endDate->format('m Y')) {
+                return $startDate->format('d') . ' - ' . $endDate->format('d F Y');
+            }
+            return $startDate->format('d M Y') . ' - ' . $endDate->format('d M Y');
+        }
+        return $startDate->format('d F Y');
     }
 }

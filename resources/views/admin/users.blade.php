@@ -4,11 +4,11 @@
 
 @section('content')
 <div class="row">
-  <div class="col-12 mb-4">
+  <div class="col-12 mb-3">
     <div class="card ep-card ep-bg-mesh">
-      <div class="card-body ep-page-hero d-flex flex-column justify-content-end p-4">
-        <h3 class="text-white font-weight-bolder mb-1">Manajemen Akun</h3>
-        <p class="text-white opacity-8 mb-0">Kelola akun creator (staff/user) dan admin aplikasi.</p>
+      <div class="card-body ep-page-hero p-3 p-lg-4">
+        <h4 class="text-white font-weight-bolder mb-1">Manajemen Akun</h4>
+        <p class="text-white opacity-9 text-sm mb-0">Kelola akun creator (staff/user) dan admin aplikasi.</p>
       </div>
     </div>
   </div>
@@ -19,45 +19,7 @@
     @includeWhen(session('success') || session('warning') || session('info') || $errors->any(), 'partials.flash')
   </div>
 
-  <div class="col-lg-4 mb-4">
-    <div class="card ep-card ep-form-card">
-      <div class="card-header pb-0 bg-transparent">
-        <h6 class="mb-0">Tambah Akun Pengguna</h6>
-        <p class="text-xs text-muted mb-0">Daftarkan akun admin atau staff baru secara langsung.</p>
-      </div>
-      <div class="card-body">
-        <form action="{{ route('admin.users.store') }}" method="POST">
-          @csrf
-          <div class="mb-3">
-            <label class="form-control-label text-xs">Nama Lengkap</label>
-            <input name="name" class="form-control" placeholder="Nama lengkap & gelar" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-control-label text-xs">Email Resmi</label>
-            <input name="email" type="email" class="form-control" placeholder="email@malangkota.go.id" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-control-label text-xs">NIP (Nomor Induk Pegawai)</label>
-            <input name="nip" class="form-control" placeholder="NIP 18 digit">
-          </div>
-          <div class="mb-3">
-            <label class="form-control-label text-xs">Password</label>
-            <input name="password" type="password" class="form-control" placeholder="Minimal 6 karakter" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-control-label text-xs">Hak Akses (Role)</label>
-            <select name="role" class="form-control">
-              <option value="user">User / Staff Creator</option>
-              <option value="admin">Super Admin</option>
-            </select>
-          </div>
-          <button class="btn bg-gradient-primary w-100 mb-0 shadow">Daftarkan Pengguna</button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-lg-8 mb-4">
+  <div class="col-12 mb-4">
     @if($pendingUsers->count() > 0)
       <div class="card ep-card mb-4 border-warning border-1 shadow-warning">
         <div class="card-header pb-0 bg-transparent">
@@ -120,8 +82,15 @@
 
     <div class="card ep-card">
       <div class="card-header pb-0 bg-transparent">
-        <h6 class="mb-0">Daftar Pengguna Aktif</h6>
-        <p class="text-xs text-muted mb-0">List seluruh administrator dan staff terdaftar dalam sistem.</p>
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <div>
+            <h6 class="mb-0 font-weight-bolder">Daftar Pengguna Aktif</h6>
+            <p class="text-xs text-muted mb-0">List seluruh administrator dan staff terdaftar dalam sistem.</p>
+          </div>
+          <button class="btn bg-gradient-primary mb-0 font-weight-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#createAccountModal">
+            <i class="fas fa-user-plus me-1"></i> Tambah Akun
+          </button>
+        </div>
       </div>
       <div class="card-body">
         <div class="table-responsive p-3">
@@ -189,7 +158,7 @@
                               </div>
                               <div class="mb-3">
                                 <label class="form-control-label text-xs">NIP (Nomor Induk Pegawai)</label>
-                                <input name="nip" class="form-control" value="{{ $user->nip }}" placeholder="NIP 18 digit (opsional)">
+                                <input name="nip" class="form-control" value="{{ $user->nip }}" placeholder="NIP (opsional)">
                               </div>
                               <div class="mb-3">
                                 <label class="form-control-label text-xs">Password Baru (Kosongkan jika tidak ingin diubah)</label>
@@ -221,6 +190,52 @@
     </div>
   </div>
 </div>
+
+<!-- Modal Tambah Akun -->
+<div class="modal fade" id="createAccountModal" tabindex="-1" role="dialog" aria-labelledby="createAccountModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0 ep-card">
+      <div class="modal-header">
+        <h5 class="modal-title font-weight-bolder" id="createAccountModalLabel">Tambah Akun Pengguna</h5>
+        <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-start">
+        <form action="{{ route('admin.users.store') }}" method="POST">
+          @csrf
+          <div class="mb-3">
+            <label class="form-control-label text-xs">Nama Lengkap</label>
+            <input name="name" class="form-control" placeholder="Nama lengkap & gelar" required value="{{ old('name') }}">
+          </div>
+          <div class="mb-3">
+            <label class="form-control-label text-xs">Email Resmi</label>
+            <input name="email" type="email" class="form-control" placeholder="email@malangkota.go.id" required value="{{ old('email') }}">
+          </div>
+          <div class="mb-3">
+            <label class="form-control-label text-xs">NIP (Nomor Induk Pegawai)</label>
+            <input name="nip" class="form-control" placeholder="NIP (opsional)" value="{{ old('nip') }}">
+          </div>
+          <div class="mb-3">
+            <label class="form-control-label text-xs">Password</label>
+            <input name="password" type="password" class="form-control" placeholder="Minimal 6 karakter" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-control-label text-xs">Hak Akses (Role)</label>
+            <select name="role" class="form-control">
+              <option value="user">User / Staff Creator</option>
+              <option value="admin">Super Admin</option>
+            </select>
+          </div>
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <button type="button" class="btn btn-outline-secondary mb-0 shadow-sm" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn bg-gradient-primary mb-0 shadow-sm">Daftarkan Pengguna</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -240,6 +255,14 @@
         }
       });
     }
+
+    @if($errors->any())
+      const createModalElement = document.getElementById('createAccountModal');
+      if (createModalElement) {
+        const createModal = new bootstrap.Modal(createModalElement);
+        createModal.show();
+      }
+    @endif
   });
 </script>
 @endsection

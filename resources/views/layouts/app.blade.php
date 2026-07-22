@@ -262,6 +262,47 @@
       }
     }
 
+    /* Sidebar Header Layout for Toggle Button */
+    .sidenav-header {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      padding: 0 1.25rem !important;
+    }
+    .sidenav-header .navbar-brand {
+      padding: 1.5rem 0 !important;
+      margin: 0 !important;
+    }
+    #iconNavbarSidenav {
+      z-index: 1000;
+      padding: 0.5rem;
+      border-radius: 0.375rem;
+      transition: all 0.2s ease;
+      margin-top: 0.25rem;
+      position: relative;
+    }
+    #iconNavbarSidenav:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Style when sidebar is minimized (hidden) */
+    @media (min-width: 1200px) {
+      body.g-sidenav-hidden .sidenav-header {
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        height: auto !important;
+        padding: 1.5rem 0 !important;
+        gap: 0.75rem;
+      }
+      body.g-sidenav-hidden .sidenav-header .navbar-brand {
+        padding: 0 !important;
+      }
+      body.g-sidenav-hidden #iconNavbarSidenav {
+        margin: 0 !important;
+      }
+    }
+
     /* Mobile Sidebar Toggle Off-Canvas */
     @media (max-width: 1199.98px) {
       body.g-sidenav-hidden .sidenav {
@@ -281,11 +322,17 @@
 
   <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 shadow-lg" id="sidenav-main">
     <div class="sidenav-header">
-      <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand m-0 d-flex align-items-center" href="{{ route('home') }}">
         <img src="{{ asset($argon . '/img/epresensi-logo.png') }}" class="navbar-brand-img shadow-sm" alt="logo">
         <span class="ms-2 font-weight-bold text-dark">E-Presensi</span>
       </a>
+      <div class="sidenav-toggler sidenav-toggler-inner cursor-pointer" id="iconNavbarSidenav" style="cursor: pointer;">
+        <div class="sidenav-toggler-inner">
+          <i class="sidenav-toggler-line bg-dark"></i>
+          <i class="sidenav-toggler-line bg-dark"></i>
+          <i class="sidenav-toggler-line bg-dark"></i>
+        </div>
+      </div>
     </div>
     <hr class="horizontal dark mt-0">
     <div class="collapse navbar-collapse w-auto h-auto" id="sidenav-collapse-main">
@@ -365,8 +412,8 @@
   <main class="main-content position-relative border-radius-lg">
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-0 mb-3 shadow-none border-radius-xl" id="navbarBlur" data-scroll="false">
       <div class="container-fluid py-1 px-3">
-        <div class="d-flex align-items-center me-3">
-          <div class="sidenav-toggler sidenav-toggler-inner cursor-pointer" id="iconNavbarSidenav" style="cursor: pointer;">
+        <div class="d-flex align-items-center me-3 d-xl-none">
+          <div class="sidenav-toggler sidenav-toggler-inner cursor-pointer" id="iconNavbarSidenavMobile" style="cursor: pointer;">
             <div class="sidenav-toggler-inner">
               <i class="sidenav-toggler-line bg-white"></i>
               <i class="sidenav-toggler-line bg-white"></i>
@@ -436,6 +483,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const iconNavbarSidenav = document.getElementById('iconNavbarSidenav');
+      const iconNavbarSidenavMobile = document.getElementById('iconNavbarSidenavMobile');
       const iconSidenav = document.getElementById('iconSidenav');
       const body = document.body;
 
@@ -452,6 +500,9 @@
 
       if (iconNavbarSidenav) {
         iconNavbarSidenav.addEventListener('click', toggleSidebar);
+      }
+      if (iconNavbarSidenavMobile) {
+        iconNavbarSidenavMobile.addEventListener('click', toggleSidebar);
       }
       if (iconSidenav) {
         iconSidenav.addEventListener('click', toggleSidebar);

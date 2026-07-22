@@ -16,7 +16,9 @@
   <style>
     body { background: #f8f9fe; color: #344767; }
     .landing-hero {
-      min-height: 540px;
+      min-height: 360px;
+      padding-top: 80px;
+      padding-bottom: 40px;
       background-image: linear-gradient(180deg, rgba(20, 37, 68, .82), rgba(24, 44, 80, .85)), url('{{ asset($argon . '/img/meeting.jpg') }}');
       background-size: cover;
       background-position: center;
@@ -27,16 +29,18 @@
     
     /* Responsivitas Hero & Stat Card */
     @media (min-width: 992px) {
-      .stat-card { margin-top: -72px; position: relative; z-index: 2; }
+      .stat-card { margin-top: -35px; position: relative; z-index: 2; }
     }
     @media (max-width: 991.98px) {
       .landing-hero {
-        padding-top: 120px;
-        padding-bottom: 60px;
+        padding-top: 100px;
+        padding-bottom: 40px;
         min-height: auto;
       }
-      .stat-card { margin-top: 24px; position: relative; z-index: 2; }
+      .stat-card { margin-top: 20px; position: relative; z-index: 2; }
     }
+
+
   </style>
 </head>
 
@@ -88,19 +92,9 @@
             <a href="{{ route('login') }}" class="btn btn-outline-white mb-0">Portal Staff</a>
           </div>
         </div>
-        <div class="col-lg-4 ms-auto mt-5 mt-lg-0">
-          <div class="card glass-panel shadow-lg border-radius-xl">
-            <div class="card-body p-4">
-              <div class="d-flex align-items-center mb-3">
-                <div class="icon icon-shape bg-white shadow text-center border-radius-md me-3">
-                  <i class="ni ni-check-bold text-success"></i>
-                </div>
-                <div>
-                  <h6 class="text-white mb-0"></h6>
-                  <p class="text-white opacity-8 text-xs mb-0"></p>
-                </div>
-              </div>
-              <hr class="horizontal light my-3">
+        <div class="col-lg-4 ms-auto mt-4 mt-lg-0">
+          <div class="card glass-panel shadow border-radius-xl">
+            <div class="card-body p-3">
               <div class="d-flex justify-content-between">
                 <span class="text-white opacity-8 text-sm">Event tersedia</span>
                 <span class="text-white font-weight-bolder">{{ $events->count() }}</span>

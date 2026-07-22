@@ -228,21 +228,21 @@
                       <div id="nip-card-wrapper" style="display: {{ $event->audience_type === 'pegawai' ? 'block' : 'none' }};">
                         <div class="card ep-card bg-gray-100 border-0 mb-2">
                           <div class="card-body p-2">
-                            <div class="d-flex align-items-center mb-1">
-                              <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-sm me-2 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; min-width: 24px;">
-                                <i class="ni ni-circle-08 text-xxs text-white"></i>
+                            <div class="d-flex align-items-center mb-2">
+                              <div class="icon icon-shape bg-gradient-info shadow text-center rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; min-width: 24px;">
+                                <i class="fas fa-id-card text-white" style="font-size: 10px;"></i>
                               </div>
                               <div>
-                                <h6 class="text-xs mb-0">Integrasi Data Pegawai</h6>
+                                <h6 class="text-xs mb-0 font-weight-bold">Integrasi Data Pegawai</h6>
                               </div>
                             </div>
-                            <div class="row align-items-end">
-                              <div class="col-8">
+                            <div class="d-flex align-items-end gap-2">
+                              <div class="flex-grow-1">
                                 <label class="form-control-label text-xxs">NIP Pegawai <span class="text-danger">*</span></label>
                                 <input type="text" name="nip" id="form-nip" value="{{ old('nip') }}" placeholder="18 digit NIP" class="form-control form-control-sm" maxlength="18" autocomplete="on">
                               </div>
-                              <div class="col-4">
-                                <button type="button" onclick="fetchEmployeeApi(this)" class="btn btn-xs bg-gradient-info w-100 mb-0 shadow">
+                              <div>
+                                <button type="button" onclick="fetchEmployeeApi(this)" class="btn btn-xs bg-gradient-info mb-0 shadow" style="min-width: 85px;">
                                   Cari NIP
                                 </button>
                               </div>
@@ -412,20 +412,20 @@
                         <div class="card ep-card bg-gray-100 border-0 mb-3">
                           <div class="card-body p-3">
                             <div class="d-flex align-items-center mb-2">
-                              <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-sm me-2 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
-                                <i class="ni ni-circle-08 text-xs text-white"></i>
+                              <div class="icon icon-shape bg-gradient-info shadow text-center rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; min-width: 28px;">
+                                <i class="fas fa-id-card text-white" style="font-size: 12px;"></i>
                               </div>
                               <div>
-                                <h6 class="text-xs mb-0">Integrasi Data Pegawai</h6>
+                                <h6 class="text-xs mb-0 font-weight-bold">Integrasi Data Pegawai</h6>
                               </div>
                             </div>
-                            <div class="row align-items-end">
-                              <div class="col-8">
+                            <div class="d-flex align-items-end gap-2">
+                              <div class="flex-grow-1">
                                 <label class="form-control-label text-xxs">NIP Pegawai <span class="text-danger">*</span></label>
                                 <input type="text" name="nip" id="form-nip" value="{{ old('nip') }}" placeholder="18 digit NIP" class="form-control form-control-sm" maxlength="18" autocomplete="on">
                               </div>
-                              <div class="col-4">
-                                <button type="button" onclick="fetchEmployeeApi(this)" class="btn btn-xs bg-gradient-info w-100 mb-0 shadow">
+                              <div>
+                                <button type="button" onclick="fetchEmployeeApi(this)" class="btn btn-xs bg-gradient-info mb-0 shadow" style="min-width: 90px;">
                                   Cari NIP
                                 </button>
                               </div>

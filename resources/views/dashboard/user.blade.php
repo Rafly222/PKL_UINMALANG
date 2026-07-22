@@ -412,7 +412,12 @@
                     img.src = canvas.toDataURL('image/png');
                   }
                 };
-                logo.src = '{{ asset("assets/argon-dashboard-pro-html-v2.0.5/assets/img/logos/GKV307_Kota Malang-logobase.net.png") }}';
+                const logoSrc = '{{ asset("assets/argon-dashboard-pro-html-v2.0.5/assets/img/logos/GKV307_Kota Malang-logobase.net.png") }}';
+                try {
+                  logo.src = new URL(logoSrc).pathname;
+                } catch (e) {
+                  logo.src = logoSrc;
+                }
               }
             } else {
               qrBox.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}" alt="QR Code" class="img-fluid rounded" />`;
@@ -428,21 +433,26 @@
       btn.addEventListener('click', function() {
         const eventId = this.getAttribute('data-event-id');
         const eventName = this.getAttribute('data-event-name');
-        const qrBox = document.getElementById('qrcode-box-' + eventId);
-        if (qrBox) {
-          const canvas = qrBox.querySelector('canvas');
+        const qrModal = document.getElementById('qrModal-' + eventId);
+        const url = qrModal ? qrModal.getAttribute('data-url') : '';
+        
+        if (!url) return;
+
+        if (typeof QRCode !== 'undefined') {
+          // Create a temporary div to generate a high-res QR code
+          const tempDiv = document.createElement('div');
+          new QRCode(tempDiv, {
+            text: url,
+            width: 600,
+            height: 600,
+            colorDark : "#0f172a",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+          });
+
+          const canvas = tempDiv.querySelector('canvas');
           if (canvas) {
-            // Create a high-res canvas (600x600) for downloading
-            const downloadCanvas = document.createElement('canvas');
-            downloadCanvas.width = 600;
-            downloadCanvas.height = 600;
-            const ctx = downloadCanvas.getContext('2d');
-
-            // Draw the QR code scaled up to 600x600 (disable smoothing for perfect crispness)
-            ctx.imageSmoothingEnabled = false;
-            ctx.drawImage(canvas, 0, 0, 600, 600);
-
-            // Load and draw the logo at the center of the download canvas
+            const ctx = canvas.getContext('2d');
             const logo = new Image();
             const logoSrc = '{{ asset("assets/argon-dashboard-pro-html-v2.0.5/assets/img/logos/GKV307_Kota Malang-logobase.net.png") }}';
             try {
@@ -467,23 +477,77 @@
 
               // Trigger download
               const a = document.createElement('a');
-              a.href = downloadCanvas.toDataURL('image/png');
+              a.href = canvas.toDataURL('image/png');
               a.download = 'QR_Code_' + eventName + '.png';
               document.body.appendChild(a);
               a.click();
               document.body.removeChild(a);
             };
 
-            // In case image loading fails, download the plain QR code as fallback
             logo.onerror = function() {
               const a = document.createElement('a');
-              a.href = downloadCanvas.toDataURL('image/png');
+              a.href = canvas.toDataURL('image/png');
               a.download = 'QR_Code_' + eventName + '.png';
               document.body.appendChild(a);
               a.click();
               document.body.removeChild(a);
             };
           }
+        } else {
+          // Fallback if QRCode is not defined: Use API
+          const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=${encodeURIComponent(url)}`;
+          const qrImg = new Image();
+          qrImg.crossOrigin = 'anonymous';
+          qrImg.src = qrImgUrl;
+          
+          qrImg.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 600;
+            canvas.height = 600;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(qrImg, 0, 0, 600, 600);
+            
+            const logo = new Image();
+            const logoSrc = '{{ asset("assets/argon-dashboard-pro-html-v2.0.5/assets/img/logos/GKV307_Kota Malang-logobase.net.png") }}';
+            try {
+              logo.src = new URL(logoSrc).pathname;
+            } catch (e) {
+              logo.src = logoSrc;
+            }
+            
+            logo.onload = function() {
+              const logoSize = 110;
+              const x = (600 - logoSize) / 2;
+              const y = (600 - logoSize) / 2;
+
+              ctx.fillStyle = '#ffffff';
+              ctx.beginPath();
+              ctx.arc(300, 300, (logoSize + 22) / 2, 0, 2 * Math.PI);
+              ctx.fill();
+
+              ctx.drawImage(logo, x, y, logoSize, logoSize);
+
+              const a = document.createElement('a');
+              a.href = canvas.toDataURL('image/png');
+              a.download = 'QR_Code_' + eventName + '.png';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+            };
+            
+            logo.onerror = function() {
+              const a = document.createElement('a');
+              a.href = canvas.toDataURL('image/png');
+              a.download = 'QR_Code_' + eventName + '.png';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+            };
+          };
+          
+          qrImg.onerror = function() {
+            window.open(qrImgUrl, '_blank');
+          };
         }
       });
     });

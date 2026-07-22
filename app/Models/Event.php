@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class Event extends Model
 {
@@ -15,7 +17,7 @@ class Event extends Model
     {
         static::creating(function ($event) {
             if (empty($event->uuid)) {
-                $event->uuid = (string) \Illuminate\Support\Str::uuid();
+                $event->uuid = (string) Str::uuid();
             }
         });
     }
@@ -39,10 +41,10 @@ class Event extends Model
     // Accessor untuk mendapatkan status form presensi (Berlaku / Tidak Berlaku)
     public function getStatusAbsensiAttribute()
     {
-        $now = \Carbon\Carbon::now('Asia/Jakarta');
-        $start = \Carbon\Carbon::parse($this->date . ' ' . $this->time_start, 'Asia/Jakarta');
+        $now = Carbon::now('Asia/Jakarta');
+        $start = Carbon::parse($this->date . ' ' . $this->time_start, 'Asia/Jakarta');
         $endDate = $this->date_end ?? $this->date;
-        $end = \Carbon\Carbon::parse($endDate . ' ' . $this->time_end, 'Asia/Jakarta');
+        $end = Carbon::parse($endDate . ' ' . $this->time_end, 'Asia/Jakarta');
 
         return $now->between($start, $end) ? 'Berlaku' : 'Tidak Berlaku';
     }
@@ -50,9 +52,9 @@ class Event extends Model
     // Accessor untuk format rentang tanggal event (misal: 01 - 31 Juli 2026 atau 21 Juli 2026)
     public function getFormattedDateRangeAttribute()
     {
-        $startDate = \Carbon\Carbon::parse($this->date);
+        $startDate = Carbon::parse($this->date);
         if ($this->date_end && $this->date_end !== $this->date) {
-            $endDate = \Carbon\Carbon::parse($this->date_end);
+            $endDate = Carbon::parse($this->date_end);
             if ($startDate->format('m Y') === $endDate->format('m Y')) {
                 return $startDate->format('d') . ' - ' . $endDate->format('d F Y');
             }

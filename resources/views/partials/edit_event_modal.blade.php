@@ -114,7 +114,7 @@
                   <div class="col-3 text-end">
                     <button type="button" class="btn btn-outline-danger btn-xs mb-0 remove-custom-field d-flex align-items-center justify-content-center gap-1 w-100" onclick="this.closest('.row').remove()">
                       <i class="ni ni-fat-remove me-1"></i>
-                      <span>Hapus</span>
+                      <span class="d-none d-sm-inline">Hapus</span>
                     </button>
                   </div>
                 </div>
@@ -179,7 +179,7 @@
           <div class="col-3 text-end">
             <button type="button" class="btn btn-outline-danger btn-xs mb-0 remove-custom-field d-flex align-items-center justify-content-center gap-1 w-100">
               <i class="ni ni-fat-remove me-1"></i>
-              <span>Hapus</span>
+              <span class="d-none d-sm-inline">Hapus</span>
             </button>
           </div>`;
         row.querySelector('.remove-custom-field').addEventListener('click', () => {

@@ -2,6 +2,31 @@
 
 @section('title', 'Log Aktivitas - E-Presensi Diskominfo')
 
+@push('styles')
+<style>
+  @media (max-width: 575.98px) {
+    .ep-log-stat-card .card-body {
+      padding: 0.75rem !important;
+    }
+    .ep-log-stat-card .icon-shape {
+      width: 32px !important;
+      height: 32px !important;
+      min-width: 32px !important;
+    }
+    .ep-log-stat-card .icon-shape i {
+      font-size: 0.85rem !important;
+      top: 0 !important;
+    }
+    .ep-log-stat-card p {
+      font-size: 0.65rem !important;
+    }
+    .ep-log-stat-card h5 {
+      font-size: 0.95rem !important;
+    }
+  }
+</style>
+@endpush
+
 @section('content')
 <div class="row">
   <div class="col-12 mb-3">
@@ -15,8 +40,8 @@
 </div>
 
 <div class="row mb-4">
-  <div class="col-xl-2 col-md-4 col-sm-6 mb-3 mb-xl-0">
-    <div class="card ep-card">
+  <div class="col-6 col-sm-6 col-md-4 col-xl-2 mb-3 mb-xl-0">
+    <div class="card ep-card ep-log-stat-card">
       <div class="card-body p-3">
         <div class="d-flex align-items-center">
           <div>
@@ -31,8 +56,8 @@
     </div>
   </div>
 
-  <div class="col-xl-2 col-md-4 col-sm-6 mb-3 mb-xl-0">
-    <div class="card ep-card">
+  <div class="col-6 col-sm-6 col-md-4 col-xl-2 mb-3 mb-xl-0">
+    <div class="card ep-card ep-log-stat-card">
       <div class="card-body p-3">
         <div class="d-flex align-items-center">
           <div>
@@ -47,8 +72,8 @@
     </div>
   </div>
 
-  <div class="col-xl-2 col-md-4 col-sm-6 mb-3 mb-xl-0">
-    <div class="card ep-card">
+  <div class="col-6 col-sm-6 col-md-4 col-xl-2 mb-3 mb-xl-0">
+    <div class="card ep-card ep-log-stat-card">
       <div class="card-body p-3">
         <div class="d-flex align-items-center">
           <div>
@@ -63,8 +88,8 @@
     </div>
   </div>
 
-  <div class="col-xl-2 col-md-4 col-sm-6 mb-3 mb-xl-0">
-    <div class="card ep-card">
+  <div class="col-6 col-sm-6 col-md-4 col-xl-2 mb-3 mb-xl-0">
+    <div class="card ep-card ep-log-stat-card">
       <div class="card-body p-3">
         <div class="d-flex align-items-center">
           <div>
@@ -79,8 +104,8 @@
     </div>
   </div>
 
-  <div class="col-xl-2 col-md-4 col-sm-6 mb-3 mb-xl-0">
-    <div class="card ep-card">
+  <div class="col-6 col-sm-6 col-md-4 col-xl-2 mb-3 mb-xl-0">
+    <div class="card ep-card ep-log-stat-card">
       <div class="card-body p-3">
         <div class="d-flex align-items-center">
           <div>
@@ -95,8 +120,8 @@
     </div>
   </div>
 
-  <div class="col-xl-2 col-md-4 col-sm-6">
-    <div class="card ep-card">
+  <div class="col-6 col-sm-6 col-md-4 col-xl-2 mb-3">
+    <div class="card ep-card ep-log-stat-card">
       <div class="card-body p-3">
         <div class="d-flex align-items-center">
           <div>
@@ -159,15 +184,15 @@
             </a>
             <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'auth'])) }}" 
                class="btn btn-sm mb-0 flex-fill text-center font-weight-bolder py-2 {{ $activeCategory === 'auth' ? 'bg-gradient-primary text-white shadow-xs' : 'bg-transparent border-0 text-dark opacity-7 shadow-none' }}">
-              <i class="ni ni-key-25 me-1 text-xs {{ $activeCategory === 'auth' ? 'text-white' : 'text-primary' }}"></i> Autentikasi & Akun
+              <i class="ni ni-key-25 me-1 text-xs {{ $activeCategory === 'auth' ? 'text-white' : 'text-primary' }}"></i> Autentikasi 
             </a>
             <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'user'])) }}" 
                class="btn btn-sm mb-0 flex-fill text-center font-weight-bolder py-2 {{ $activeCategory === 'user' ? 'bg-gradient-info text-white shadow-xs' : 'bg-transparent border-0 text-dark opacity-7 shadow-none' }}">
-              <i class="ni ni-badge me-1 text-xs {{ $activeCategory === 'user' ? 'text-white' : 'text-info' }}"></i> User Admin
+              <i class="ni ni-badge me-1 text-xs {{ $activeCategory === 'user' ? 'text-white' : 'text-info' }}"></i> Staff/Admin
             </a>
             <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'security'])) }}" 
                class="btn btn-sm mb-0 flex-fill text-center font-weight-bolder py-2 {{ $activeCategory === 'security' ? 'bg-gradient-danger text-white shadow-xs' : 'bg-transparent border-0 text-dark opacity-7 shadow-none' }}">
-              <i class="ni ni-lock-circle-open me-1 text-xs {{ $activeCategory === 'security' ? 'text-white' : 'text-danger' }}"></i> Keamanan & Blacklist
+              <i class="ni ni-lock-circle-open me-1 text-xs {{ $activeCategory === 'security' ? 'text-white' : 'text-danger' }}"></i> Blacklist
             </a>
             <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'event'])) }}" 
                class="btn btn-sm mb-0 flex-fill text-center font-weight-bolder py-2 {{ $activeCategory === 'event' ? 'bg-gradient-success text-white shadow-xs' : 'bg-transparent border-0 text-dark opacity-7 shadow-none' }}">
@@ -190,7 +215,7 @@
               <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'login'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'login' ? 'bg-gradient-success text-white' : 'btn-outline-success' }} mb-0">Berhasil Login</a>
               <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'login_failed'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'login_failed' ? 'bg-gradient-warning text-white' : 'btn-outline-warning' }} mb-0">Gagal Login</a>
               <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'login_blocked'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'login_blocked' ? 'bg-gradient-danger text-white' : 'btn-outline-danger' }} mb-0">Login Terblokir</a>
-              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'register'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'register' ? 'bg-gradient-info text-white' : 'btn-outline-info' }} mb-0">Pendaftaran Mandiri</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'register'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'register' ? 'bg-gradient-info text-white' : 'btn-outline-info' }} mb-0">Register</a>
               <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'logout'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'logout' ? 'bg-gradient-dark text-white' : 'btn-outline-dark' }} mb-0">Logout</a>
             </div>
 
@@ -247,7 +272,7 @@
                         'login' => ['color' => 'bg-gradient-success', 'label' => 'Berhasil Login'],
                         'login_failed' => ['color' => 'bg-gradient-warning', 'label' => 'Gagal Login'],
                         'login_blocked' => ['color' => 'bg-gradient-danger', 'label' => 'Login Terblokir'],
-                        'register' => ['color' => 'bg-gradient-info', 'label' => 'Pendaftaran Mandiri'],
+                        'register' => ['color' => 'bg-gradient-info', 'label' => 'Register'],
                         'logout' => ['color' => 'bg-gradient-dark', 'label' => 'Logout'],
 
                         'create_user' => ['color' => 'bg-gradient-primary', 'label' => 'Tambah Akun'],

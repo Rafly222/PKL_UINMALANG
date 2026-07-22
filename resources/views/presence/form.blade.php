@@ -117,6 +117,15 @@
       }
     }
 
+    @media (max-width: 991.98px) {
+      .kolom-kiri {
+        border-right: none !important;
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 1.25rem !important;
+        margin-bottom: 1.25rem !important;
+      }
+    }
+
     .form-control-sm,
     .form-select-sm,
     .form-control,
@@ -198,7 +207,7 @@
                 @if($hasMedia)
                   <div class="row">
                     <!-- Kolom Kiri: Identitas Peserta -->
-                    <div class="col-lg-6 pb-2" style="border-right: 1px solid #e9ecef;">
+                    <div class="col-lg-6 pb-2 kolom-kiri" style="border-right: 1px solid #e9ecef;">
                       <!-- Kategori Kehadiran -->
                       @if($event->audience_type === 'semua')
                         <div class="mb-2">
@@ -326,7 +335,7 @@
                         @if($hasPhoto)
                           <span class="ep-section-label">Capture Foto Wajah</span>
                           <div class="row align-items-center mt-1 mb-2">
-                            <div class="col-6">
+                            <div class="col-sm-6 col-12 mb-2 mb-sm-0">
                               <div class="ep-media-frame position-relative" style="height: 180px; width: 100%;">
                                 <video id="webcam-preview" autoplay playsinline class="w-100 h-100 d-none" style="object-fit: cover;"></video>
                                 <div id="webcam-fallback" class="d-flex flex-column align-items-center justify-content-center h-100 text-center text-white p-1">
@@ -342,7 +351,7 @@
                                 </div>
                               </div>
                             </div>
-                            <div class="col-6 col-md-5">
+                            <div class="col-sm-6 col-12 col-md-5">
                               <button type="button" id="btn-open-camera" onclick="activateWebcam()" class="btn btn-xs btn-outline-primary w-100 mb-1 py-1">
                                 Buka Kamera
                               </button>

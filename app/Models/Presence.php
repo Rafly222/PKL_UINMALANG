@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Presence extends Model
 {
@@ -14,7 +15,7 @@ class Presence extends Model
     {
         static::creating(function ($presence) {
             if (empty($presence->uuid)) {
-                $presence->uuid = (string) \Illuminate\Support\Str::uuid();
+                $presence->uuid = (string) Str::uuid();
             }
         });
     }

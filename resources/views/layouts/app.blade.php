@@ -312,6 +312,34 @@
         margin-left: 0 !important;
       }
     }
+    /* Floating Sticky Navbar */
+    body {
+      overflow-x: clip !important;
+    }
+    
+    .main-content {
+      overflow: visible !important;
+    }
+    
+    .navbar-main.sticky-top {
+      position: sticky !important;
+      top: 0.75rem !important;
+      z-index: 1020 !important;
+      transition: all 0.25s ease-in-out !important;
+    }
+    
+    .navbar-main.navbar-scrolled {
+      background: rgba(94, 114, 228, 0.95) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      box-shadow: 0 10px 30px rgba(23, 43, 77, 0.15) !important;
+      padding-top: 0.75rem !important;
+      padding-bottom: 0.75rem !important;
+      padding-left: 1.25rem !important;
+      padding-right: 1.25rem !important;
+      border-radius: 1rem !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    }
   </style>
 
   @stack('styles')
@@ -410,7 +438,7 @@
   </aside>
 
   <main class="main-content position-relative border-radius-lg">
-    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-0 mb-3 shadow-none border-radius-xl" id="navbarBlur" data-scroll="false">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-0 mb-3 shadow-none border-radius-xl sticky-top" id="navbarBlur" data-scroll="false">
       <div class="container-fluid py-1 px-3">
         <div class="d-flex align-items-center me-3 d-xl-none">
           <div class="sidenav-toggler sidenav-toggler-inner cursor-pointer" id="iconNavbarSidenavMobile" style="cursor: pointer;">
@@ -487,6 +515,12 @@
       const iconSidenav = document.getElementById('iconSidenav');
       const body = document.body;
 
+      // Auto close sidebar on mobile/tablet screens
+      if (window.innerWidth < 1200) {
+        body.classList.remove('g-sidenav-pinned');
+        body.classList.add('g-sidenav-hidden');
+      }
+
       function toggleSidebar(e) {
         if (e) e.preventDefault();
         if (body.classList.contains('g-sidenav-pinned')) {
@@ -506,6 +540,20 @@
       }
       if (iconSidenav) {
         iconSidenav.addEventListener('click', toggleSidebar);
+      }
+
+      // Navbar scroll listener for sticky card styling
+      const navbarBlur = document.getElementById('navbarBlur');
+      if (navbarBlur) {
+        const handleScroll = () => {
+          if (window.scrollY > 10) {
+            navbarBlur.classList.add('navbar-scrolled');
+          } else {
+            navbarBlur.classList.remove('navbar-scrolled');
+          }
+        };
+        window.addEventListener('scroll', handleScroll);
+        handleScroll();
       }
     });
   </script>

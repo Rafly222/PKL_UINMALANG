@@ -4,6 +4,31 @@
 @section('breadcrumb', 'Dashboard User')
 @section('page-title', 'Dashboard Pembuat Event')
 
+@push('styles')
+<style>
+  @media (max-width: 575.98px) {
+    .ep-dashboard-stat-card .card-body {
+      padding: 0.75rem !important;
+    }
+    .ep-dashboard-stat-card .icon-shape {
+      width: 32px !important;
+      height: 32px !important;
+      min-width: 32px !important;
+    }
+    .ep-dashboard-stat-card .icon-shape i {
+      font-size: 0.85rem !important;
+      top: 0 !important;
+    }
+    .ep-dashboard-stat-card p {
+      font-size: 0.65rem !important;
+    }
+    .ep-dashboard-stat-card h5 {
+      font-size: 0.95rem !important;
+    }
+  }
+</style>
+@endpush
+
 @section('content')
 <div class="row">
   <div class="col-12 mb-3">
@@ -23,8 +48,8 @@
 </div>
 
 <div class="row">
-  <div class="col-xl-4 col-md-6 mb-4">
-    <div class="card ep-card">
+  <div class="col-6 col-sm-4 col-md-4 col-xl-4 mb-4">
+    <div class="card ep-card ep-dashboard-stat-card">
       <div class="card-body p-3">
         <div class="d-flex">
           <div>
@@ -38,8 +63,8 @@
       </div>
     </div>
   </div>
-  <div class="col-xl-4 col-md-6 mb-4">
-    <div class="card ep-card">
+  <div class="col-6 col-sm-4 col-md-4 col-xl-4 mb-4">
+    <div class="card ep-card ep-dashboard-stat-card">
       <div class="card-body p-3">
         <div class="d-flex">
           <div>
@@ -53,8 +78,8 @@
       </div>
     </div>
   </div>
-  <div class="col-xl-4 mb-4">
-    <div class="card ep-card">
+  <div class="col-12 col-sm-4 col-md-4 col-xl-4 mb-4">
+    <div class="card ep-card ep-dashboard-stat-card">
       <div class="card-body p-3">
         <div class="d-flex">
           <div>
@@ -348,7 +373,7 @@
       <div class="col-3 text-end">
         <button type="button" class="btn btn-outline-danger btn-xs mb-0 remove-custom-field d-flex align-items-center justify-content-center gap-1 w-100">
           <i class="ni ni-fat-remove me-1"></i>
-          <span>Hapus</span>
+          <span class="d-none d-sm-inline">Hapus</span>
         </button>
       </div>`;
     

@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\User;
 use App\Models\Blacklist;
 use App\Models\Presence;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -36,35 +37,11 @@ class DashboardController extends Controller
             'custom_types' => 'nullable|array',
         ]);
 
-        // Ambil isian checklist semi-custom
-        $fields = ['sc-name'];
-        foreach (['sc-phone', 'sc-gender', 'sc-institution', 'sc-email', 'sc-photo', 'sc-signature'] as $field) {
-            if ($request->boolean($field)) {
-                $fields[] = $field;
-            }
-        }
-
-        if ($request->has('sc-nip') || $request->audience_type === 'pegawai') {
-            $fields[] = 'sc-nip';
-        }
-
-        $fields = array_values(array_unique($fields));
-
-        // Ambil isian dinamis full-custom
-        $custom_fields = [];
-        if ($request->has('custom_labels')) {
-            foreach ($request->custom_labels as $index => $label) {
-                if (!empty($label)) {
-                    $custom_fields[] = [
-                        'label' => $label,
-                        'type' => $request->custom_types[$index] ?? 'text'
-                    ];
-                }
-            }
-        }
+        $fields = $this->extractFields($request);
+        $custom_fields = $this->extractCustomFields($request);
 
         $event = Event::create([
-            'user_id' => auth::id(),
+            'user_id' => Auth::id(),
             'name' => $request->name,
             'date' => $request->date,
             'date_end' => $request->date_end ?? $request->date,
@@ -78,7 +55,7 @@ class DashboardController extends Controller
         ]);
 
         // Catat Log Aktivitas
-        \App\Models\ActivityLog::log('create_event', "Pengguna mendaftarkan event baru: '{$event->name}' (Kategori: {$event->audience_type}, Akses: {$event->access_type}).");
+        ActivityLog::log('create_event', "Pengguna mendaftarkan event baru: '{$event->name}' (Kategori: {$event->audience_type}, Akses: {$event->access_type}).");
 
         return back()->with('success', 'Event baru berhasil didaftarkan & siap digunakan!');
     }
@@ -106,32 +83,8 @@ class DashboardController extends Controller
             return back()->withErrors(['password' => 'Password wajib diisi jika merubah akses menjadi privat.']);
         }
 
-        // Ambil isian checklist semi-custom
-        $fields = ['sc-name'];
-        foreach (['sc-phone', 'sc-gender', 'sc-institution', 'sc-email', 'sc-photo', 'sc-signature'] as $field) {
-            if ($request->boolean($field)) {
-                $fields[] = $field;
-            }
-        }
-
-        if ($request->has('sc-nip') || $request->audience_type === 'pegawai') {
-            $fields[] = 'sc-nip';
-        }
-
-        $fields = array_values(array_unique($fields));
-
-        // Ambil isian dinamis full-custom
-        $custom_fields = [];
-        if ($request->has('custom_labels')) {
-            foreach ($request->custom_labels as $index => $label) {
-                if (!empty($label)) {
-                    $custom_fields[] = [
-                        'label' => $label,
-                        'type' => $request->custom_types[$index] ?? 'text'
-                    ];
-                }
-            }
-        }
+        $fields = $this->extractFields($request);
+        $custom_fields = $this->extractCustomFields($request);
 
         $data = [
             'name' => $request->name,
@@ -156,9 +109,41 @@ class DashboardController extends Controller
         $event->update($data);
 
         // Catat Log Aktivitas
-        \App\Models\ActivityLog::log('update_event', "Pengguna memperbarui event: '{$event->name}' (ID: {$event->id}).");
+        ActivityLog::log('update_event', "Pengguna memperbarui event: '{$event->name}' (ID: {$event->id}).");
 
         return back()->with('success', 'Event berhasil diperbarui!');
+    }
+
+    private function extractFields(Request $request)
+    {
+        $fields = ['sc-name'];
+        foreach (['sc-phone', 'sc-gender', 'sc-institution', 'sc-email', 'sc-photo', 'sc-signature'] as $field) {
+            if ($request->boolean($field)) {
+                $fields[] = $field;
+            }
+        }
+
+        if ($request->has('sc-nip') || $request->audience_type === 'pegawai') {
+            $fields[] = 'sc-nip';
+        }
+
+        return array_values(array_unique($fields));
+    }
+
+    private function extractCustomFields(Request $request)
+    {
+        $custom_fields = [];
+        if ($request->has('custom_labels')) {
+            foreach ($request->custom_labels as $index => $label) {
+                if (!empty($label)) {
+                    $custom_fields[] = [
+                        'label' => $label,
+                        'type' => $request->custom_types[$index] ?? 'text'
+                    ];
+                }
+            }
+        }
+        return $custom_fields;
     }
 
     // Dashboard Super Admin
@@ -167,7 +152,7 @@ class DashboardController extends Controller
         $events = Event::with('creator')->latest()->get();
         $totalUsers = User::where('status', 'approved')->count();
         $totalBlacklists = Blacklist::count();
-        $totalLogs = \App\Models\ActivityLog::count();
+        $totalLogs = ActivityLog::count();
         $pendingUsersCount = User::where('status', 'pending')->count();
         return view('dashboard.admin', compact('events', 'totalUsers', 'totalBlacklists', 'totalLogs', 'pendingUsersCount'));
     }
@@ -222,7 +207,7 @@ class DashboardController extends Controller
         $user = User::findOrFail($id);
         $user->update(['status' => 'approved']);
 
-        \App\Models\ActivityLog::log('approve_user', "Admin menyetujui pendaftaran akun: '{$user->name}' (Email: {$user->email}).");
+        ActivityLog::log('approve_user', "Admin menyetujui pendaftaran akun: '{$user->name}' (Email: {$user->email}).");
 
         return back()->with('success', "Akun '{$user->name}' berhasil disetujui!");
     }
@@ -234,7 +219,7 @@ class DashboardController extends Controller
         $email = $user->email;
         $user->delete();
 
-        \App\Models\ActivityLog::log('reject_user', "Admin menolak pendaftaran akun: '{$name}' (Email: {$email}).");
+        ActivityLog::log('reject_user', "Admin menolak pendaftaran akun: '{$name}' (Email: {$email}).");
 
         return back()->with('info', "Pendaftaran akun '{$name}' ditolak dan data dihapus.");
     }
@@ -245,7 +230,7 @@ class DashboardController extends Controller
         $endDate = $request->query('end_date');
         $activityFilter = $request->query('activity_filter', 'all');
 
-        $baseQuery = \App\Models\ActivityLog::query();
+        $baseQuery = ActivityLog::query();
 
         if ($startDate && $endDate) {
             $startUtc = \Carbon\Carbon::parse($startDate . ' 00:00:00', 'Asia/Jakarta')->setTimezone('UTC');
@@ -332,7 +317,7 @@ class DashboardController extends Controller
         ]);
 
         // Catat Log Aktivitas
-        \App\Models\ActivityLog::log('create_user', "Admin mendaftarkan akun baru: '{$newUser->name}' (Role: {$newUser->role}).");
+        ActivityLog::log('create_user', "Admin mendaftarkan akun baru: '{$newUser->name}' (Role: {$newUser->role}).");
 
         return back()->with('success', 'Akun pengguna baru sukses ditambahkan!');
     }
@@ -342,7 +327,7 @@ class DashboardController extends Controller
         $user = User::findOrFail($id);
         $name = $user->name;
 
-        \App\Models\ActivityLog::log('delete_user', "Admin menghapus akun pengguna: '{$name}'.");
+        ActivityLog::log('delete_user', "Admin menghapus akun pengguna: '{$name}'.");
 
         $user->delete();
 
@@ -358,7 +343,7 @@ class DashboardController extends Controller
 
         Blacklist::firstOrCreate(['nip' => $user->nip]);
 
-        \App\Models\ActivityLog::log('blacklist_add', "Admin mem-blacklist akun pengguna: '{$user->name}' (NIP: {$user->nip}).");
+        ActivityLog::log('blacklist_add', "Admin mem-blacklist akun pengguna: '{$user->name}' (NIP: {$user->nip}).");
 
         return back()->with('success', "Akun '{$user->name}' berhasil diblokir!");
     }
@@ -370,7 +355,7 @@ class DashboardController extends Controller
             Blacklist::where('nip', $user->nip)->delete();
         }
 
-        \App\Models\ActivityLog::log('blacklist_remove', "Admin memulihkan akses akun pengguna: '{$user->name}' (NIP: {$user->nip}).");
+        ActivityLog::log('blacklist_remove', "Admin memulihkan akses akun pengguna: '{$user->name}' (NIP: {$user->nip}).");
 
         return back()->with('info', "Akses akun '{$user->name}' berhasil dipulihkan.");
     }
@@ -380,7 +365,7 @@ class DashboardController extends Controller
         $user = User::onlyTrashed()->findOrFail($id);
         $user->restore();
 
-        \App\Models\ActivityLog::log('restore_user', "Admin memulihkan akun terhapus: '{$user->name}' (Email: {$user->email}).");
+        ActivityLog::log('restore_user', "Admin memulihkan akun terhapus: '{$user->name}' (Email: {$user->email}).");
 
         return back()->with('success', "Akun '{$user->name}' berhasil dipulihkan!");
     }
@@ -423,7 +408,7 @@ class DashboardController extends Controller
         $user->update($data);
 
         // Catat Log Aktivitas
-        \App\Models\ActivityLog::log('update_user', "Admin memperbarui data akun pengguna: '{$user->name}' (Role: {$user->role}).");
+        ActivityLog::log('update_user', "Admin memperbarui data akun pengguna: '{$user->name}' (Role: {$user->role}).");
 
         return back()->with('success', 'Akun pengguna berhasil diperbarui!');
     }
@@ -434,7 +419,7 @@ class DashboardController extends Controller
         
         // Catat Log Aktivitas
         $blNip = $blacklist->nip ?? '-';
-        \App\Models\ActivityLog::log('blacklist_remove', "Admin memulihkan identitas dari Blacklist (NIP: {$blNip}).");
+        ActivityLog::log('blacklist_remove', "Admin memulihkan identitas dari Blacklist (NIP: {$blNip}).");
 
         $blacklist->delete();
         return back()->with('info', 'Blokir identitas berhasil dipulihkan.');
@@ -455,7 +440,7 @@ class DashboardController extends Controller
         ]);
 
         // Catat Log Aktivitas
-        \App\Models\ActivityLog::log('blacklist_add', "Admin mem-blacklist identitas secara manual (NIP: {$request->nip}).");
+        ActivityLog::log('blacklist_add', "Admin mem-blacklist identitas secara manual (NIP: {$request->nip}).");
 
         return back()->with('success', 'Identitas manual berhasil ditambahkan ke Blacklist.');
     }
@@ -467,7 +452,7 @@ class DashboardController extends Controller
         }
 
         // Catat Log Aktivitas
-        \App\Models\ActivityLog::log('delete_event', "Pengguna menghapus event: '{$event->name}' (ID: {$event->id}).");
+        ActivityLog::log('delete_event', "Pengguna menghapus event: '{$event->name}' (ID: {$event->id}).");
 
         $event->delete();
 

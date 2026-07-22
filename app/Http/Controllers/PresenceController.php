@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Presence;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class PresenceController extends Controller
@@ -30,73 +33,47 @@ class PresenceController extends Controller
     public function showForm($event_uuid)
     {
         $event = Event::where('uuid', $event_uuid)->firstOrFail();
-        
-        // Tahap 3: Aturan Bypass Pembuat (User) / Admin
-        $isBypassed = false;
-        if (Auth::check()) {
-            if (Auth::id() === $event->user_id || Auth::user()->role === 'admin') {
-                $isBypassed = true;
-            }
-        }
-
+        $isBypassed = $this->isUserBypassed($event);
+ 
         if (!$isBypassed) {
-            // Verifikasi batasan jam pelaksanaan
-            $now = Carbon::now('Asia/Jakarta');
-            $start = Carbon::parse($event->date . ' ' . $event->time_start, 'Asia/Jakarta');
-            $endDate = $event->date_end ?? $event->date;
-            $end = Carbon::parse($endDate . ' ' . $event->time_end, 'Asia/Jakarta');
-
-            if ($now->lt($start) || $now->gt($end)) {
+            if (!$this->isEventTimeValid($event)) {
                 return view('presence.gate', [
                     'event' => $event,
                     'error' => 'Akses Ditolak: Kegiatan belum dimulai atau sudah berakhir!'
                 ]);
             }
-
+ 
             // Jika event bertipe privat, minta password
             if ($event->access_type === 'privat' && !session("event_gate_passed_{$event->id}")) {
                 return redirect()->route('presence.gate', $event->uuid);
             }
         }
-
+ 
         return view('presence.form', compact('event', 'isBypassed'));
     }
-
+ 
     public function showGate($event_uuid)
     {
         $event = Event::where('uuid', $event_uuid)->firstOrFail();
-
-        // Tahap 3: Aturan Bypass Pembuat (User) / Admin
-        $isBypassed = false;
-        if (Auth::check()) {
-            if (Auth::id() === $event->user_id || Auth::user()->role === 'admin') {
-                $isBypassed = true;
-            }
-        }
-
+        $isBypassed = $this->isUserBypassed($event);
+ 
         if (!$isBypassed) {
-            // Verifikasi batasan jam pelaksanaan
-            $now = Carbon::now('Asia/Jakarta');
-            $start = Carbon::parse($event->date . ' ' . $event->time_start, 'Asia/Jakarta');
-            $endDate = $event->date_end ?? $event->date;
-            $end = Carbon::parse($endDate . ' ' . $event->time_end, 'Asia/Jakarta');
-
-            if ($now->lt($start) || $now->gt($end)) {
+            if (!$this->isEventTimeValid($event)) {
                 return view('presence.gate', [
                     'event' => $event,
                     'error' => 'Akses Ditolak: Kegiatan belum dimulai atau sudah berakhir!'
                 ]);
             }
         }
-
+ 
         // Jika user dibypass atau sudah memasukkan password, langsung ke form
         if ($isBypassed || session("event_gate_passed_{$event->id}")) {
             return redirect()->route('presence.form', $event->uuid);
         }
-
+ 
         return view('presence.gate', compact('event'));
     }
-
+ 
     public function checkGatePassword(Request $request, $event_uuid)
     {
         $request->validate([
@@ -105,35 +82,23 @@ class PresenceController extends Controller
         ], [
             'g-recaptcha-response.required' => 'Verifikasi reCAPTCHA wajib diisi.'
         ]);
-
+ 
         $event = Event::where('uuid', $event_uuid)->firstOrFail();
-
+ 
         $throttleKey = 'gate_pass|' . $event->id . '|' . $request->ip();
         $attemptsKey = 'gate_pass_attempts|' . $event->id . '|' . $request->ip();
-
-        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($throttleKey, 1)) {
-            $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($throttleKey);
+ 
+        if (RateLimiter::tooManyAttempts($throttleKey, 1)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
             $minutes = ceil($seconds / 60);
             return back()->with('warning', "Kata sandi yang Anda masukkan salah. Akses Anda dibekukan sementara. Silakan coba lagi dalam {$minutes} menit.")
                          ->with('lockout_seconds', $seconds);
         }
-
-        // Tahap 3: Aturan Bypass Pembuat (User) / Admin
-        $isBypassed = false;
-        if (Auth::check()) {
-            if (Auth::id() === $event->user_id || Auth::user()->role === 'admin') {
-                $isBypassed = true;
-            }
-        }
-
+ 
+        $isBypassed = $this->isUserBypassed($event);
+ 
         if (!$isBypassed) {
-            // Verifikasi batasan jam pelaksanaan sebelum memproses password
-            $now = Carbon::now('Asia/Jakarta');
-            $start = Carbon::parse($event->date . ' ' . $event->time_start, 'Asia/Jakarta');
-            $endDate = $event->date_end ?? $event->date;
-            $end = Carbon::parse($endDate . ' ' . $event->time_end, 'Asia/Jakarta');
-
-            if ($now->lt($start) || $now->gt($end)) {
+            if (!$this->isEventTimeValid($event)) {
                 return view('presence.gate', [
                     'event' => $event,
                     'error' => 'Akses Ditolak: Kegiatan belum dimulai atau sudah berakhir!'
@@ -154,15 +119,15 @@ class PresenceController extends Controller
         }
 
         if ($isMatch) {
-            \Illuminate\Support\Facades\RateLimiter::clear($throttleKey);
-            \Illuminate\Support\Facades\Cache::forget($attemptsKey);
+            RateLimiter::clear($throttleKey);
+            Cache::forget($attemptsKey);
             session(["event_gate_passed_{$event->id}" => true]);
             return redirect()->route('presence.form', $event->uuid)->with('success', 'Akses diberikan!');
         }
 
         // Hitung akumulasi percobaan salah secara bertahap
-        $attempts = \Illuminate\Support\Facades\Cache::get($attemptsKey, 0) + 1;
-        \Illuminate\Support\Facades\Cache::put($attemptsKey, $attempts, now()->addMinutes(60));
+        $attempts = Cache::get($attemptsKey, 0) + 1;
+        Cache::put($attemptsKey, $attempts, now()->addMinutes(60));
 
         // Durasi pembekuan bertahap (1m, 3m, 5m)
         if ($attempts === 1) {
@@ -173,12 +138,12 @@ class PresenceController extends Controller
             $decaySeconds = 300;  // Salah ke-3+: 5 menit
         }
 
-        \Illuminate\Support\Facades\RateLimiter::hit($throttleKey, $decaySeconds);
+        RateLimiter::hit($throttleKey, $decaySeconds);
 
-        $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($throttleKey);
+        $seconds = RateLimiter::availableIn($throttleKey);
         $minutes = ceil($seconds / 60);
 
-        return back()->with('warning', "Kata sandi yang Anda masukkan salah. Akses dibekukan sementara selama {$minutes} menit (percobaan ke-{$attempts}).")
+        return back()->with('warning', "Kata sandi yang Anda masukkan salah. Akses dibekukan sementara selama {$minutes} menit.")
                      ->with('lockout_seconds', $seconds);
     }
 
@@ -362,7 +327,7 @@ class PresenceController extends Controller
 
         // Catat Log Aktivitas
         $identityLog = $presence->nip ? "NIP: {$presence->nip}" : "Umum";
-        \App\Models\ActivityLog::log('submit_presence', "Tamu '{$presence->name}' ({$identityLog}) berhasil mengisi presensi untuk kegiatan '{$event->name}'.");
+        ActivityLog::log('submit_presence', "Tamu '{$presence->name}' ({$identityLog}) berhasil mengisi presensi untuk kegiatan '{$event->name}'.");
 
         return redirect()->route('presence.success', $presence->uuid);
     }
@@ -385,7 +350,22 @@ class PresenceController extends Controller
         if (array_key_exists($nip, $database)) {
             return response()->json(["success" => true, "data" => $database[$nip]]);
         }
-
+ 
         return response()->json(["success" => false, "message" => "Pegawai tidak ditemukan"]);
+    }
+ 
+    private function isUserBypassed(Event $event)
+    {
+        return Auth::check() && (Auth::id() === $event->user_id || Auth::user()->role === 'admin');
+    }
+ 
+    private function isEventTimeValid(Event $event)
+    {
+        $now = Carbon::now('Asia/Jakarta');
+        $start = Carbon::parse($event->date . ' ' . $event->time_start, 'Asia/Jakarta');
+        $endDate = $event->date_end ?? $event->date;
+        $end = Carbon::parse($endDate . ' ' . $event->time_end, 'Asia/Jakarta');
+ 
+        return $now->gte($start) && $now->lte($end);
     }
 }

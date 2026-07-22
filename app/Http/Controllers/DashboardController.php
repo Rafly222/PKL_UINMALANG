@@ -202,9 +202,12 @@ class DashboardController extends Controller
         $countBlacklisted = Blacklist::count();
         $countTrashed = User::onlyTrashed()->count();
 
+        $trashedUsers = User::onlyTrashed()->latest()->get();
+
         return view('admin.users', compact(
             'users', 
             'pendingUsers', 
+            'trashedUsers',
             'blacklistedNips', 
             'filter',
             'countActive',
@@ -245,11 +248,15 @@ class DashboardController extends Controller
         $baseQuery = \App\Models\ActivityLog::query();
 
         if ($startDate && $endDate) {
-            $baseQuery->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+            $startUtc = \Carbon\Carbon::parse($startDate . ' 00:00:00', 'Asia/Jakarta')->setTimezone('UTC');
+            $endUtc = \Carbon\Carbon::parse($endDate . ' 23:59:59', 'Asia/Jakarta')->setTimezone('UTC');
+            $baseQuery->whereBetween('created_at', [$startUtc, $endUtc]);
         } elseif ($startDate) {
-            $baseQuery->where('created_at', '>=', $startDate . ' 00:00:00');
+            $startUtc = \Carbon\Carbon::parse($startDate . ' 00:00:00', 'Asia/Jakarta')->setTimezone('UTC');
+            $baseQuery->where('created_at', '>=', $startUtc);
         } elseif ($endDate) {
-            $baseQuery->where('created_at', '<=', $endDate . ' 23:59:59');
+            $endUtc = \Carbon\Carbon::parse($endDate . ' 23:59:59', 'Asia/Jakarta')->setTimezone('UTC');
+            $baseQuery->where('created_at', '<=', $endUtc);
         }
 
         $countTotalEvents = \App\Models\Event::count();
@@ -260,14 +267,20 @@ class DashboardController extends Controller
         $countUniqueIps = (clone $baseQuery)->whereNotNull('ip_address')->where('ip_address', '!=', '')->distinct('ip_address')->count('ip_address');
 
         $logQuery = clone $baseQuery;
-        if ($activityFilter === 'login') {
-            $logQuery->where('activity', 'login');
-        } elseif ($activityFilter === 'login_failed') {
-            $logQuery->where('activity', 'login_failed');
-        } elseif ($activityFilter === 'blocked') {
-            $logQuery->whereIn('activity', ['blacklist_add', 'login_blocked']);
-        } elseif ($activityFilter === 'logout') {
-            $logQuery->where('activity', 'logout');
+        if ($activityFilter && $activityFilter !== 'all') {
+            if ($activityFilter === 'blocked') {
+                $logQuery->whereIn('activity', ['blacklist_add', 'login_blocked']);
+            } elseif ($activityFilter === 'auth') {
+                $logQuery->whereIn('activity', ['login', 'login_failed', 'login_blocked', 'register', 'logout']);
+            } elseif ($activityFilter === 'user') {
+                $logQuery->whereIn('activity', ['create_user', 'update_user', 'delete_user', 'restore_user', 'approve_user', 'reject_user']);
+            } elseif ($activityFilter === 'security') {
+                $logQuery->whereIn('activity', ['blacklist_add', 'blacklist_remove', 'login_blocked']);
+            } elseif ($activityFilter === 'event') {
+                $logQuery->whereIn('activity', ['create_event', 'update_event', 'delete_event', 'submit_presence']);
+            } else {
+                $logQuery->where('activity', $activityFilter);
+            }
         }
 
         $systemLogs = $logQuery->latest()->take(500)->get();

@@ -154,8 +154,23 @@
 
     <div class="card ep-card">
       <div class="card-header pb-0 bg-transparent">
-        <h6 class="mb-0">Daftar Pengguna Aktif</h6>
-        <p class="text-xs text-muted mb-0">List seluruh administrator dan staff terdaftar dalam sistem.</p>
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <h6 class="mb-0">Daftar Pengguna Aktif</h6>
+            <p class="text-xs text-muted mb-0">List seluruh administrator dan staff terdaftar dalam sistem.</p>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <button type="button" class="btn btn-sm btn-outline-primary mb-0 shadow-sm" data-bs-toggle="modal" data-bs-target="#trashedUsersModal">
+              <i class="fas fa-trash-restore me-1"></i> Pengguna Terhapus
+              @if(($countTrashed ?? 0) > 0)
+                <span class="badge bg-gradient-danger text-white ms-1" style="font-size: 10px;">{{ $countTrashed }}</span>
+              @endif
+            </button>
+            <button type="button" class="btn btn-sm bg-gradient-primary mb-0 shadow-sm" data-bs-toggle="modal" data-bs-target="#createAccountModal">
+              <i class="fas fa-user-plus me-1"></i> Tambah Akun
+            </button>
+          </div>
+        </div>
       </div>
       <div class="card-body">
         <div class="table-responsive p-3">
@@ -381,6 +396,79 @@
             <button type="submit" class="btn bg-gradient-primary mb-0 shadow-sm">Daftarkan Pengguna</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Pengguna Terhapus (Trash & Restore) -->
+<div class="modal fade" id="trashedUsersModal" tabindex="-1" role="dialog" aria-labelledby="trashedUsersModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content border-0 ep-card">
+      <div class="modal-header">
+        <h5 class="modal-title font-weight-bolder text-dark" id="trashedUsersModalLabel">
+          <i class="fas fa-trash-restore me-2 text-primary"></i> Daftar Pengguna Terhapus (Trash)
+        </h5>
+        <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body p-4">
+        @if(isset($trashedUsers) && $trashedUsers->count() > 0)
+          <div class="table-responsive">
+            <table class="table mb-0 align-items-center">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-3">Nama</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Email</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">NIP</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Tanggal Dihapus</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-end pe-3">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach($trashedUsers as $tUser)
+                  <tr>
+                    <td class="ps-3">
+                      <div class="d-flex align-items-center">
+                        <div class="avatar avatar-sm bg-gradient-secondary text-white rounded-circle me-3 d-flex align-items-center justify-content-center">
+                          {{ strtoupper(substr($tUser->name, 0, 1)) }}
+                        </div>
+                        <h6 class="text-sm mb-0 font-weight-bold text-decoration-line-through text-muted">{{ $tUser->name }}</h6>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="text-sm text-secondary font-weight-bold">{{ $tUser->email }}</span>
+                    </td>
+                    <td>
+                      <span class="text-sm text-secondary font-weight-bold">{{ $tUser->nip ?? '-' }}</span>
+                    </td>
+                    <td>
+                      <span class="text-xs text-muted font-weight-bold">{{ $tUser->deleted_at ? $tUser->deleted_at->format('d M Y H:i') : '-' }}</span>
+                    </td>
+                    <td class="text-end pe-3">
+                      <form action="{{ route('admin.users.restore', $tUser->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Pulihkan kembali akun terhapus ini?')">
+                        @csrf
+                        <button type="submit" class="btn btn-xs bg-gradient-success text-white mb-0 shadow-sm">
+                          <i class="fas fa-undo me-1"></i> Pulihkan Akun
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+        @else
+          <div class="text-center py-4">
+            <i class="fas fa-check-circle text-success fs-1 mb-2 opacity-5"></i>
+            <h6 class="text-dark font-weight-bold mb-1">Tidak Ada Akun Terhapus</h6>
+            <p class="text-xs text-muted mb-0">Semua akun pengguna dalam kondisi aktif atau tidak ada di dalam keranjang sampah.</p>
+          </div>
+        @endif
+        <div class="text-end mt-4">
+          <button type="button" class="btn btn-outline-secondary mb-0 shadow-sm" data-bs-dismiss="modal">Tutup</button>
+        </div>
       </div>
     </div>
   </div>

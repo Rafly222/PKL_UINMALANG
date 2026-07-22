@@ -239,7 +239,7 @@
                             <div class="row align-items-end">
                               <div class="col-8">
                                 <label class="form-control-label text-xxs">NIP Pegawai <span class="text-danger">*</span></label>
-                                <input type="text" name="nip" id="form-nip" placeholder="18 digit NIP" class="form-control form-control-sm" maxlength="18">
+                                <input type="text" name="nip" id="form-nip" value="{{ old('nip') }}" placeholder="18 digit NIP" class="form-control form-control-sm" maxlength="18" autocomplete="on">
                               </div>
                               <div class="col-4">
                                 <button type="button" onclick="fetchEmployeeApi(this)" class="btn btn-xs bg-gradient-info w-100 mb-0 shadow">
@@ -262,13 +262,13 @@
                       <div class="row mt-1">
                         <div class="col-12 mb-2">
                           <label class="form-control-label text-xs">Nama Lengkap <span class="text-danger">*</span></label>
-                          <input type="text" name="name" id="form-name" required placeholder="Nama lengkap beserta gelar" class="form-control form-control-sm" value="{{ old('name') }}">
+                          <input type="text" name="name" id="form-name" required placeholder="Nama lengkap beserta gelar" class="form-control form-control-sm" value="{{ old('name') }}" autocomplete="name">
                         </div>
 
                         @if(in_array('sc-phone', $event->fields ?? []))
                           <div class="col-md-6 mb-2">
                             <label class="form-control-label text-xs">Nomor WhatsApp <span class="text-danger">*</span></label>
-                            <input type="tel" name="phone" id="form-phone" required placeholder="Contoh: 081234567890" class="form-control form-control-sm">
+                            <input type="tel" name="phone" id="form-phone" required placeholder="Contoh: 081234567890" class="form-control form-control-sm" value="{{ old('phone') }}" autocomplete="tel">
                           </div>
                         @endif
 
@@ -276,8 +276,8 @@
                           <div class="col-md-6 mb-2">
                             <label class="form-control-label text-xs">Jenis Kelamin</label>
                             <select name="gender" class="form-control form-control-sm">
-                              <option value="Laki-Laki">Laki-Laki</option>
-                              <option value="Perempuan">Perempuan</option>
+                              <option value="Laki-Laki" @selected(old('gender') === 'Laki-Laki')>Laki-Laki</option>
+                              <option value="Perempuan" @selected(old('gender') === 'Perempuan')>Perempuan</option>
                             </select>
                           </div>
                         @endif
@@ -285,14 +285,14 @@
                         @if(in_array('sc-institution', $event->fields ?? []))
                           <div class="col-md-6 mb-2">
                             <label class="form-control-label text-xs">Instansi / Lembaga <span class="text-danger">*</span></label>
-                            <input type="text" name="institution" id="form-institution" required placeholder="Nama instansi/lembaga" class="form-control form-control-sm">
+                            <input type="text" name="institution" id="form-institution" required placeholder="Nama instansi/lembaga" class="form-control form-control-sm" value="{{ old('institution') }}" autocomplete="organization">
                           </div>
                         @endif
 
                         @if(in_array('sc-email', $event->fields ?? []))
                           <div class="col-md-6 mb-2">
                             <label class="form-control-label text-xs">Email <span class="text-danger">*</span></label>
-                            <input type="email" name="email" id="form-email" required placeholder="Contoh: nama@domain.com" class="form-control form-control-sm" value="{{ old('email') }}">
+                            <input type="email" name="email" id="form-email" required placeholder="Contoh: nama@domain.com" class="form-control form-control-sm" value="{{ old('email') }}" autocomplete="email">
                           </div>
                         @endif
                       </div>
@@ -422,7 +422,7 @@
                             <div class="row align-items-end">
                               <div class="col-8">
                                 <label class="form-control-label text-xxs">NIP Pegawai <span class="text-danger">*</span></label>
-                                <input type="text" name="nip" id="form-nip" placeholder="18 digit NIP" class="form-control form-control-sm" maxlength="18">
+                                <input type="text" name="nip" id="form-nip" value="{{ old('nip') }}" placeholder="18 digit NIP" class="form-control form-control-sm" maxlength="18" autocomplete="on">
                               </div>
                               <div class="col-4">
                                 <button type="button" onclick="fetchEmployeeApi(this)" class="btn btn-xs bg-gradient-info w-100 mb-0 shadow">
@@ -445,13 +445,13 @@
                       <div class="row mt-2">
                         <div class="col-12 mb-3">
                           <label class="form-control-label text-xs">Nama Lengkap <span class="text-danger">*</span></label>
-                          <input type="text" name="name" id="form-name" required placeholder="Nama lengkap beserta gelar" class="form-control form-control-sm" value="{{ old('name') }}">
+                          <input type="text" name="name" id="form-name" required placeholder="Nama lengkap beserta gelar" class="form-control form-control-sm" value="{{ old('name') }}" autocomplete="name">
                         </div>
 
                         @if(in_array('sc-phone', $event->fields ?? []))
                           <div class="col-md-6 mb-3">
                             <label class="form-control-label text-xs">Nomor WhatsApp <span class="text-danger">*</span></label>
-                            <input type="tel" name="phone" id="form-phone" required placeholder="Contoh: 081234567890" class="form-control form-control-sm">
+                            <input type="tel" name="phone" id="form-phone" required placeholder="Contoh: 081234567890" class="form-control form-control-sm" value="{{ old('phone') }}" autocomplete="tel">
                           </div>
                         @endif
 
@@ -459,8 +459,8 @@
                           <div class="col-md-6 mb-3">
                             <label class="form-control-label text-xs">Jenis Kelamin</label>
                             <select name="gender" class="form-control form-control-sm">
-                              <option value="Laki-Laki">Laki-Laki</option>
-                              <option value="Perempuan">Perempuan</option>
+                              <option value="Laki-Laki" @selected(old('gender') === 'Laki-Laki')>Laki-Laki</option>
+                              <option value="Perempuan" @selected(old('gender') === 'Perempuan')>Perempuan</option>
                             </select>
                           </div>
                         @endif
@@ -468,14 +468,14 @@
                         @if(in_array('sc-institution', $event->fields ?? []))
                           <div class="col-md-6 mb-3">
                             <label class="form-control-label text-xs">Instansi / Lembaga <span class="text-danger">*</span></label>
-                            <input type="text" name="institution" id="form-institution" required placeholder="Nama instansi/lembaga" class="form-control form-control-sm">
+                            <input type="text" name="institution" id="form-institution" required placeholder="Nama instansi/lembaga" class="form-control form-control-sm" value="{{ old('institution') }}" autocomplete="organization">
                           </div>
                         @endif
 
                         @if(in_array('sc-email', $event->fields ?? []))
                           <div class="col-md-6 mb-3">
                             <label class="form-control-label text-xs">Email <span class="text-danger">*</span></label>
-                            <input type="email" name="email" id="form-email" required placeholder="Contoh: nama@domain.com" class="form-control form-control-sm" value="{{ old('email') }}">
+                            <input type="email" name="email" id="form-email" required placeholder="Contoh: nama@domain.com" class="form-control form-control-sm" value="{{ old('email') }}" autocomplete="email">
                           </div>
                         @endif
                       </div>

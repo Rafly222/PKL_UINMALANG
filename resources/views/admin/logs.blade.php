@@ -124,42 +124,113 @@
   <div class="col-12">
     <div class="card ep-card mb-4">
       <div class="card-header pb-0 bg-transparent">
-        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
-          <div>
-            <h6 class="mb-0">Log Aktivitas Sistem</h6>
-            <p class="text-xs text-muted mb-0">Audit trail aktivitas pengguna dan keamanan sistem E-Presensi.</p>
-          </div>
-          <div>
-            <form action="{{ route('admin.logs') }}" method="GET" class="d-flex flex-wrap align-items-center gap-2 mb-0">
-              <div class="d-flex align-items-center gap-1">
-                <label class="form-control-label text-xs mb-0 text-nowrap font-weight-bold">Jenis Log:</label>
-                <select name="activity_filter" class="form-select form-select-sm" style="min-width: 155px;" onchange="this.form.submit()">
-                  <option value="all" {{ ($activityFilter ?? 'all') === 'all' ? 'selected' : '' }}>Semua Aktivitas</option>
-                  <option value="login" {{ ($activityFilter ?? '') === 'login' ? 'selected' : '' }}>Berhasil Login</option>
-                  <option value="login_failed" {{ ($activityFilter ?? '') === 'login_failed' ? 'selected' : '' }}>Gagal Login</option>
-                  <option value="blocked" {{ ($activityFilter ?? '') === 'blocked' ? 'selected' : '' }}>Blokir</option>
-                  <option value="logout" {{ ($activityFilter ?? '') === 'logout' ? 'selected' : '' }}>Logout</option>
-                </select>
-              </div>
+        <form action="{{ route('admin.logs') }}" method="GET" id="logs-filter-form">
+          <input type="hidden" name="activity_filter" id="active-activity-filter-input" value="{{ $activityFilter ?? 'all' }}">
+
+          <!-- Header Title & Date Filters -->
+          <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
+            <div>
+              <h6 class="mb-0 font-weight-bolder">Log Aktivitas Sistem</h6>
+              <p class="text-xs text-muted mb-0">Audit trail aktivitas pengguna dan keamanan sistem E-Presensi.</p>
+            </div>
+            <div class="d-flex flex-wrap align-items-center gap-2">
               <div class="d-flex align-items-center gap-1">
                 <label class="form-control-label text-xs mb-0 text-nowrap font-weight-bold">Dari:</label>
-                <input type="date" name="start_date" class="form-control form-control-sm" value="{{ request('start_date') }}" style="max-width: 135px;">
+                <input type="date" name="start_date" class="form-control form-control-sm" value="{{ request('start_date') }}" style="max-width: 135px;" onchange="this.form.submit()">
               </div>
               <div class="d-flex align-items-center gap-1">
                 <label class="form-control-label text-xs mb-0 text-nowrap font-weight-bold">Sampai:</label>
-                <input type="date" name="end_date" class="form-control form-control-sm" value="{{ request('end_date') }}" style="max-width: 135px;">
+                <input type="date" name="end_date" class="form-control form-control-sm" value="{{ request('end_date') }}" style="max-width: 135px;" onchange="this.form.submit()">
               </div>
-              <button type="submit" class="btn bg-gradient-primary btn-sm mb-0 shadow-xs px-3">
-                <i class="fas fa-search me-1"></i> Filter
-              </button>
               @if(request('start_date') || request('end_date') || (request('activity_filter') && request('activity_filter') !== 'all'))
                 <a href="{{ route('admin.logs') }}" class="btn btn-outline-secondary btn-sm mb-0 shadow-xs px-3">
-                  <i class="fas fa-undo me-1"></i> Reset
+                  <i class="fas fa-undo me-1"></i> Reset Filter
                 </a>
               @endif
-            </form>
+            </div>
           </div>
-        </div>
+
+          <!-- 4 Category Pill Tabs -->
+          @php
+            $activeCategory = 'all';
+            if (in_array($activityFilter ?? '', ['auth', 'login', 'login_failed', 'login_blocked', 'register', 'logout'])) $activeCategory = 'auth';
+            elseif (in_array($activityFilter ?? '', ['user', 'create_user', 'update_user', 'delete_user', 'restore_user', 'approve_user', 'reject_user'])) $activeCategory = 'user';
+            elseif (in_array($activityFilter ?? '', ['security', 'blacklist_add', 'blacklist_remove', 'blocked'])) $activeCategory = 'security';
+            elseif (in_array($activityFilter ?? '', ['event', 'create_event', 'update_event', 'delete_event', 'submit_presence'])) $activeCategory = 'event';
+          @endphp
+
+          <!-- 4 Category Pill Buttons Bar -->
+          <div class="d-flex flex-wrap gap-2 mb-3 p-1 bg-gray-100 border-radius-lg">
+            <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'all'])) }}" 
+               class="btn btn-sm mb-0 flex-fill text-center font-weight-bolder py-2 {{ $activeCategory === 'all' ? 'bg-gradient-dark text-white shadow-xs' : 'bg-transparent border-0 text-dark opacity-7 shadow-none' }}">
+              <i class="ni ni-bullet-list-67 me-1 text-xs"></i> Semua Log
+            </a>
+            <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'auth'])) }}" 
+               class="btn btn-sm mb-0 flex-fill text-center font-weight-bolder py-2 {{ $activeCategory === 'auth' ? 'bg-gradient-primary text-white shadow-xs' : 'bg-transparent border-0 text-dark opacity-7 shadow-none' }}">
+              <i class="ni ni-key-25 me-1 text-xs {{ $activeCategory === 'auth' ? 'text-white' : 'text-primary' }}"></i> Autentikasi & Akun
+            </a>
+            <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'user'])) }}" 
+               class="btn btn-sm mb-0 flex-fill text-center font-weight-bolder py-2 {{ $activeCategory === 'user' ? 'bg-gradient-info text-white shadow-xs' : 'bg-transparent border-0 text-dark opacity-7 shadow-none' }}">
+              <i class="ni ni-badge me-1 text-xs {{ $activeCategory === 'user' ? 'text-white' : 'text-info' }}"></i> User Admin
+            </a>
+            <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'security'])) }}" 
+               class="btn btn-sm mb-0 flex-fill text-center font-weight-bolder py-2 {{ $activeCategory === 'security' ? 'bg-gradient-danger text-white shadow-xs' : 'bg-transparent border-0 text-dark opacity-7 shadow-none' }}">
+              <i class="ni ni-lock-circle-open me-1 text-xs {{ $activeCategory === 'security' ? 'text-white' : 'text-danger' }}"></i> Keamanan & Blacklist
+            </a>
+            <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'event'])) }}" 
+               class="btn btn-sm mb-0 flex-fill text-center font-weight-bolder py-2 {{ $activeCategory === 'event' ? 'bg-gradient-success text-white shadow-xs' : 'bg-transparent border-0 text-dark opacity-7 shadow-none' }}">
+              <i class="ni ni-calendar-grid-58 me-1 text-xs {{ $activeCategory === 'event' ? 'text-white' : 'text-success' }}"></i> Event Presensi
+            </a>
+          </div>
+
+          <!-- Interactive Sub-Chips Bar -->
+          <div class="p-2 border-radius-lg bg-white border d-flex flex-wrap align-items-center gap-1">
+            <span class="text-xxs font-weight-bolder text-uppercase text-muted me-2 ms-1">Sub Filter:</span>
+
+            <!-- Tab All Chips -->
+            <div class="sub-chips-group d-flex flex-wrap gap-1 {{ $activeCategory === 'all' ? '' : 'd-none' }}" id="chips-all">
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'all'])) }}" class="btn btn-xs {{ ($activityFilter ?? 'all') === 'all' ? 'bg-gradient-dark text-white' : 'btn-outline-dark' }} mb-0">Semua Aktivitas</a>
+            </div>
+
+            <!-- Tab Auth Chips -->
+            <div class="sub-chips-group d-flex flex-wrap gap-1 {{ $activeCategory === 'auth' ? '' : 'd-none' }}" id="chips-auth">
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'auth'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'auth' ? 'bg-gradient-primary text-white' : 'btn-outline-primary' }} mb-0">Semua Autentikasi</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'login'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'login' ? 'bg-gradient-success text-white' : 'btn-outline-success' }} mb-0">Berhasil Login</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'login_failed'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'login_failed' ? 'bg-gradient-warning text-white' : 'btn-outline-warning' }} mb-0">Gagal Login</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'login_blocked'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'login_blocked' ? 'bg-gradient-danger text-white' : 'btn-outline-danger' }} mb-0">Login Terblokir</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'register'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'register' ? 'bg-gradient-info text-white' : 'btn-outline-info' }} mb-0">Pendaftaran Mandiri</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'logout'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'logout' ? 'bg-gradient-dark text-white' : 'btn-outline-dark' }} mb-0">Logout</a>
+            </div>
+
+            <!-- Tab User Chips -->
+            <div class="sub-chips-group d-flex flex-wrap gap-1 {{ $activeCategory === 'user' ? '' : 'd-none' }}" id="chips-user">
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'user'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'user' ? 'bg-gradient-primary text-white' : 'btn-outline-primary' }} mb-0">Semua User Admin</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'create_user'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'create_user' ? 'bg-gradient-primary text-white' : 'btn-outline-primary' }} mb-0">Tambah Akun</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'update_user'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'update_user' ? 'bg-gradient-info text-white' : 'btn-outline-info' }} mb-0">Edit Akun</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'delete_user'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'delete_user' ? 'bg-gradient-danger text-white' : 'btn-outline-danger' }} mb-0">Hapus Akun</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'restore_user'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'restore_user' ? 'bg-gradient-success text-white' : 'btn-outline-success' }} mb-0">Pulihkan Akun</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'approve_user'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'approve_user' ? 'bg-gradient-success text-white' : 'btn-outline-success' }} mb-0">Setujui Akun</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'reject_user'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'reject_user' ? 'bg-gradient-danger text-white' : 'btn-outline-danger' }} mb-0">Tolak Akun</a>
+            </div>
+
+            <!-- Tab Security Chips -->
+            <div class="sub-chips-group d-flex flex-wrap gap-1 {{ $activeCategory === 'security' ? '' : 'd-none' }}" id="chips-security">
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'security'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'security' ? 'bg-gradient-primary text-white' : 'btn-outline-primary' }} mb-0">Semua Keamanan</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'blacklist_add'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'blacklist_add' ? 'bg-gradient-danger text-white' : 'btn-outline-danger' }} mb-0">Tambah Blacklist</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'blacklist_remove'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'blacklist_remove' ? 'bg-gradient-success text-white' : 'btn-outline-success' }} mb-0">Hapus Blacklist</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'blocked'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'blocked' ? 'bg-gradient-dark text-white' : 'btn-outline-dark' }} mb-0">Semua Pemblokiran</a>
+            </div>
+
+            <!-- Tab Event Chips -->
+            <div class="sub-chips-group d-flex flex-wrap gap-1 {{ $activeCategory === 'event' ? '' : 'd-none' }}" id="chips-event">
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'event'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'event' ? 'bg-gradient-primary text-white' : 'btn-outline-primary' }} mb-0">Semua Event</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'create_event'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'create_event' ? 'bg-gradient-primary text-white' : 'btn-outline-primary' }} mb-0">Buat Event</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'update_event'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'update_event' ? 'bg-gradient-info text-white' : 'btn-outline-info' }} mb-0">Edit Event</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'delete_event'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'delete_event' ? 'bg-gradient-danger text-white' : 'btn-outline-danger' }} mb-0">Hapus Event</a>
+              <a href="{{ route('admin.logs', array_merge(request()->query(), ['activity_filter' => 'submit_presence'])) }}" class="btn btn-xs {{ ($activityFilter ?? '') === 'submit_presence' ? 'bg-gradient-success text-white' : 'btn-outline-success' }} mb-0">Presensi Tamu / Peserta</a>
+            </div>
+          </div>
+        </form>
       </div>
       <div class="card-body px-0 pt-0 pb-2 mt-3">
         <div class="table-responsive p-4">
@@ -180,18 +251,31 @@
                   <td class="text-sm font-weight-bold">{{ $log->user_name }}</td>
                   <td>
                     @php
-                      $color = 'bg-gradient-secondary';
-                      if ($log->activity === 'login') $color = 'bg-gradient-success';
-                      elseif ($log->activity === 'login_failed') $color = 'bg-gradient-warning';
-                      elseif (in_array($log->activity, ['login_blocked', 'blacklist_add'])) $color = 'bg-gradient-danger';
-                      elseif ($log->activity === 'logout') $color = 'bg-gradient-dark';
-                      elseif ($log->activity === 'create_event') $color = 'bg-gradient-primary';
-                      elseif ($log->activity === 'update_event') $color = 'bg-gradient-info';
-                      elseif ($log->activity === 'delete_event') $color = 'bg-gradient-danger';
-                      elseif ($log->activity === 'submit_presence') $color = 'bg-gradient-info';
-                      elseif ($log->activity === 'delete_user') $color = 'bg-gradient-warning';
+                      $badgeConfig = [
+                        'login' => ['color' => 'bg-gradient-success', 'label' => 'Berhasil Login'],
+                        'login_failed' => ['color' => 'bg-gradient-warning', 'label' => 'Gagal Login'],
+                        'login_blocked' => ['color' => 'bg-gradient-danger', 'label' => 'Login Terblokir'],
+                        'register' => ['color' => 'bg-gradient-info', 'label' => 'Pendaftaran Mandiri'],
+                        'logout' => ['color' => 'bg-gradient-dark', 'label' => 'Logout'],
+
+                        'create_user' => ['color' => 'bg-gradient-primary', 'label' => 'Tambah Akun'],
+                        'update_user' => ['color' => 'bg-gradient-info', 'label' => 'Edit Akun'],
+                        'delete_user' => ['color' => 'bg-gradient-danger', 'label' => 'Hapus Akun'],
+                        'restore_user' => ['color' => 'bg-gradient-success', 'label' => 'Pulihkan Akun'],
+                        'approve_user' => ['color' => 'bg-gradient-success', 'label' => 'Setujui Pendaftaran'],
+                        'reject_user' => ['color' => 'bg-gradient-danger', 'label' => 'Tolak Pendaftaran'],
+
+                        'blacklist_add' => ['color' => 'bg-gradient-danger', 'label' => 'Tambah Blacklist'],
+                        'blacklist_remove' => ['color' => 'bg-gradient-success', 'label' => 'Hapus Blacklist'],
+
+                        'create_event' => ['color' => 'bg-gradient-primary', 'label' => 'Buat Event'],
+                        'update_event' => ['color' => 'bg-gradient-info', 'label' => 'Edit Event'],
+                        'delete_event' => ['color' => 'bg-gradient-danger', 'label' => 'Hapus Event'],
+                      ];
+
+                      $cfg = $badgeConfig[$log->activity] ?? ['color' => 'bg-gradient-secondary', 'label' => ucfirst(str_replace('_', ' ', $log->activity))];
                     @endphp
-                    <span class="badge badge-sm {{ $color }}">{{ ucfirst(str_replace('_', ' ', $log->activity)) }}</span>
+                    <span class="badge badge-sm {{ $cfg['color'] }}">{{ $cfg['label'] }}</span>
                   </td>
                   <td class="text-sm text-wrap" style="max-width: 350px;">{{ $log->description }}</td>
                   <td class="text-sm">{{ $log->ip_address }}</td>
@@ -209,6 +293,24 @@
 @section('scripts')
 <script src="{{ asset('assets/argon-dashboard-pro-html-v2.0.5/assets/js/plugins/datatables.js') }}"></script>
 <script>
+  function switchCategoryTab(cat) {
+    document.querySelectorAll('.nav-category-btn').forEach(btn => {
+      btn.classList.remove('active', 'bg-white', 'text-dark', 'shadow-xs');
+      btn.classList.add('text-muted');
+      if (btn.getAttribute('data-cat') === cat) {
+        btn.classList.add('active', 'bg-white', 'text-dark', 'shadow-xs');
+        btn.classList.remove('text-muted');
+      }
+    });
+
+    applySubChipFilter(cat);
+  }
+
+  function applySubChipFilter(val) {
+    document.getElementById('active-activity-filter-input').value = val || 'all';
+    document.getElementById('logs-filter-form').submit();
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('activity-logs-table')) {
       new simpleDatatables.DataTable("#activity-logs-table", {

@@ -5,7 +5,7 @@
   @php($argon = 'assets/argon-dashboard-pro-html-v2.0.5/assets')
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Login Staff - E-Presensi Diskominfo</title>
+  <title>Login Staff - E-Presensi </title>
   <link rel="apple-touch-icon" sizes="76x76" href="{{ asset($argon . '/img/apple-icon.png') }}">
   <link rel="icon" type="image/png" href="{{ asset($argon . '/img/favicon.png') }}">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -32,7 +32,7 @@
 <body class="bg-gray-100">
   <nav class="navbar navbar-expand-lg position-absolute top-0 z-index-3 w-100 shadow-none my-3 navbar-transparent">
     <div class="container">
-      <a class="navbar-brand font-weight-bolder text-white" href="{{ route('home') }}">E-Presensi Diskominfo</a>
+      <a class="navbar-brand font-weight-bolder text-white" href="{{ route('home') }}">E-Presensi </a>
     </div>
   </nav>
   <main class="main-content mt-0">
@@ -60,7 +60,7 @@
                 @csrf
                 <label>Email</label>
                 <div class="mb-3">
-                  <input type="email" name="email" required class="form-control" placeholder="email@malangkota.go.id">
+                  <input type="email" name="email" value="{{ old('email') }}" required class="form-control" placeholder="email@malangkota.go.id" autocomplete="email">
                 </div>
                 <label>Kata Sandi</label>
                 <div class="input-group mb-3">

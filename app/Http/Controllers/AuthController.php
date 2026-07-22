@@ -40,7 +40,7 @@ class AuthController extends Controller
                 $request->session()->regenerateToken();
 
                 if ($user->status === 'pending') {
-                    return back()->with('warning', 'Pendaftaran akun Anda masih menunggu persetujuan (approval) dari Super Admin. Silakan hubungi admin via WhatsApp/Telepon ke nomor 085756654123 untuk konfirmasi persetujuan akun Anda.');
+                    return back()->with('warning', 'Pendaftaran akun Anda masih menunggu persetujuan (approval) dari Super Admin. Silakan hubungi admin via WhatsApp/Telepon ke nomor 082131701177 untuk konfirmasi persetujuan akun Anda.');
                 } else {
                     return back()->with('warning', 'Pendaftaran akun Anda telah ditolak oleh Admin.');
                 }
@@ -142,7 +142,7 @@ class AuthController extends Controller
             'user_agent' => $request->userAgent()
         ]);
 
-        return redirect('/login')->with('info', 'Pendaftaran mandiri berhasil! Akun Anda sedang menunggu persetujuan (approval) dari Super Admin sebelum dapat digunakan. Silakan hubungi admin via WhatsApp/Telepon ke nomor 085756654123 untuk konfirmasi persetujuan akun Anda.');
+        return redirect('/login')->with('info', 'Pendaftaran mandiri berhasil! Akun Anda sedang menunggu persetujuan (approval) dari Super Admin sebelum dapat digunakan. Silakan hubungi admin via WhatsApp/Telepon ke nomor 082131701177 untuk konfirmasi persetujuan akun Anda.');
     }
 
     public function logout(Request $request)

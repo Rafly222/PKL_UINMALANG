@@ -60,15 +60,15 @@
                 @csrf
                 <div class="mb-3">
                   <label>NIP (Nomor Induk Pegawai)</label>
-                  <input type="text" name="nip" required class="form-control" placeholder="18 digit NIP">
+                  <input type="text" name="nip" value="{{ old('nip') }}" required class="form-control" placeholder="18 digit NIP" autocomplete="on" maxlength="18">
                 </div>
                 <label>Nama Lengkap</label>
                 <div class="mb-3">
-                  <input type="text" name="name" required class="form-control" placeholder="Nama lengkap dan gelar">
+                  <input type="text" name="name" value="{{ old('name') }}" required class="form-control" placeholder="Nama lengkap dan gelar" autocomplete="name">
                 </div>
                 <label>Email</label>
                 <div class="mb-3">
-                  <input type="email" name="email" required class="form-control" placeholder="email@malangkota.go.id">
+                  <input type="email" name="email" value="{{ old('email') }}" required class="form-control" placeholder="email@malangkota.go.id" autocomplete="email">
                 </div>
                 <label>Kata Sandi</label>
                 <div class="input-group mb-3">

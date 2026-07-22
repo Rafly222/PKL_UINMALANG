@@ -274,7 +274,7 @@
             </div>
             <h5 class="text-white">Maklumat Integritas</h5>
             <p class="text-white opacity-8 text-sm mb-0">
-              <!-- Data yang dikirimkan menjadi bukti kehadiran resmi pada agenda Diskominfo Kota Malang. Pastikan identitas, foto, dan tanda tangan sesuai dengan peserta yang hadir. -->
+              Data yang dikirimkan menjadi bukti kehadiran resmi pada agenda Diskominfo Kota Malang. Pastikan identitas, foto, dan tanda tangan sesuai dengan peserta yang hadir.
             </p>
           </div>
         </div>

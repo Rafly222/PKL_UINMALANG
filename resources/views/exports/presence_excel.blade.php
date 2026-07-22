@@ -80,13 +80,13 @@
                 <tr style="height: 120px;">
                     <td>{{ $index + 1 }}</td>
                     @if($event->audience_type === 'pegawai' || $event->audience_type === 'semua')
-                        <td>'{{ $presence->nip ?? '-' }}</td>
+                        <td style="mso-number-format:'\@';">{{ $presence->nip ?? '-' }}</td>
                     @endif
                     <td>{{ $presence->name }}</td>
                     
                     {{-- WhatsApp --}}
                     @if(in_array('sc-phone', $event->fields ?? []))
-                        <td>{{ $presence->phone ?? '-' }}</td>
+                        <td style="mso-number-format:'\@';">{{ $presence->phone ?? '-' }}</td>
                     @endif
                     
                     {{-- Gender --}}

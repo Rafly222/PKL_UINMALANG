@@ -132,36 +132,90 @@
       font-weight: 700 !important;
       color: #334155;
       white-space: nowrap;
-    }
-
-    .sidenav .nav-link.active .nav-link-text {
-      color: #0f172a !important;
-      font-weight: 800 !important;
+      transition: color 0.25s ease !important;
     }
 
     .sidenav .nav-link {
-      padding-top: 0.75rem !important;
-      padding-bottom: 0.75rem !important;
+      padding: 0.75rem 1rem !important;
+      margin: 0.25rem 0.75rem !important;
+      border-radius: 0.75rem !important;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      position: relative;
+    }
+
+    /* Hover State on Inactive Sidebar Links */
+    .sidenav .nav-link:hover:not(.active) {
+      background-color: rgba(94, 114, 228, 0.08) !important;
+      transform: translateX(6px) scale(1.01);
+    }
+
+    .sidenav .nav-link:hover:not(.active) .nav-link-text {
+      color: #5e72e4 !important;
+    }
+
+    .sidenav .nav-link:hover:not(.active) .icon i {
+      transform: scale(1.2) rotate(6deg);
+      transition: transform 0.25s ease !important;
+      color: #5e72e4 !important;
+    }
+
+    /* Active State on Sidebar Links */
+    .sidenav .nav-link.active {
+      background: linear-gradient(135deg, #5e72e4 0%, #825ee4 100%) !important;
+      box-shadow: 0 6px 20px rgba(94, 114, 228, 0.35) !important;
+      transform: translateX(4px);
+    }
+
+    .sidenav .nav-link.active .nav-link-text {
+      color: #ffffff !important;
+      font-weight: 800 !important;
+    }
+
+    .sidenav .nav-link.active .icon i {
+      color: #ffffff !important;
+      opacity: 1 !important;
+    }
+
+    .sidenav .nav-link:active {
+      transform: scale(0.97) translateX(3px) !important;
     }
 
     .sidenav .icon-shape {
       width: 38px !important;
       height: 38px !important;
       border-radius: 0.75rem !important;
+      transition: all 0.25s ease !important;
     }
 
     .sidenav .nav-link i {
       font-size: 1.15rem !important;
+      transition: all 0.25s ease !important;
+    }
+
+    /* Universal Button & Chip Interactive Effects */
+    .btn, .nav-category-btn, .sub-chips-group .btn {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .btn:hover, .sub-chips-group .btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 6px 16px rgba(50, 50, 93, 0.12), 0 3px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn:active, .sub-chips-group .btn:active {
+      transform: translateY(0) scale(0.97) !important;
     }
 
     /* Desktop Expanded & Compact Sidebar Mode */
     @media (min-width: 1200px) {
       .g-sidenav-show:not(.g-sidenav-hidden) .sidenav {
-        max-width: 19.5rem !important;
-        width: 19.5rem !important;
+        max-width: 17.5rem !important;
+        width: 17.5rem !important;
       }
       .g-sidenav-show:not(.g-sidenav-hidden) .main-content {
-        margin-left: 21rem !important;
+        margin-left: 20.25rem !important;
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
       }
 
       body.g-sidenav-hidden .sidenav {
@@ -202,7 +256,9 @@
         margin-right: 0 !important;
       }
       body.g-sidenav-hidden .main-content {
-        margin-left: 7rem !important;
+        margin-left: 7.75rem !important;
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
       }
     }
 
@@ -307,7 +363,7 @@
   </aside>
 
   <main class="main-content position-relative border-radius-lg">
-    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" data-scroll="false">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-0 mb-3 shadow-none border-radius-xl" id="navbarBlur" data-scroll="false">
       <div class="container-fluid py-1 px-3">
         <div class="d-flex align-items-center me-3">
           <div class="sidenav-toggler sidenav-toggler-inner cursor-pointer" id="iconNavbarSidenav" style="cursor: pointer;">
@@ -351,7 +407,7 @@
       </div>
     </nav>
 
-    <div class="container-fluid py-4">
+    <div class="container-fluid px-0 py-3">
       @yield('content')
       <footer class="footer pt-4">
         <div class="row align-items-center justify-content-lg-between">

@@ -32,75 +32,67 @@
   </div>
 
   <div class="col-xl-2 col-md-4 col-sm-6 mb-3 mb-xl-0">
-    <a href="{{ route('admin.logs', array_merge(request()->except('page'), ['activity_filter' => 'login'])) }}" class="text-decoration-none">
-      <div class="card ep-card {{ ($activityFilter ?? '') === 'login' ? 'border border-2 border-success' : '' }}">
-        <div class="card-body p-3">
-          <div class="d-flex align-items-center">
-            <div>
-              <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">Berhasil Login</p>
-              <h5 class="font-weight-bolder mb-0 text-dark">{{ $countLoginSuccess ?? 0 }}</h5>
-            </div>
-            <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
-              <i class="ni ni-check-bold text-lg opacity-10 text-white" style="top: 0 !important;"></i>
-            </div>
+    <div class="card ep-card">
+      <div class="card-body p-3">
+        <div class="d-flex align-items-center">
+          <div>
+            <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">Berhasil Login</p>
+            <h5 class="font-weight-bolder mb-0 text-dark">{{ $countLoginSuccess ?? 0 }}</h5>
+          </div>
+          <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
+            <i class="ni ni-check-bold text-lg opacity-10 text-white" style="top: 0 !important;"></i>
           </div>
         </div>
       </div>
-    </a>
+    </div>
   </div>
 
   <div class="col-xl-2 col-md-4 col-sm-6 mb-3 mb-xl-0">
-    <a href="{{ route('admin.logs', array_merge(request()->except('page'), ['activity_filter' => 'login_failed'])) }}" class="text-decoration-none">
-      <div class="card ep-card {{ ($activityFilter ?? '') === 'login_failed' ? 'border border-2 border-warning' : '' }}">
-        <div class="card-body p-3">
-          <div class="d-flex align-items-center">
-            <div>
-              <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">Gagal Login</p>
-              <h5 class="font-weight-bolder mb-0 text-dark">{{ $countLoginFailed ?? 0 }}</h5>
-            </div>
-            <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
-              <i class="ni ni-fat-remove text-lg opacity-10 text-white" style="top: 0 !important;"></i>
-            </div>
+    <div class="card ep-card">
+      <div class="card-body p-3">
+        <div class="d-flex align-items-center">
+          <div>
+            <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">Gagal Login</p>
+            <h5 class="font-weight-bolder mb-0 text-dark">{{ $countLoginFailed ?? 0 }}</h5>
+          </div>
+          <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
+            <i class="ni ni-fat-remove text-lg opacity-10 text-white" style="top: 0 !important;"></i>
           </div>
         </div>
       </div>
-    </a>
+    </div>
   </div>
 
   <div class="col-xl-2 col-md-4 col-sm-6 mb-3 mb-xl-0">
-    <a href="{{ route('admin.logs', array_merge(request()->except('page'), ['activity_filter' => 'blocked'])) }}" class="text-decoration-none">
-      <div class="card ep-card {{ ($activityFilter ?? '') === 'blocked' ? 'border border-2 border-danger' : '' }}">
-        <div class="card-body p-3">
-          <div class="d-flex align-items-center">
-            <div>
-              <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">Blokir</p>
-              <h5 class="font-weight-bolder mb-0 text-dark">{{ $countBlocked ?? 0 }}</h5>
-            </div>
-            <div class="icon icon-shape bg-gradient-danger shadow-danger text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
-              <i class="ni ni-lock-circle-open text-lg opacity-10 text-white" style="top: 0 !important;"></i>
-            </div>
+    <div class="card ep-card">
+      <div class="card-body p-3">
+        <div class="d-flex align-items-center">
+          <div>
+            <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">Blokir</p>
+            <h5 class="font-weight-bolder mb-0 text-dark">{{ $countBlocked ?? 0 }}</h5>
+          </div>
+          <div class="icon icon-shape bg-gradient-danger shadow-danger text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
+            <i class="ni ni-lock-circle-open text-lg opacity-10 text-white" style="top: 0 !important;"></i>
           </div>
         </div>
       </div>
-    </a>
+    </div>
   </div>
 
   <div class="col-xl-2 col-md-4 col-sm-6 mb-3 mb-xl-0">
-    <a href="{{ route('admin.logs', array_merge(request()->except('page'), ['activity_filter' => 'logout'])) }}" class="text-decoration-none">
-      <div class="card ep-card {{ ($activityFilter ?? '') === 'logout' ? 'border border-2 border-info' : '' }}">
-        <div class="card-body p-3">
-          <div class="d-flex align-items-center">
-            <div>
-              <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">Logout</p>
-              <h5 class="font-weight-bolder mb-0 text-dark">{{ $countLogout ?? 0 }}</h5>
-            </div>
-            <div class="icon icon-shape bg-gradient-info shadow-info text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
-              <i class="ni ni-button-power text-lg opacity-10 text-white" style="top: 0 !important;"></i>
-            </div>
+    <div class="card ep-card">
+      <div class="card-body p-3">
+        <div class="d-flex align-items-center">
+          <div>
+            <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">Logout</p>
+            <h5 class="font-weight-bolder mb-0 text-dark">{{ $countLogout ?? 0 }}</h5>
+          </div>
+          <div class="icon icon-shape bg-gradient-info shadow-info text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
+            <i class="ni ni-button-power text-lg opacity-10 text-white" style="top: 0 !important;"></i>
           </div>
         </div>
       </div>
-    </a>
+    </div>
   </div>
 
   <div class="col-xl-2 col-md-4 col-sm-6">

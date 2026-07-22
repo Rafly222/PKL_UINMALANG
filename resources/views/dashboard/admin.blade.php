@@ -451,32 +451,58 @@
         const qrBox = document.getElementById('qrcode-box-' + eventId);
         if (qrBox) {
           const canvas = qrBox.querySelector('canvas');
-          const img = qrBox.querySelector('img');
-          
           if (canvas) {
-            const a = document.createElement('a');
-            a.href = canvas.toDataURL('image/png');
-            a.download = 'QR_Code_' + eventName + '.png';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-          } else if (img && img.src) {
-            const tempCanvas = document.createElement('canvas');
-            const ctx = tempCanvas.getContext('2d');
-            const tempImg = new Image();
-            tempImg.crossOrigin = 'anonymous';
-            tempImg.onload = function() {
-              tempCanvas.width = tempImg.naturalWidth || 180;
-              tempCanvas.height = tempImg.naturalHeight || 180;
-              ctx.drawImage(tempImg, 0, 0);
+            // Create a high-res canvas (600x600) for downloading
+            const downloadCanvas = document.createElement('canvas');
+            downloadCanvas.width = 600;
+            downloadCanvas.height = 600;
+            const ctx = downloadCanvas.getContext('2d');
+
+            // Draw the QR code scaled up to 600x600 (disable smoothing for perfect crispness)
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(canvas, 0, 0, 600, 600);
+
+            // Load and draw the logo at the center of the download canvas
+            const logo = new Image();
+            const logoSrc = '{{ asset("assets/argon-dashboard-pro-html-v2.0.5/assets/img/logos/GKV307_Kota Malang-logobase.net.png") }}';
+            try {
+              logo.src = new URL(logoSrc).pathname;
+            } catch (e) {
+              logo.src = logoSrc;
+            }
+
+            logo.onload = function() {
+              const logoSize = 110;
+              const x = (600 - logoSize) / 2;
+              const y = (600 - logoSize) / 2;
+
+              // Draw a clean white circle background card for the logo
+              ctx.fillStyle = '#ffffff';
+              ctx.beginPath();
+              ctx.arc(300, 300, (logoSize + 22) / 2, 0, 2 * Math.PI);
+              ctx.fill();
+
+              // Draw logo inside the circle
+              ctx.drawImage(logo, x, y, logoSize, logoSize);
+
+              // Trigger download
               const a = document.createElement('a');
-              a.href = tempCanvas.toDataURL('image/png');
+              a.href = downloadCanvas.toDataURL('image/png');
               a.download = 'QR_Code_' + eventName + '.png';
               document.body.appendChild(a);
               a.click();
               document.body.removeChild(a);
             };
-            tempImg.src = img.src;
+
+            // In case image loading fails, download the plain QR code as fallback
+            logo.onerror = function() {
+              const a = document.createElement('a');
+              a.href = downloadCanvas.toDataURL('image/png');
+              a.download = 'QR_Code_' + eventName + '.png';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+            };
           }
         }
       });

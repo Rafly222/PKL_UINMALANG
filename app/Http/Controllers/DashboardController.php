@@ -71,7 +71,7 @@ class DashboardController extends Controller
             'time_start' => $request->time_start,
             'time_end' => $request->time_end,
             'access_type' => $request->access_type,
-            'password' => $request->access_type === 'privat' ? Hash::make($request->password) : null,
+            'password' => $request->access_type === 'privat' ? encrypt($request->password) : null,
             'audience_type' => $request->audience_type,
             'fields' => $fields,
             'custom_fields' => $custom_fields
@@ -146,8 +146,8 @@ class DashboardController extends Controller
         ];
 
         if ($request->access_type === 'privat') {
-            if ($request->filled('password')) {
-                $data['password'] = Hash::make($request->password);
+            if ($request->filled('password') && $request->password !== '********') {
+                $data['password'] = encrypt($request->password);
             }
         } else {
             $data['password'] = null;

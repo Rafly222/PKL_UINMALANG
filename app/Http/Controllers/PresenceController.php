@@ -141,7 +141,19 @@ class PresenceController extends Controller
             }
         }
 
-        if (Hash::check($request->password, $event->password) || $request->password === $event->password) {
+        $isMatch = false;
+        try {
+            $decrypted = decrypt($event->password);
+            if ($request->password === $decrypted) {
+                $isMatch = true;
+            }
+        } catch (\Exception $e) {
+            if (Hash::check($request->password, $event->password) || $request->password === $event->password) {
+                $isMatch = true;
+            }
+        }
+
+        if ($isMatch) {
             \Illuminate\Support\Facades\RateLimiter::clear($throttleKey);
             \Illuminate\Support\Facades\Cache::forget($attemptsKey);
             session(["event_gate_passed_{$event->id}" => true]);

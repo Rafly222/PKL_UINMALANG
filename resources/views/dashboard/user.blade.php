@@ -185,8 +185,8 @@
                                 </div>
                               </div>
                               
-                              <p class="text-xs text-muted mb-0 text-break" style="font-size: 11px;">
-                                {{ route('presence.form', $event->uuid) }}
+                              <p class="text-xs text-muted mb-0 text-break qr-link-copy" style="font-size: 11px; cursor: pointer;" title="Klik untuk menyalin" data-url="{{ route('presence.form', $event->uuid) }}">
+                                <i class="fas fa-copy me-1"></i> {{ route('presence.form', $event->uuid) }}
                               </p>
                             </div>
                           </div>
@@ -574,6 +574,33 @@
             window.open(qrImgUrl, '_blank');
           };
         }
+      });
+    });
+
+    // Copy link on click
+    document.querySelectorAll('.qr-link-copy').forEach(el => {
+      el.addEventListener('click', function() {
+        const url = this.getAttribute('data-url');
+        navigator.clipboard.writeText(url).then(() => {
+          const originalHTML = this.innerHTML;
+          this.innerHTML = '<span class="text-success font-weight-bold"><i class="fas fa-check me-1"></i> Berhasil disalin!</span>';
+          setTimeout(() => {
+            this.innerHTML = originalHTML;
+          }, 2000);
+        }).catch(err => {
+          const tempInput = document.createElement('input');
+          tempInput.value = url;
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempInput);
+
+          const originalHTML = this.innerHTML;
+          this.innerHTML = '<span class="text-success font-weight-bold"><i class="fas fa-check me-1"></i> Berhasil disalin!</span>';
+          setTimeout(() => {
+            this.innerHTML = originalHTML;
+          }, 2000);
+        });
       });
     });
 

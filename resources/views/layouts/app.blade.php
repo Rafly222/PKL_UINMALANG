@@ -28,13 +28,8 @@
         <img src="{{ asset($argon . '/img/epresensi-logo.png') }}" class="navbar-brand-img shadow-sm" alt="logo">
         <span class="ms-2 font-weight-bold text-dark">E-Presensi</span>
       </a>
-      <div class="sidenav-toggler sidenav-toggler-inner cursor-pointer" id="iconSidenav" style="cursor: pointer;">
-        <div class="sidenav-toggler-inner">
-          <i class="sidenav-toggler-line bg-dark"></i>
-          <i class="sidenav-toggler-line bg-dark"></i>
-          <i class="sidenav-toggler-line bg-dark"></i>
-        </div>
-      </div>
+      <span id="iconSidenav" class="d-none"></span>
+
     </div>
     <hr class="horizontal dark mt-0">
     <div class="collapse navbar-collapse w-auto h-auto" id="sidenav-collapse-main">
@@ -111,15 +106,6 @@
   <main class="main-content position-relative border-radius-lg">
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-0 mb-3 shadow-none border-radius-xl sticky-top" id="navbarBlur" data-scroll="false">
       <div class="container-fluid py-1 px-3">
-        <div class="d-flex align-items-center me-3 d-xl-none">
-          <div class="sidenav-toggler sidenav-toggler-inner cursor-pointer" id="iconNavbarSidenav" style="cursor: pointer;">
-            <div class="sidenav-toggler-inner">
-              <i class="sidenav-toggler-line bg-white"></i>
-              <i class="sidenav-toggler-line bg-white"></i>
-              <i class="sidenav-toggler-line bg-white"></i>
-            </div>
-          </div>
-        </div>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
             <li class="breadcrumb-item text-sm"><a class="opacity-7 text-white" href="{{ route('home') }}">E-Presensi</a></li>
@@ -127,6 +113,16 @@
           </ol>
           <h6 class="font-weight-bolder text-white mb-0">@yield('page-title', 'Portal Presensi')</h6>
         </nav>
+        <div class="sidenav-toggler sidenav-toggler-inner d-xl-block d-none ms-5 me-3">
+          <a class="nav-link p-0 cursor-pointer">
+            <div class="sidenav-toggler-inner">
+              <i class="sidenav-toggler-line bg-white"></i>
+              <i class="sidenav-toggler-line bg-white"></i>
+              <i class="sidenav-toggler-line bg-white"></i>
+            </div>
+          </a>
+        </div>
+
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
           <div class="ms-md-auto pe-md-3 d-flex align-items-center"></div>
           <ul class="navbar-nav justify-content-end">
@@ -149,6 +145,15 @@
               </li>
             @endauth
           </ul>
+        </div>
+        <div class="d-xl-none ps-3 d-flex align-items-center ms-auto me-3">
+          <a class="nav-link text-white p-0 cursor-pointer" id="iconNavbarSidenav">
+            <div class="sidenav-toggler-inner">
+              <i class="sidenav-toggler-line bg-white"></i>
+              <i class="sidenav-toggler-line bg-white"></i>
+              <i class="sidenav-toggler-line bg-white"></i>
+            </div>
+          </a>
         </div>
       </div>
     </nav>
@@ -187,7 +192,15 @@
       // Auto close sidebar on mobile/tablet screens
       if (window.innerWidth < 1200) {
         body.classList.remove('g-sidenav-pinned');
-        body.classList.add('g-sidenav-hidden');
+        body.classList.remove('g-sidenav-hidden');
+      }
+
+      // Ensure clicking the mobile toggler removes the hidden class (which prevents it from showing)
+      const iconNavbarSidenav = document.getElementById('iconNavbarSidenav');
+      if (iconNavbarSidenav) {
+        iconNavbarSidenav.addEventListener('click', () => {
+          body.classList.remove('g-sidenav-hidden');
+        });
       }
 
       // Navbar scroll listener for sticky card styling

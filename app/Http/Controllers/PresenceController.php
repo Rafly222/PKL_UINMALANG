@@ -129,9 +129,14 @@ class PresenceController extends Controller
         $attempts = Cache::get($attemptsKey, 0) + 1;
         Cache::put($attemptsKey, $attempts, now()->addMinutes(60));
 
+        if ($attempts < 3) {
+            $remaining = 3 - $attempts;
+            return back()->with('warning', "Kata sandi yang Anda masukkan salah. Sisa percobaan Anda: {$remaining} kali.");
+        }
+
         $decaySeconds = match ($attempts) {
-            1 => 60,
-            2 => 180,
+            3 => 60,
+            4 => 180,
             default => 300,
         };
 

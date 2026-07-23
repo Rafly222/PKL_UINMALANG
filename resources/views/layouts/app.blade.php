@@ -22,13 +22,13 @@
 <body class="g-sidenav-show g-sidenav-pinned bg-gray-100">
   <div class="min-height-300 bg-primary position-absolute w-100"></div>
 
-  <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 shadow-lg" id="sidenav-main">
+  <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 fixed-start" id="sidenav-main">
     <div class="sidenav-header">
       <a class="navbar-brand m-0 d-flex align-items-center" href="{{ route('home') }}">
         <img src="{{ asset($argon . '/img/epresensi-logo.png') }}" class="navbar-brand-img shadow-sm" alt="logo">
         <span class="ms-2 font-weight-bold text-dark">E-Presensi</span>
       </a>
-      <div class="sidenav-toggler sidenav-toggler-inner cursor-pointer" id="iconNavbarSidenav" style="cursor: pointer;">
+      <div class="sidenav-toggler sidenav-toggler-inner cursor-pointer" id="iconSidenav" style="cursor: pointer;">
         <div class="sidenav-toggler-inner">
           <i class="sidenav-toggler-line bg-dark"></i>
           <i class="sidenav-toggler-line bg-dark"></i>
@@ -112,7 +112,7 @@
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-0 mb-3 shadow-none border-radius-xl sticky-top" id="navbarBlur" data-scroll="false">
       <div class="container-fluid py-1 px-3">
         <div class="d-flex align-items-center me-3 d-xl-none">
-          <div class="sidenav-toggler sidenav-toggler-inner cursor-pointer" id="iconNavbarSidenavMobile" style="cursor: pointer;">
+          <div class="sidenav-toggler sidenav-toggler-inner cursor-pointer" id="iconNavbarSidenav" style="cursor: pointer;">
             <div class="sidenav-toggler-inner">
               <i class="sidenav-toggler-line bg-white"></i>
               <i class="sidenav-toggler-line bg-white"></i>
@@ -182,36 +182,12 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const iconNavbarSidenav = document.getElementById('iconNavbarSidenav');
-      const iconNavbarSidenavMobile = document.getElementById('iconNavbarSidenavMobile');
-      const iconSidenav = document.getElementById('iconSidenav');
       const body = document.body;
 
       // Auto close sidebar on mobile/tablet screens
       if (window.innerWidth < 1200) {
         body.classList.remove('g-sidenav-pinned');
         body.classList.add('g-sidenav-hidden');
-      }
-
-      function toggleSidebar(e) {
-        if (e) e.preventDefault();
-        if (body.classList.contains('g-sidenav-pinned')) {
-          body.classList.remove('g-sidenav-pinned');
-          body.classList.add('g-sidenav-hidden');
-        } else {
-          body.classList.remove('g-sidenav-hidden');
-          body.classList.add('g-sidenav-pinned');
-        }
-      }
-
-      if (iconNavbarSidenav) {
-        iconNavbarSidenav.addEventListener('click', toggleSidebar);
-      }
-      if (iconNavbarSidenavMobile) {
-        iconNavbarSidenavMobile.addEventListener('click', toggleSidebar);
-      }
-      if (iconSidenav) {
-        iconSidenav.addEventListener('click', toggleSidebar);
       }
 
       // Navbar scroll listener for sticky card styling

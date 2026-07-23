@@ -14,75 +14,67 @@
   </div>
 <div class="row mb-4">
   <div class="col-xl-3 col-md-6 mb-3 mb-xl-0">
-    <a href="{{ route('admin.users', ['status_filter' => 'approved']) }}" class="text-decoration-none">
-      <div class="card ep-card {{ ($filter ?? '') === 'approved' ? 'border border-2 border-success' : '' }}">
-        <div class="card-body p-3">
-          <div class="d-flex align-items-center">
-            <div>
-              <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">User Aktif</p>
-              <h4 class="font-weight-bolder mb-0 text-dark">{{ $countActive ?? 0 }}</h4>
-            </div>
-            <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
-              <i class="ni ni-badge text-lg opacity-10 text-white" style="top: 0 !important;"></i>
-            </div>
+    <div class="card ep-card">
+      <div class="card-body p-3">
+        <div class="d-flex align-items-center">
+          <div>
+            <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">User Aktif</p>
+            <h4 class="font-weight-bolder mb-0 text-dark">{{ $countActive ?? 0 }}</h4>
+          </div>
+          <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
+            <i class="ni ni-badge text-lg opacity-10 text-white" style="top: 0 !important;"></i>
           </div>
         </div>
       </div>
-    </a>
+    </div>
   </div>
 
   <div class="col-xl-3 col-md-6 mb-3 mb-xl-0">
-    <a href="{{ route('admin.users', ['status_filter' => 'pending']) }}" class="text-decoration-none">
-      <div class="card ep-card {{ ($filter ?? '') === 'pending' ? 'border border-2 border-warning' : '' }}">
-        <div class="card-body p-3">
-          <div class="d-flex align-items-center">
-            <div>
-              <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">User Pending</p>
-              <h4 class="font-weight-bolder mb-0 text-dark">{{ $countPending ?? 0 }}</h4>
-            </div>
-            <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
-              <i class="ni ni-time-alarm text-lg opacity-10 text-white" style="top: 0 !important;"></i>
-            </div>
+    <div class="card ep-card">
+      <div class="card-body p-3">
+        <div class="d-flex align-items-center">
+          <div>
+            <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">User Pending</p>
+            <h4 class="font-weight-bolder mb-0 text-dark">{{ $countPending ?? 0 }}</h4>
+          </div>
+          <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
+            <i class="ni ni-time-alarm text-lg opacity-10 text-white" style="top: 0 !important;"></i>
           </div>
         </div>
       </div>
-    </a>
+    </div>
   </div>
 
   <div class="col-xl-3 col-md-6 mb-3 mb-xl-0">
-    <a href="{{ route('admin.users', ['status_filter' => 'blacklisted']) }}" class="text-decoration-none">
-      <div class="card ep-card {{ ($filter ?? '') === 'blacklisted' ? 'border border-2 border-danger' : '' }}">
-        <div class="card-body p-3">
-          <div class="d-flex align-items-center">
-            <div>
-              <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">User Terblokir</p>
-              <h4 class="font-weight-bolder mb-0 text-dark">{{ $countBlacklisted ?? 0 }}</h4>
-            </div>
-            <div class="icon icon-shape bg-gradient-danger shadow-danger text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
-              <i class="ni ni-lock-circle-open text-lg opacity-10 text-white" style="top: 0 !important;"></i>
-            </div>
+    <div class="card ep-card">
+      <div class="card-body p-3">
+        <div class="d-flex align-items-center">
+          <div>
+            <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">User Terblokir</p>
+            <h4 class="font-weight-bolder mb-0 text-dark">{{ $countBlacklisted ?? 0 }}</h4>
+          </div>
+          <div class="icon icon-shape bg-gradient-danger shadow-danger text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
+            <i class="ni ni-lock-circle-open text-lg opacity-10 text-white" style="top: 0 !important;"></i>
           </div>
         </div>
       </div>
-    </a>
+    </div>
   </div>
 
   <div class="col-xl-3 col-md-6">
-    <a href="{{ route('admin.users', ['status_filter' => 'trashed']) }}" class="text-decoration-none">
-      <div class="card ep-card {{ ($filter ?? '') === 'trashed' ? 'border border-2 border-secondary' : '' }}">
-        <div class="card-body p-3">
-          <div class="d-flex align-items-center">
-            <div>
-              <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">User Terhapus</p>
-              <h4 class="font-weight-bolder mb-0 text-dark">{{ $countTrashed ?? 0 }}</h4>
-            </div>
-            <div class="icon icon-shape bg-gradient-secondary shadow-secondary text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
-              <i class="ni ni-basket text-lg opacity-10 text-white" style="top: 0 !important;"></i>
-            </div>
+    <div class="card ep-card">
+      <div class="card-body p-3">
+        <div class="d-flex align-items-center">
+          <div>
+            <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">User Terhapus</p>
+            <h4 class="font-weight-bolder mb-0 text-dark">{{ $countTrashed ?? 0 }}</h4>
+          </div>
+          <div class="icon icon-shape bg-gradient-secondary shadow-secondary text-center rounded-circle ms-auto d-flex align-items-center justify-content-center">
+            <i class="ni ni-basket text-lg opacity-10 text-white" style="top: 0 !important;"></i>
           </div>
         </div>
       </div>
-    </a>
+    </div>
   </div>
 </div>
 
@@ -154,9 +146,9 @@
 
     <div class="card ep-card">
       <div class="card-header pb-0 bg-transparent">
-        <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
           <div>
-            <h6 class="mb-0">Daftar Pengguna</h6>
+            <h6 class="mb-0 font-weight-bolder">Daftar Pengguna</h6>
             <p class="text-xs text-muted mb-0">List seluruh administrator dan staff terdaftar dalam sistem.</p>
           </div>
           <div class="d-flex align-items-center gap-2">
@@ -164,6 +156,30 @@
               <i class="fas fa-user-plus me-1"></i> Tambah Akun
             </button>
           </div>
+        </div>
+
+        <!-- Category Pill Buttons Bar for User Filters (Like Logs Page) -->
+        <div class="d-flex flex-wrap gap-2 mb-3 p-1 bg-gray-100 border-radius-lg">
+          <a href="{{ route('admin.users', ['status_filter' => 'all']) }}" 
+             class="btn btn-sm mb-0 flex-fill text-center font-weight-bolder py-2 {{ ($filter ?? 'all') === 'all' ? 'bg-gradient-dark text-white shadow-xs' : 'bg-transparent border-0 text-dark opacity-7 shadow-none' }}">
+            <i class="ni ni-bullet-list-67 me-1 text-xs"></i> Semua Akun ({{ ($countActive ?? 0) + ($countPending ?? 0) + ($countBlacklisted ?? 0) + ($countTrashed ?? 0) }})
+          </a>
+          <a href="{{ route('admin.users', ['status_filter' => 'approved']) }}" 
+             class="btn btn-sm mb-0 flex-fill text-center font-weight-bolder py-2 {{ ($filter ?? '') === 'approved' ? 'bg-gradient-success text-white shadow-xs' : 'bg-transparent border-0 text-dark opacity-7 shadow-none' }}">
+            <i class="ni ni-badge me-1 text-xs {{ ($filter ?? '') === 'approved' ? 'text-white' : 'text-success' }}"></i> Akun Aktif ({{ $countActive ?? 0 }})
+          </a>
+          <a href="{{ route('admin.users', ['status_filter' => 'pending']) }}" 
+             class="btn btn-sm mb-0 flex-fill text-center font-weight-bolder py-2 {{ ($filter ?? '') === 'pending' ? 'bg-gradient-warning text-white shadow-xs' : 'bg-transparent border-0 text-dark opacity-7 shadow-none' }}">
+            <i class="ni ni-time-alarm me-1 text-xs {{ ($filter ?? '') === 'pending' ? 'text-white' : 'text-warning' }}"></i> Menunggu Persetujuan ({{ $countPending ?? 0 }})
+          </a>
+          <a href="{{ route('admin.users', ['status_filter' => 'blacklisted']) }}" 
+             class="btn btn-sm mb-0 flex-fill text-center font-weight-bolder py-2 {{ ($filter ?? '') === 'blacklisted' ? 'bg-gradient-danger text-white shadow-xs' : 'bg-transparent border-0 text-dark opacity-7 shadow-none' }}">
+            <i class="ni ni-lock-circle-open me-1 text-xs {{ ($filter ?? '') === 'blacklisted' ? 'text-white' : 'text-danger' }}"></i> Akun Terblokir ({{ $countBlacklisted ?? 0 }})
+          </a>
+          <a href="{{ route('admin.users', ['status_filter' => 'trashed']) }}" 
+             class="btn btn-sm mb-0 flex-fill text-center font-weight-bolder py-2 {{ ($filter ?? '') === 'trashed' ? 'bg-gradient-secondary text-white shadow-xs' : 'bg-transparent border-0 text-dark opacity-7 shadow-none' }}">
+            <i class="ni ni-basket me-1 text-xs {{ ($filter ?? '') === 'trashed' ? 'text-white' : 'text-secondary' }}"></i> Akun Terhapus ({{ $countTrashed ?? 0 }})
+          </a>
         </div>
       </div>
       <div class="card-body">
@@ -405,9 +421,10 @@
         searchable: true,
         fixedHeight: false,
         perPage: 5,
+        perPageSelect: [5, 10, 15, 20, 25],
         labels: {
           placeholder: "Cari user...",
-          perPage: "",
+          perPage: "{select} data per halaman",
           noRows: "Tidak ada user ditemukan",
           info: "Menampilkan {start} sampai {end} dari {rows} entri",
         }

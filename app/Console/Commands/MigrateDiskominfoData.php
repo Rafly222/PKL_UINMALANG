@@ -44,7 +44,6 @@ class MigrateDiskominfoData extends Command
         DB::statement("ALTER TABLE presences MODIFY nip VARCHAR(100) NULL");
 
         DB::beginTransaction();
-
         try {
             // 1. Migrasi Users
             $this->info("--- 1. Memindahkan Data Users ---");

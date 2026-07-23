@@ -202,9 +202,10 @@
         searchable: true,
         fixedHeight: false,
         perPage: 10,
-        perPageSelect: false, // Hapus/sembunyikan dropdown entri per halaman
+        perPageSelect: [5, 10, 15, 20, 25],
         labels: {
           placeholder: "Cari...",
+          perPage: "{select} data per halaman",
           noRows: "Tidak ada data ditemukan",
           info: "Menampilkan {start} sampai {end} dari {rows} entri",
         }

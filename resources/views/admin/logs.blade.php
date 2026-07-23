@@ -334,9 +334,10 @@
         searchable: true,
         fixedHeight: false,
         perPage: 10,
+        perPageSelect: [5, 10, 15, 20, 25],
         labels: {
           placeholder: "Cari log aktivitas...",
-          perPage: "",
+          perPage: "{select} data per halaman",
           noRows: "Tidak ada log ditemukan",
           info: "Menampilkan {start} sampai {end} dari {rows} entri",
         }

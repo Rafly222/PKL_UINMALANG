@@ -183,8 +183,27 @@
                       <button type="button" class="btn btn-xs bg-gradient-dark mb-0 shadow-xs" data-bs-toggle="modal" data-bs-target="#qrModal-{{ $event->id }}">
                         <i class="fas fa-qrcode me-1"></i> QR
                       </button>
+                      <button type="button" class="btn btn-xs bg-gradient-secondary text-white mb-0 shadow-xs qr-link-copy" data-url="{{ route('presence.form', $event->uuid) }}">
+                        <i class="fas fa-copy me-1"></i> Salin
+                      </button>
                       <a href="{{ route('event.presences', $event->uuid) }}" class="btn btn-xs bg-gradient-success mb-0 shadow-xs">Rekap</a>
-                      <button type="button" class="btn btn-xs bg-gradient-info mb-0 shadow-xs" data-bs-toggle="modal" data-bs-target="#editEventModal-{{ $event->id }}">Edit</button>
+                      <button type="button" 
+                              class="btn btn-xs bg-gradient-info mb-0 shadow-xs" 
+                              data-bs-toggle="modal" 
+                              data-bs-target="#editEventModal" 
+                              data-action="{{ route('event.update', $event->id) }}"
+                              data-name="{{ $event->name }}"
+                              data-date="{{ $event->date }}"
+                              data-date-end="{{ $event->date_end }}"
+                              data-time-start="{{ \Carbon\Carbon::parse($event->time_start)->format('H:i') }}"
+                              data-time-end="{{ \Carbon\Carbon::parse($event->time_end)->format('H:i') }}"
+                              data-audience-type="{{ $event->audience_type }}"
+                              data-access-type="{{ $event->access_type }}"
+                              data-password="{{ $event->decrypted_password }}"
+                              data-fields="{{ json_encode($event->fields ?? []) }}"
+                              data-custom-fields="{{ json_encode($event->custom_fields ?? []) }}">
+                        Edit
+                      </button>
                       <a href="{{ route('presence.form', $event->uuid) }}" class="btn btn-xs bg-gradient-primary mb-0 shadow-xs">Buka</a>
                       <form action="{{ route('event.destroy', $event) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus event ini?')">
                         @csrf
@@ -211,6 +230,13 @@
                               <p class="text-xs text-muted mb-3 font-weight-bold">
                                 <i class="ni ni-calendar-grid-58 text-info me-1"></i> {{ $event->formatted_date_range }} ({{ \Carbon\Carbon::parse($event->time_start)->format('H:i') }} - {{ \Carbon\Carbon::parse($event->time_end)->format('H:i') }} WIB)
                               </p>
+                              @if($event->access_type === 'privat' && $event->decrypted_password)
+                                <div class="mt-2 text-center qr-password-info">
+                                  <span class="badge bg-gradient-warning text-xxs font-weight-bold" style="font-size: 11px; padding: 6px 12px; border-radius: 6px;">
+                                    <i class="fas fa-lock me-1"></i> Password: <strong>{{ $event->decrypted_password }}</strong>
+                                  </span>
+                                </div>
+                              @endif
                               
                               <div class="d-flex justify-content-center my-3">
                                 <div class="position-relative d-inline-block p-2 bg-white rounded border shadow-xs">
@@ -220,10 +246,6 @@
                                   </div>
                                 </div>
                               </div>
-                              
-                              <p class="text-xs text-muted mb-0 text-break qr-link-copy" style="font-size: 11px; cursor: pointer;" title="Klik untuk menyalin" data-url="{{ route('presence.form', $event->uuid) }}">
-                                <i class="fas fa-copy me-1"></i> {{ route('presence.form', $event->uuid) }}
-                              </p>
                             </div>
                           </div>
                           <div class="modal-footer justify-content-between">
@@ -237,7 +259,6 @@
                     </div>
                   </td>
                 </tr>
-                @include('partials.edit_event_modal', ['event' => $event])
               @empty
                 <tr><td colspan="4" class="text-center text-sm text-muted py-5">Belum ada event.</td></tr>
               @endforelse
@@ -248,6 +269,8 @@
     </div>
   </div>
 </div>
+
+@include('partials.edit_event_modal')
 
 <!-- Modal Buat Event Global -->
 <div class="modal fade" id="createEventModal" tabindex="-1" role="dialog" aria-labelledby="createEventModalLabel" aria-hidden="true">
@@ -411,9 +434,10 @@
         searchable: true,
         fixedHeight: false,
         perPage: 5,
+        perPageSelect: [5, 10, 15, 20, 25],
         labels: {
           placeholder: "Cari...",
-          perPage: "",
+          perPage: "{select} data per halaman",
           noRows: "Tidak ada data ditemukan",
           info: "Menampilkan {start} sampai {end} dari {rows} entri",
         }
@@ -437,33 +461,6 @@
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.H
               });
-
-              const canvas = qrBox.querySelector('canvas');
-              if (canvas) {
-                const ctx = canvas.getContext('2d');
-                const logo = new Image();
-                logo.onload = function () {
-                  const logoSize = 36;
-                  const x = (canvas.width - logoSize) / 2;
-                  const y = (canvas.height - logoSize) / 2;
-
-                  ctx.fillStyle = '#ffffff';
-                  ctx.fillRect(x - 3, y - 3, logoSize + 6, logoSize + 6);
-
-                  ctx.drawImage(logo, x, y, logoSize, logoSize);
-
-                  const img = qrBox.querySelector('img');
-                  if (img) {
-                    img.src = canvas.toDataURL('image/png');
-                  }
-                };
-                const logoSrc = '{{ asset("assets/argon-dashboard-pro-html-v2.0.5/assets/img/logos/GKV307_Kota Malang-logobase.net.png") }}';
-                try {
-                  logo.src = new URL(logoSrc).pathname;
-                } catch (e) {
-                  logo.src = logoSrc;
-                }
-              }
             } else {
               qrBox.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}" alt="QR Code" class="img-fluid rounded" />`;
             }
@@ -483,130 +480,305 @@
         
         if (!url) return;
 
-        if (typeof QRCode !== 'undefined') {
-          // Create a temporary div to generate a high-res QR code
-          const tempDiv = document.createElement('div');
-          new QRCode(tempDiv, {
-            text: url,
-            width: 600,
-            height: 600,
-            colorDark : "#0f172a",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
-          });
-
-          const canvas = tempDiv.querySelector('canvas');
-          if (canvas) {
-            const ctx = canvas.getContext('2d');
-            const logo = new Image();
-            const logoSrc = '{{ asset("assets/argon-dashboard-pro-html-v2.0.5/assets/img/logos/GKV307_Kota Malang-logobase.net.png") }}';
-            try {
-              logo.src = new URL(logoSrc).pathname;
-            } catch (e) {
-              logo.src = logoSrc;
-            }
-
-            logo.onload = function() {
-              const logoSize = 110;
-              const x = (600 - logoSize) / 2;
-              const y = (600 - logoSize) / 2;
-
-              // Draw a clean white circle background card for the logo
-              ctx.fillStyle = '#ffffff';
-              ctx.beginPath();
-              ctx.arc(300, 300, (logoSize + 22) / 2, 0, 2 * Math.PI);
-              ctx.fill();
-
-              // Draw logo inside the circle
-              ctx.drawImage(logo, x, y, logoSize, logoSize);
-
-              // Trigger download
-              const a = document.createElement('a');
-              a.href = canvas.toDataURL('image/png');
-              a.download = 'QR_Code_' + eventName + '.png';
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-            };
-
-            logo.onerror = function() {
-              const a = document.createElement('a');
-              a.href = canvas.toDataURL('image/png');
-              a.download = 'QR_Code_' + eventName + '.png';
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-            };
-          }
-        } else {
-          // Fallback if QRCode is not defined: Use API
-          const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=${encodeURIComponent(url)}`;
-          const qrImg = new Image();
-          qrImg.crossOrigin = 'anonymous';
-          qrImg.src = qrImgUrl;
-          
-          qrImg.onload = function() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 600;
-            canvas.height = 600;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(qrImg, 0, 0, 600, 600);
-            
-            const logo = new Image();
-            const logoSrc = '{{ asset("assets/argon-dashboard-pro-html-v2.0.5/assets/img/logos/GKV307_Kota Malang-logobase.net.png") }}';
-            try {
-              logo.src = new URL(logoSrc).pathname;
-            } catch (e) {
-              logo.src = logoSrc;
-            }
-            
-            logo.onload = function() {
-              const logoSize = 110;
-              const x = (600 - logoSize) / 2;
-              const y = (600 - logoSize) / 2;
-
-              ctx.fillStyle = '#ffffff';
-              ctx.beginPath();
-              ctx.arc(300, 300, (logoSize + 22) / 2, 0, 2 * Math.PI);
-              ctx.fill();
-
-              ctx.drawImage(logo, x, y, logoSize, logoSize);
-
-              const a = document.createElement('a');
-              a.href = canvas.toDataURL('image/png');
-              a.download = 'QR_Code_' + eventName + '.png';
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-            };
-            
-            logo.onerror = function() {
-              const a = document.createElement('a');
-              a.href = canvas.toDataURL('image/png');
-              a.download = 'QR_Code_' + eventName + '.png';
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-            };
-          };
-          
-          qrImg.onerror = function() {
-            window.open(qrImgUrl, '_blank');
-          };
+        function drawRoundedRect(ctx, x, y, width, height, radius) {
+          ctx.beginPath();
+          ctx.moveTo(x + radius, y);
+          ctx.lineTo(x + width - radius, y);
+          ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+          ctx.lineTo(x + width, y + height - radius);
+          ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+          ctx.lineTo(x + radius, y + height);
+          ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+          ctx.lineTo(x, y + radius);
+          ctx.quadraticCurveTo(x, y, x + radius, y);
+          ctx.closePath();
         }
+
+        function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+          const words = text.split(' ');
+          let line = '';
+          let currentY = y;
+          
+          for (let n = 0; n < words.length; n++) {
+            let testLine = line + words[n] + ' ';
+            let metrics = ctx.measureText(testLine);
+            let testWidth = metrics.width;
+            if (testWidth > maxWidth && n > 0) {
+              ctx.fillText(line, x, currentY);
+              line = words[n] + ' ';
+              currentY += lineHeight;
+            } else {
+              line = testLine;
+            }
+          }
+          ctx.fillText(line, x, currentY);
+          return currentY;
+        }
+
+        const loadImage = (src) => {
+          return new Promise((resolve) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => resolve(img);
+            img.onerror = () => resolve(null);
+            try {
+              img.src = new URL(src, window.location.origin).pathname;
+            } catch (e) {
+              img.src = src;
+            }
+          });
+        };
+
+        const logoMalangSrc = '{{ asset("assets/argon-dashboard-pro-html-v2.0.5/assets/img/logos/GKV307_Kota Malang-logobase.net.png") }}';
+        const logoEPresensiSrc = '{{ asset("assets/argon-dashboard-pro-html-v2.0.5/assets/img/epresensi-logo.png") }}';
+
+        Promise.all([
+          loadImage(logoMalangSrc),
+          loadImage(logoEPresensiSrc)
+        ]).then(([logoMalang, logoEPresensi]) => {
+          const cardArea = document.getElementById('qrCardArea-' + eventId);
+          const eventNameText = cardArea.querySelector('h5').innerText;
+          const eventDateTimeText = cardArea.querySelector('p').innerText;
+          // Create canvas
+          const canvas = document.createElement('canvas');
+          canvas.width = 800;
+          
+          const ctx = canvas.getContext('2d');
+          ctx.font = 'bold 38px sans-serif';
+          
+          // Wrap text dry run to get height of Title
+          const words = eventNameText.split(' ');
+          let line = '';
+          let tempY = 150; // Starting Y of Title
+          for (let n = 0; n < words.length; n++) {
+            let testLine = line + words[n] + ' ';
+            let metrics = ctx.measureText(testLine);
+            if (metrics.width > 680 && n > 0) {
+              line = words[n] + ' ';
+              tempY += 50; // Line height for title
+            } else {
+              line = testLine;
+            }
+          }
+          const titleEndY = tempY + 15; // Y position at the bottom of the title text
+          const dateY = titleEndY + 45; // Y position for Event Date & Time
+          
+          // Check if password exists
+          const passwordInfo = cardArea.querySelector('.qr-password-info');
+          let passwordY = 0;
+          let qrBoxY = dateY + 45;
+          if (passwordInfo) {
+            passwordY = dateY + 40;
+            qrBoxY = passwordY + 45;
+          }
+          
+          // Set dynamic canvas height (balanced top/bottom 40px gaps)
+          canvas.height = qrBoxY + 528;
+
+          // Draw outer rounded card with compact shadow on transparent canvas
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.12)';
+          ctx.shadowBlur = 8;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 3;
+          
+          ctx.fillStyle = '#ffffff';
+          drawRoundedRect(ctx, 8, 8, 784, canvas.height - 16, 24);
+          ctx.fill();
+
+          // Reset shadow
+          ctx.shadowColor = 'transparent';
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+
+          // Draw outer rounded border
+          ctx.strokeStyle = '#e2e8f0';
+          ctx.lineWidth = 2;
+          drawRoundedRect(ctx, 8, 8, 784, canvas.height - 16, 24);
+          ctx.stroke();
+
+          // Draw E-Presensi logo and brand (perfectly centered)
+          if (logoEPresensi) {
+            ctx.font = 'bold 34px sans-serif';
+            ctx.fillStyle = '#344767';
+            const brandText = 'E-Presensi';
+            const brandTextWidth = ctx.measureText(brandText).width;
+            const logoWidth = 44;
+            const headerGap = 14;
+            const totalHeaderWidth = logoWidth + headerGap + brandTextWidth;
+            const startHeaderX = (800 - totalHeaderWidth) / 2;
+            
+            ctx.drawImage(logoEPresensi, startHeaderX, 48, logoWidth, logoWidth);
+            
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(brandText, startHeaderX + logoWidth + headerGap, 48 + logoWidth / 2);
+          } else {
+            ctx.font = 'bold 34px sans-serif';
+            ctx.fillStyle = '#344767';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('E-Presensi', 400, 70);
+          }
+
+          // Draw Event Name
+          ctx.font = 'bold 38px sans-serif';
+          ctx.fillStyle = '#5e72e4';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'top';
+          wrapText(ctx, eventNameText, 400, 150, 680, 50);
+
+           // Draw Event Date & Time
+          ctx.font = 'bold 22px sans-serif';
+          ctx.fillStyle = '#8898aa';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'top';
+          ctx.fillText(eventDateTimeText.trim(), 400, dateY);
+
+          // Draw Password if present
+          if (passwordInfo) {
+            ctx.font = 'bold 20px sans-serif';
+            ctx.fillStyle = '#fb6340'; // Warning color matching the badge
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText(passwordInfo.innerText.trim(), 400, passwordY);
+          }
+
+          // Draw QR Code Border Box with shadow (perfectly centered)
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.04)';
+          ctx.shadowBlur = 12;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 4;
+
+          ctx.fillStyle = '#ffffff';
+          drawRoundedRect(ctx, 160, qrBoxY, 480, 480, 24);
+          ctx.fill();
+
+          // Reset shadow
+          ctx.shadowColor = 'transparent';
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+
+          ctx.strokeStyle = '#e2e8f0';
+          ctx.lineWidth = 2;
+          drawRoundedRect(ctx, 160, qrBoxY, 480, 480, 24);
+          ctx.stroke();
+
+          // Draw QR Code directly from the already-rendered modal canvas/img (Guarantees pixels are ready)
+          const qrBox = document.getElementById('qrcode-box-' + eventId);
+          if (qrBox) {
+            const modalCanvas = qrBox.querySelector('canvas');
+            const modalImg = qrBox.querySelector('img');
+            
+            ctx.imageSmoothingEnabled = false;
+            ctx.mozImageSmoothingEnabled = false;
+            ctx.webkitImageSmoothingEnabled = false;
+            ctx.msImageSmoothingEnabled = false;
+            
+            if (modalCanvas) {
+              ctx.drawImage(modalCanvas, 180, qrBoxY + 20, 440, 440);
+              ctx.imageSmoothingEnabled = true;
+              finishDrawing();
+            } else if (modalImg && modalImg.src) {
+              const tempImg = new Image();
+              tempImg.crossOrigin = 'anonymous';
+              tempImg.onload = function() {
+                ctx.drawImage(tempImg, 180, qrBoxY + 20, 440, 440);
+                ctx.imageSmoothingEnabled = true;
+                finishDrawing();
+              };
+              tempImg.onerror = function() {
+                ctx.imageSmoothingEnabled = true;
+                finishDrawing();
+              };
+              tempImg.src = modalImg.src;
+            } else {
+              ctx.imageSmoothingEnabled = true;
+              finishDrawing();
+            }
+          } else {
+            finishDrawing();
+          }
+
+          function finishDrawing() {
+            // Draw Malang Kota logo in center of QR
+            const logoSize = 72;
+            const centerX = 400;
+            const centerY = qrBoxY + 240;
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 48, 0, 2 * Math.PI);
+            ctx.fill();
+
+            if (logoMalang) {
+              ctx.drawImage(logoMalang, centerX - (logoSize / 2), centerY - (logoSize / 2), logoSize, logoSize);
+            }
+
+            // Trigger download
+            const a = document.createElement('a');
+            a.href = canvas.toDataURL('image/png');
+            a.download = 'QR_Card_' + eventName + '.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          };
+        }).catch(err => {
+          console.error('Failed to generate QR card: ', err);
+          alert('Gagal mengunduh kartu QR: ' + err.message);
+          window.open(`https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=${encodeURIComponent(url)}`, '_blank');
+        });
       });
     });
+
+    function showCopyNotification() {
+      let existing = document.getElementById('copy-toast-notification');
+      if (existing) {
+        existing.remove();
+      }
+
+      const toast = document.createElement('div');
+      toast.id = 'copy-toast-notification';
+      toast.style.position = 'fixed';
+      toast.style.bottom = '20px';
+      toast.style.left = '20px';
+      toast.style.zIndex = '9999';
+      toast.style.backgroundColor = '#2dce89';
+      toast.style.color = '#ffffff';
+      toast.style.padding = '12px 24px';
+      toast.style.borderRadius = '8px';
+      toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+      toast.style.display = 'flex';
+      toast.style.alignItems = 'center';
+      toast.style.gap = '10px';
+      toast.style.fontSize = '13px';
+      toast.style.fontWeight = 'bold';
+      toast.style.transition = 'all 0.3s ease';
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(20px)';
+      toast.innerHTML = '<i class="fas fa-check-circle" style="font-size: 16px;"></i> Link presensi berhasil disalin!';
+
+      document.body.appendChild(toast);
+      toast.offsetHeight;
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 3000);
+    }
 
     // Copy link on click
     document.querySelectorAll('.qr-link-copy').forEach(el => {
       el.addEventListener('click', function() {
         const url = this.getAttribute('data-url');
         navigator.clipboard.writeText(url).then(() => {
-          const originalHTML = this.innerHTML;
-          this.innerHTML = '<span class="text-success font-weight-bold"><i class="fas fa-check me-1"></i> Berhasil disalin!</span>';
-          setTimeout(() => {
-            this.innerHTML = originalHTML;
-          }, 2000);
+          showCopyNotification();
         }).catch(err => {
           const tempInput = document.createElement('input');
           tempInput.value = url;
@@ -614,12 +786,7 @@
           tempInput.select();
           document.execCommand('copy');
           document.body.removeChild(tempInput);
-
-          const originalHTML = this.innerHTML;
-          this.innerHTML = '<span class="text-success font-weight-bold"><i class="fas fa-check me-1"></i> Berhasil disalin!</span>';
-          setTimeout(() => {
-            this.innerHTML = originalHTML;
-          }, 2000);
+          showCopyNotification();
         });
       });
     });

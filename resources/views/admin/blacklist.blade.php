@@ -95,9 +95,10 @@
         searchable: true,
         fixedHeight: false,
         perPage: 5,
+        perPageSelect: [5, 10, 15, 20, 25],
         labels: {
           placeholder: "Cari blacklist...",
-          perPage: "",
+          perPage: "{select} data per halaman",
           noRows: "Tidak ada data blacklist ditemukan",
           info: "Menampilkan {start} sampai {end} dari {rows} entri",
         }

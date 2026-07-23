@@ -3,6 +3,10 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PresenceController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\AdminLogController;
+use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\Route;
 
 // ==========================================
@@ -10,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 // ==========================================
 Route::get('/', [PresenceController::class, 'index'])->name('home');
 
-// Rute Presensi Publik (Tahap 3 & 5)
+// Rute Presensi Publik
 Route::get('/presensi/{event_uuid}', [PresenceController::class, 'showForm'])->name('presence.form');
 Route::post('/presensi/{event_uuid}', [PresenceController::class, 'submitForm']);
 Route::get('/presensi/{event_uuid}/gate', [PresenceController::class, 'showGate'])->name('presence.gate');
@@ -35,35 +39,32 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // 3. AREA PROTEKSI: CREATOR / PEMBUAT EVENT (WAJIB LOGIN)
 // ==========================================
 Route::middleware(['auth'])->group(function () {
-    // Masuk ke dashboard creator untuk kelola form absensi sendiri
     Route::get('/dashboard', [DashboardController::class, 'userIndex'])->name('dashboard.user');
-    Route::post('/dashboard/event/create', [DashboardController::class, 'storeEvent'])->name('event.store');
-    Route::put('/dashboard/event/{event}', [DashboardController::class, 'updateEvent'])->name('event.update');
-    Route::delete('/dashboard/event/{event}', [DashboardController::class, 'destroyEvent'])->name('event.destroy');
+    Route::post('/dashboard/event/create', [EventController::class, 'store'])->name('event.store');
+    Route::put('/dashboard/event/{event}', [EventController::class, 'update'])->name('event.update');
+    Route::delete('/dashboard/event/{event}', [EventController::class, 'destroy'])->name('event.destroy');
     
-    // Fitur melihat daftar kehadiran & ekspor excel per event
-    Route::get('/dashboard/event/{event_uuid}/presence', [DashboardController::class, 'eventPresences'])->name('event.presences');
-    Route::get('/dashboard/event/{event_uuid}/presence/excel', [DashboardController::class, 'exportPresenceExcel'])->name('event.presences.excel');
+    Route::get('/dashboard/event/{event_uuid}/presence', [EventController::class, 'presences'])->name('event.presences');
+    Route::get('/dashboard/event/{event_uuid}/presence/excel', [EventController::class, 'exportExcel'])->name('event.presences.excel');
 });
 
-// Akses publik untuk melihat foto & TTD hasil presensi (agar bisa diakses langsung via link Excel)
-Route::get('/presence/{id}/photo', [DashboardController::class, 'showPresencePhoto'])->name('presence.photo');
-Route::get('/presence/{id}/signature', [DashboardController::class, 'showPresenceSignature'])->name('presence.signature');
+// Akses publik untuk melihat foto & TTD hasil presensi
+Route::get('/presence/{id}/photo', [MediaController::class, 'photo'])->name('presence.photo');
+Route::get('/presence/{id}/signature', [MediaController::class, 'signature'])->name('presence.signature');
 
-// Area Proteksi Ketat: HANYA Super Admin yang Bisa Masuk (Selain Admin Ditolak)
+// Area Proteksi Ketat: HANYA Super Admin
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    // Halaman Dashboard Utama Admin
     Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->name('dashboard.admin');
-    Route::get('/admin/users', [DashboardController::class, 'adminUsers'])->name('admin.users');
-    Route::get('/admin/logs', [DashboardController::class, 'adminLogs'])->name('admin.logs');
-    // Fitur CRUD & Akses Manajemen Admin
-    Route::post('/admin/event/create', [DashboardController::class, 'storeEvent'])->name('admin.event.store');
-    Route::post('/admin/users/create', [DashboardController::class, 'storeUserByAdmin'])->name('admin.users.store');
-    Route::post('/admin/users/approve/{id}', [DashboardController::class, 'approveUser'])->name('admin.users.approve');
-    Route::post('/admin/users/reject/{id}', [DashboardController::class, 'rejectUser'])->name('admin.users.reject');
-    Route::put('/admin/users/update/{id}', [DashboardController::class, 'updateUserByAdmin'])->name('admin.users.update');
-    Route::delete('/admin/users/delete/{id}', [DashboardController::class, 'destroyUserByAdmin'])->name('admin.users.delete');
-    Route::post('/admin/users/block/{id}', [DashboardController::class, 'blockUser'])->name('admin.users.block');
-    Route::post('/admin/users/unblock/{id}', [DashboardController::class, 'unblockUser'])->name('admin.users.unblock');
-    Route::post('/admin/users/restore/{id}', [DashboardController::class, 'restoreUserByAdmin'])->name('admin.users.restore');
+    Route::get('/admin/users', [AdminUserController::class, 'index'])->name('admin.users');
+    Route::get('/admin/logs', [AdminLogController::class, 'index'])->name('admin.logs');
+
+    Route::post('/admin/event/create', [EventController::class, 'store'])->name('admin.event.store');
+    Route::post('/admin/users/create', [AdminUserController::class, 'store'])->name('admin.users.store');
+    Route::post('/admin/users/approve/{id}', [AdminUserController::class, 'approve'])->name('admin.users.approve');
+    Route::post('/admin/users/reject/{id}', [AdminUserController::class, 'reject'])->name('admin.users.reject');
+    Route::put('/admin/users/update/{id}', [AdminUserController::class, 'update'])->name('admin.users.update');
+    Route::delete('/admin/users/delete/{id}', [AdminUserController::class, 'destroy'])->name('admin.users.delete');
+    Route::post('/admin/users/block/{id}', [AdminUserController::class, 'block'])->name('admin.users.block');
+    Route::post('/admin/users/unblock/{id}', [AdminUserController::class, 'unblock'])->name('admin.users.unblock');
+    Route::post('/admin/users/restore/{id}', [AdminUserController::class, 'restore'])->name('admin.users.restore');
 });

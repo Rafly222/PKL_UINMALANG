@@ -2,7 +2,12 @@
 <html lang="id">
 
 <head>
-  @php($argon = 'assets/argon-dashboard-pro-html-v2.0.5/assets')
+  @php
+    $argon = 'assets/argon-dashboard-pro-html-v2.0.5/assets';
+    $hasPhoto = in_array('sc-photo', $event->fields ?? []);
+    $hasSignature = in_array('sc-signature', $event->fields ?? []);
+    $hasMedia = $hasPhoto || $hasSignature;
+  @endphp
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Form Presensi - E-Presensi</title>
@@ -15,145 +20,10 @@
   <script src="{{ asset($argon . '/js/42d5adcbca.js') }}" crossorigin="anonymous"></script>
   <link id="pagestyle" href="{{ asset($argon . '/css/argon-dashboard.min.css') }}" rel="stylesheet" />
 
-  <style>
-    :root {
-      --ep-primary: #5e72e4;
-      --ep-dark: #172b4d;
-      --ep-soft: #f6f9fc;
-    }
-
-    body {
-      color: #344767;
-      background: #f8f9fe;
-    }
-
-    .ep-card {
-      border: 0;
-      border-radius: 1rem;
-      box-shadow: 0 14px 35px rgba(50, 50, 93, .08), 0 4px 12px rgba(0, 0, 0, .05);
-    }
-
-    .ep-card:hover {
-      box-shadow: 0 18px 45px rgba(50, 50, 93, .12), 0 7px 18px rgba(0, 0, 0, .07);
-    }
-
-    .ep-form-card {
-      border: 1px solid rgba(226, 232, 240, .95);
-      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
-    }
-
-    .ep-section-label {
-      color: #8392ab;
-      font-size: .68rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: .04rem;
-    }
-
-    .form-control,
-    .form-select {
-      border: 1px solid #dee2e6;
-      box-shadow: 0 3px 8px rgba(50, 50, 93, .04);
-    }
-
-    .form-control:focus,
-    .form-select:focus {
-      border-color: #5e72e4;
-      box-shadow: 0 0 0 .2rem rgba(94, 114, 228, .15);
-    }
-
-    .input-group:focus-within {
-      box-shadow: 0 0 0 .2rem rgba(94, 114, 228, .15) !important;
-      border-radius: 0.5rem !important;
-    }
-
-    .input-group:focus-within .form-control,
-    .input-group:focus-within .input-group-text {
-      border-color: #5e72e4 !important;
-      box-shadow: none !important;
-    }
-
-    .ep-media-frame {
-      border: 1px solid rgba(203, 213, 225, .8);
-      border-radius: 1rem;
-      background: #111827;
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06), 0 16px 30px rgba(15, 23, 42, .14);
-      overflow: hidden;
-    }
-
-    .ep-signature-frame {
-      border: 2px dashed #cbd5e1;
-      border-radius: 1rem;
-      background: #fff;
-      box-shadow: inset 0 1px 14px rgba(15, 23, 42, .05);
-    }
-
-    @media (min-width: 992px) {
-      body {
-        height: 100vh;
-        overflow: hidden;
-      }
-      .main-content {
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .container {
-        max-height: 98vh;
-        padding-top: 5px !important;
-        padding-bottom: 5px !important;
-        max-width: 1700px !important;
-        width: 98vw !important;
-      }
-      .ep-form-card {
-        max-height: 96vh;
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 0 !important;
-      }
-      .ep-form-card .card-body {
-        overflow-y: auto;
-      }
-    }
-
-    @media (max-width: 991.98px) {
-      .kolom-kiri {
-        border-right: none !important;
-        border-bottom: 1px solid #e9ecef;
-        padding-bottom: 1.25rem !important;
-        margin-bottom: 1.25rem !important;
-      }
-    }
-
-    .form-control-sm,
-    .form-select-sm,
-    .form-control,
-    .form-select {
-      padding: .65rem 1rem !important;
-      font-size: 1rem !important;
-      border-radius: .5rem !important;
-      height: auto !important;
-    }
-    .form-control-label {
-      font-size: .85rem !important;
-      font-weight: 700 !important;
-      color: #525f7f !important;
-      margin-bottom: .3rem !important;
-    }
-    .ep-section-label {
-      font-size: .8rem !important;
-      letter-spacing: .06rem !important;
-      margin-bottom: .5rem !important;
-    }
-    .btn-xs, .btn-sm, .btn {
-      padding: .65rem 1.2rem !important;
-      font-size: .875rem !important;
-    }
-  </style>
+  <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 ep-form-page">
   <div class="min-height-300 bg-primary position-absolute w-100" style="height: 35vh !important; min-height: unset !important;"></div>
   
   <main class="main-content position-relative border-radius-lg">
@@ -198,11 +68,6 @@
                 <input type="hidden" name="photo" id="photo-base64">
                 <input type="hidden" name="signature" id="signature-base64">
 
-                <?php
-                  $hasPhoto = in_array('sc-photo', $event->fields ?? []);
-                  $hasSignature = in_array('sc-signature', $event->fields ?? []);
-                  $hasMedia = $hasPhoto || $hasSignature;
-                ?>
 
                 @if($hasMedia)
                   <div class="row">
@@ -909,6 +774,7 @@
       }
     });
   </script>
+  <script src="{{ asset('js/custom-events.js') }}"></script>
 </body>
 
 </html>

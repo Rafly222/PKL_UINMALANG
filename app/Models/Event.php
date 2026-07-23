@@ -62,4 +62,17 @@ class Event extends Model
         }
         return $startDate->format('d F Y');
     }
+
+    // Accessor untuk mendapatkan password terdekripsi jika event privat
+    public function getDecryptedPasswordAttribute()
+    {
+        if ($this->access_type === 'privat' && $this->password) {
+            try {
+                return decrypt($this->password);
+            } catch (\Exception $e) {
+                return (string) $this->password;
+            }
+        }
+        return '';
+    }
 }

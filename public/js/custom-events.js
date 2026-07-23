@@ -62,6 +62,18 @@ function initEditEventModal() {
     });
   }
 
+  const btnGenerateEditPassword = document.getElementById('btn-generate-edit-password');
+  if (btnGenerateEditPassword && passwordInput) {
+    btnGenerateEditPassword.addEventListener('click', function () {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let randomPass = '';
+      for (let i = 0; i < 6; i++) {
+        randomPass += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      passwordInput.value = randomPass;
+    });
+  }
+
   editModalEl.addEventListener('show.bs.modal', function (e) {
     const btn = e.relatedTarget;
     if (!btn) return;

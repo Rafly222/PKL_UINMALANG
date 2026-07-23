@@ -20,6 +20,11 @@
 </head>
 
 <body class="g-sidenav-show g-sidenav-pinned bg-gray-100">
+  <script>
+    if (localStorage.getItem('dark-mode') === 'true') {
+      document.body.classList.add('dark-version');
+    }
+  </script>
   <div class="min-height-300 bg-primary position-absolute w-100"></div>
 
   <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 fixed-start" id="sidenav-main">
@@ -130,10 +135,18 @@
               <li class="nav-item d-flex align-items-center me-3 text-white">
                 <span class="text-sm d-sm-inline d-none">Hai, <b>{{ Auth::user()->name }}</b></span>
               </li>
+              <li class="nav-item d-flex align-items-center me-3">
+                <a href="javascript:;" class="nav-link text-white p-0 d-flex align-items-center" id="dark-mode-toggle" title="Toggle Dark Mode" style="cursor: pointer;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-moon-fill text-white" viewBox="0 0 16 16" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle;">
+                    <path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.078 2.18c.088.958.429 1.896 1.055 2.652A5.9 5.9 0 0 0 9.51 7.62c.762.626 1.704.967 2.662 1.055a7.06 7.06 0 0 0 2.18-.078.77.77 0 0 1 .858.08.77.77 0 0 1 .08.858 7.2 7.2 0 0 1-2.18 3.54 7.2 7.2 0 0 1-3.54 2.18 7.2 7.2 0 0 1-3.54-.078A7.2 7.2 0 0 1 .278 10 7.2 7.2 0 0 1 0 6.46 7.2 7.2 0 0 1 2.18 2.92 7.2 7.2 0 0 1 6 .278z"/>
+                  </svg>
+                </a>
+                <input type="checkbox" id="dark-version" style="display: none;">
+              </li>
               <li class="nav-item d-flex align-items-center">
                 <form action="{{ route('logout') }}" method="POST" class="m-0">
                   @csrf
-                  <button type="submit" class="btn btn-sm bg-gradient-light text-dark mb-0 px-3">Keluar</button>
+                  <button type="submit" class="btn btn-sm bg-gradient-danger text-white mb-0 px-3">Keluar</button>
                 </form>
               </li>
             @else
@@ -200,6 +213,42 @@
       if (iconNavbarSidenav) {
         iconNavbarSidenav.addEventListener('click', () => {
           body.classList.remove('g-sidenav-hidden');
+        });
+      }
+
+      // Dark Mode Toggle Logic
+      const darkModeToggle = document.getElementById('dark-mode-toggle');
+      const darkVersionCheckbox = document.getElementById('dark-version');
+
+      function updateDarkModeIcon() {
+        if (body.classList.contains('dark-version')) {
+          darkModeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-sun-fill text-white" viewBox="0 0 16 16" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle;"><path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/></svg>';
+          darkModeToggle.setAttribute('title', 'Aktifkan Mode Terang');
+        } else {
+          darkModeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-moon-fill text-white" viewBox="0 0 16 16" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle;"><path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.078 2.18c.088.958.429 1.896 1.055 2.652A5.9 5.9 0 0 0 9.51 7.62c.762.626 1.704.967 2.662 1.055a7.06 7.06 0 0 0 2.18-.078.77.77 0 0 1 .858.08.77.77 0 0 1 .08.858 7.2 7.2 0 0 1-2.18 3.54 7.2 7.2 0 0 1-3.54 2.18 7.2 7.2 0 0 1-3.54-.078A7.2 7.2 0 0 1 .278 10 7.2 7.2 0 0 1 0 6.46 7.2 7.2 0 0 1 2.18 2.92 7.2 7.2 0 0 1 6 .278z"/></svg>';
+          darkModeToggle.setAttribute('title', 'Aktifkan Mode Gelap');
+        }
+      }
+
+      if (darkModeToggle && darkVersionCheckbox) {
+        // If dark mode was enabled, trigger Argon's darkMode function to convert sub-elements
+        if (localStorage.getItem('dark-mode') === 'true') {
+          if (typeof darkMode === 'function') {
+            darkMode(darkVersionCheckbox);
+          } else {
+            body.classList.add('dark-version');
+          }
+        }
+        updateDarkModeIcon();
+
+        darkModeToggle.addEventListener('click', () => {
+          if (typeof darkMode === 'function') {
+            darkMode(darkVersionCheckbox);
+          } else {
+            body.classList.toggle('dark-version');
+          }
+          localStorage.setItem('dark-mode', body.classList.contains('dark-version') ? 'true' : 'false');
+          updateDarkModeIcon();
         });
       }
 

@@ -148,11 +148,17 @@
 
                         @if(in_array('sc-gender', $event->fields ?? []))
                           <div class="col-md-6 mb-2">
-                            <label class="form-control-label text-xs">Jenis Kelamin</label>
-                            <select name="gender" class="form-control form-control-sm">
-                              <option value="Laki-Laki" @selected(old('gender') === 'Laki-Laki')>Laki-Laki</option>
-                              <option value="Perempuan" @selected(old('gender') === 'Perempuan')>Perempuan</option>
-                            </select>
+                            <label class="form-control-label text-xs d-block">Jenis Kelamin</label>
+                            <div class="d-flex gap-3 mt-1 align-items-center" style="min-height: 40px;">
+                              <div class="form-check mb-0">
+                                <input class="form-check-input" type="radio" name="gender" id="gender-peg-l" value="Laki-Laki" @checked(old('gender') === 'Laki-Laki' || !old('gender')) required>
+                                <label class="form-check-label text-xs font-weight-bold cursor-pointer" for="gender-peg-l">Laki-Laki</label>
+                              </div>
+                              <div class="form-check mb-0">
+                                <input class="form-check-input" type="radio" name="gender" id="gender-peg-p" value="Perempuan" @checked(old('gender') === 'Perempuan') required>
+                                <label class="form-check-label text-xs font-weight-bold cursor-pointer" for="gender-peg-p">Perempuan</label>
+                              </div>
+                            </div>
                           </div>
                         @endif
 
@@ -331,11 +337,17 @@
 
                         @if(in_array('sc-gender', $event->fields ?? []))
                           <div class="col-md-6 mb-3">
-                            <label class="form-control-label text-xs">Jenis Kelamin</label>
-                            <select name="gender" class="form-control form-control-sm">
-                              <option value="Laki-Laki" @selected(old('gender') === 'Laki-Laki')>Laki-Laki</option>
-                              <option value="Perempuan" @selected(old('gender') === 'Perempuan')>Perempuan</option>
-                            </select>
+                            <label class="form-control-label text-xs d-block">Jenis Kelamin</label>
+                            <div class="d-flex gap-3 mt-1 align-items-center" style="min-height: 40px;">
+                              <div class="form-check mb-0">
+                                <input class="form-check-input" type="radio" name="gender" id="gender-um-l" value="Laki-Laki" @checked(old('gender') === 'Laki-Laki' || !old('gender')) required>
+                                <label class="form-check-label text-xs font-weight-bold cursor-pointer" for="gender-um-l">Laki-Laki</label>
+                              </div>
+                              <div class="form-check mb-0">
+                                <input class="form-check-input" type="radio" name="gender" id="gender-um-p" value="Perempuan" @checked(old('gender') === 'Perempuan') required>
+                                <label class="form-check-label text-xs font-weight-bold cursor-pointer" for="gender-um-p">Perempuan</label>
+                              </div>
+                            </div>
                           </div>
                         @endif
 

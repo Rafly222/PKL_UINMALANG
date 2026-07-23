@@ -17,6 +17,14 @@ class EventController extends Controller
         $fields = $this->extractFields($request);
         $customFields = $this->extractCustomFields($request);
 
+        $password = null;
+        $encryptedPassword = null;
+
+        if ($request->access_type === 'privat') {
+            $password = $request->filled('password') ? $request->password : Str::upper(Str::random(6));
+            $encryptedPassword = encrypt($password);
+        }
+
         $event = Event::create([
             'user_id' => Auth::id(),
             'name' => $request->name,
@@ -25,13 +33,17 @@ class EventController extends Controller
             'time_start' => $request->time_start,
             'time_end' => $request->time_end,
             'access_type' => $request->access_type,
-            'password' => $request->access_type === 'privat' ? encrypt($request->password) : null,
+            'password' => $encryptedPassword,
             'audience_type' => $request->audience_type,
             'fields' => $fields,
             'custom_fields' => $customFields
         ]);
 
         ActivityLog::log('create_event', "Pengguna mendaftarkan event baru: '{$event->name}' (Kategori: {$event->audience_type}, Akses: {$event->access_type}).");
+
+        if ($password) {
+            return back()->with('success', 'Event baru berhasil didaftarkan! Password privat Anda: ' . $password);
+        }
 
         return back()->with('success', 'Event baru berhasil didaftarkan & siap digunakan!');
     }
@@ -40,10 +52,6 @@ class EventController extends Controller
     {
         if (Auth::user()->role !== 'admin' && $event->user_id !== Auth::id()) {
             abort(403);
-        }
-
-        if ($request->access_type === 'privat' && !$event->password && !$request->filled('password')) {
-            return back()->withErrors(['password' => 'Password wajib diisi jika merubah akses menjadi privat.']);
         }
 
         $fields = $this->extractFields($request);
@@ -61,9 +69,13 @@ class EventController extends Controller
             'custom_fields' => $customFields
         ];
 
+        $newGeneratedPassword = null;
         if ($request->access_type === 'privat') {
             if ($request->filled('password') && $request->password !== '********') {
                 $data['password'] = encrypt($request->password);
+            } elseif (!$event->password) {
+                $newGeneratedPassword = Str::upper(Str::random(6));
+                $data['password'] = encrypt($newGeneratedPassword);
             }
         } else {
             $data['password'] = null;
@@ -72,6 +84,10 @@ class EventController extends Controller
         $event->update($data);
 
         ActivityLog::log('update_event', "Pengguna memperbarui event: '{$event->name}' (ID: {$event->id}).");
+
+        if ($newGeneratedPassword) {
+            return back()->with('success', 'Event berhasil diperbarui! Password privat baru Anda: ' . $newGeneratedPassword);
+        }
 
         return back()->with('success', 'Event berhasil diperbarui!');
     }

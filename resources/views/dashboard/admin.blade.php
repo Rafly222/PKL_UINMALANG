@@ -37,11 +37,6 @@
         <div>
           <span class="badge bg-white text-danger shadow-sm mb-1">Super Admin</span>
           <h4 class="text-white font-weight-bolder mb-0">Portal Kendali & Pembuatan Event</h4>
-        </div>
-        <div class="badge bg-white text-dark shadow-sm px-3 py-2 font-weight-bold d-flex align-items-center gap-2">
-          <i class="ni ni-settings-gear-65 text-danger"></i>
-          <span>SUPER ADMIN</span>
-        </div>
       </div>
     </div>
   </div>
@@ -326,11 +321,14 @@
               </select>
             </div>
           </div>
-          <div class="input-group mb-3" id="admin-event-password-group">
-            <input type="password" name="password" id="admin-event-password" class="form-control" placeholder="Password event privat" style="border-right: 0;">
-            <span class="input-group-text bg-white cursor-pointer" id="toggle-admin-event-password" style="cursor: pointer; border-left: 0;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16" style="width: 16px; height: 16px;"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 4 8 4c2.12 0 3.879.668 5.168 1.957A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12 8 12c-2.12 0-3.879-.668-5.168-1.957A13.133 13.133 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/></svg>
-            </span>
+          <div class="mb-3" id="admin-event-password-group" style="display: none;">
+            <label class="form-control-label text-xs font-weight-bold">Password Event Privat</label>
+            <div class="input-group">
+              <input type="text" name="password" id="admin-event-password" class="form-control" placeholder="Password event privat" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">
+              <button type="button" class="btn bg-gradient-dark mb-0 px-3" id="btn-generate-create-admin-password" style="border-top-left-radius: 0; border-bottom-left-radius: 0; font-size: 11px;">
+                <i class="fas fa-random me-1"></i> Generate Acak
+              </button>
+            </div>
           </div>
 
           <span class="ep-section-label">Field Presensi</span>
@@ -375,29 +373,37 @@
 <script>
   const adminAccessType = document.getElementById('admin-access-type');
   const adminEventPasswordGroup = document.getElementById('admin-event-password-group');
+  const adminEventPasswordInput = document.getElementById('admin-event-password');
+  const btnGenerateCreateAdminPassword = document.getElementById('btn-generate-create-admin-password');
+
+  function generateRandomPassword() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let randomPass = '';
+    for (let i = 0; i < 6; i++) {
+      randomPass += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return randomPass;
+  }
 
   function toggleAdminPassword() {
-    adminEventPasswordGroup.style.display = adminAccessType.value === 'privat' ? 'flex' : 'none';
+    if (adminAccessType.value === 'privat') {
+      adminEventPasswordGroup.style.display = 'block';
+      if (!adminEventPasswordInput.value) {
+        adminEventPasswordInput.value = generateRandomPassword();
+      }
+    } else {
+      adminEventPasswordGroup.style.display = 'none';
+    }
   }
 
   adminAccessType.addEventListener('change', toggleAdminPassword);
   toggleAdminPassword();
 
-  const toggleAdminBtn = document.getElementById('toggle-admin-event-password');
-  const adminEventPasswordInput = document.getElementById('admin-event-password');
-
-  const eyeSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16" style="width: 16px; height: 16px;"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 4 8 4c2.12 0 3.879.668 5.168 1.957A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12 8 12c-2.12 0-3.879-.668-5.168-1.957A13.133 13.133 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/></svg>`;
-  const eyeSlashSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash" viewBox="0 0 16 16" style="width: 16px; height: 16px;"><path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a8.09 8.09 0 0 0-2.312.333L9.73 6.868c.403-.345.925-.535 1.47-.535 1.38 0 2.5 1.12 2.5 2.5 0 .545-.19 1.067-.535 1.47l2.194 2.193zm-5.09-5.09L10 8.357A2.49 2.49 0 0 0 8.005 6.5a2.49 2.49 0 0 0-2.464 1.857l-1.815-1.815C4.857 6.136 6.326 5.5 8 5.5z"/><path d="M8 12c-2.12 0-3.879-.668-5.168-1.957a13.133 13.133 0 0 1-1.66-2.043C1.22 7.712 1.9 6.837 2.73 6.012L1.082 4.364A8.907 8.907 0 0 0 0 8s3 5.5 8 5.5a8.09 8.09 0 0 0 2.312-.333L8.641 11.51c-.403.345-.925.535-1.47.535z"/><path d="M12.42 13.482a8.238 8.238 0 0 1-2.585.836l1.246 1.246a.5.5 0 0 0 .707-.707l-1.368-1.375z"/><path d="M5.433 11.104A3.5 3.5 0 0 1 4.5 8a3.5 3.5 0 0 1 1.037-2.433l-1.037-1.037a5 5 0 0 0-.25 5.576l1.183 1.183-.003-.186zm6.825 2.193a5 5 0 0 0 .25-5.576l-1.183-1.183.003.186a3.5 3.5 0 0 1 1.037 3.03l1.183 1.183-.29-.64z"/></svg>`;
-
-  toggleAdminBtn.addEventListener('click', function() {
-    if (adminEventPasswordInput.type === 'password') {
-      adminEventPasswordInput.type = 'text';
-      toggleAdminBtn.innerHTML = eyeSlashSvg;
-    } else {
-      adminEventPasswordInput.type = 'password';
-      toggleAdminBtn.innerHTML = eyeSvg;
-    }
-  });
+  if (btnGenerateCreateAdminPassword && adminEventPasswordInput) {
+    btnGenerateCreateAdminPassword.addEventListener('click', function() {
+      adminEventPasswordInput.value = generateRandomPassword();
+    });
+  }
 
   document.getElementById('admin-add-custom-field').addEventListener('click', () => {
     const row = document.createElement('div');

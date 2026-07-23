@@ -20,7 +20,7 @@ class StoreEventRequest extends FormRequest
             'time_start' => 'required|date_format:H:i',
             'time_end' => 'required|date_format:H:i',
             'access_type' => 'required|in:publik,privat',
-            'password' => 'required_if:access_type,privat|nullable|string|min:4',
+            'password' => 'nullable|string',
             'audience_type' => 'required|in:umum,pegawai,semua',
             'custom_labels' => 'nullable|array',
             'custom_types' => 'nullable|array',

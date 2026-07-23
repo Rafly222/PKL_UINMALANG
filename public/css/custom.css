@@ -395,3 +395,104 @@ body {
   padding: .65rem 1.2rem !important;
   font-size: .875rem !important;
 }
+
+/* ==========================================================================
+   Dark Mode Overrides
+   ========================================================================== */
+body.dark-version {
+  color: rgba(255, 255, 255, 0.8) !important;
+  background-color: #0f172a !important; /* slate-900 */
+}
+
+body.dark-version .sidenav {
+  background-color: #1e293b !important; /* slate-800 */
+}
+
+body.dark-version .sidenav .nav-link-text {
+  color: #cbd5e1 !important;
+}
+
+body.dark-version .sidenav .nav-link:hover:not(.active) {
+  background-color: rgba(94, 114, 228, 0.15) !important;
+}
+
+body.dark-version .sidenav .nav-link:hover:not(.active) .nav-link-text {
+  color: #818cf8 !important;
+}
+
+body.dark-version .ep-card,
+body.dark-version .card,
+body.dark-version .card.ep-card {
+  background-color: #1e293b !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
+}
+
+body.dark-version .ep-form-card {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: #1e293b !important;
+}
+
+body.dark-version .form-control,
+body.dark-version .form-select,
+body.dark-version .input-group-text {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+body.dark-version .form-control:focus,
+body.dark-version .form-select:focus {
+  border-color: #6366f1 !important;
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+body.dark-version .form-control-label {
+  color: #94a3b8 !important;
+}
+
+body.dark-version .text-dark {
+  color: #f8fafc !important;
+}
+
+body.dark-version .text-muted {
+  color: #94a3b8 !important;
+}
+
+body.dark-version .table th {
+  color: #94a3b8 !important;
+}
+
+body.dark-version .table td {
+  color: #cbd5e1 !important;
+}
+
+body.dark-version .modal-content {
+  background-color: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #f8fafc !important;
+}
+
+body.dark-version .modal-header,
+body.dark-version .modal-footer {
+  border-color: #334155 !important;
+}
+
+body.dark-version .bg-transparent {
+  background-color: transparent !important;
+}
+
+body.dark-version .btn-close-white,
+body.dark-version .btn-close {
+  filter: invert(1) grayscale(1) brightness(2) !important;
+}
+
+body.dark-version .ep-signature-frame {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+body.dark-version .navbar-main.navbar-scrolled {
+  background: rgba(30, 41, 59, 0.95) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+}

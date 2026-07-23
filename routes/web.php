@@ -46,11 +46,11 @@ Route::middleware(['auth'])->group(function () {
     
     Route::get('/dashboard/event/{event_uuid}/presence', [EventController::class, 'presences'])->name('event.presences');
     Route::get('/dashboard/event/{event_uuid}/presence/excel', [EventController::class, 'exportExcel'])->name('event.presences.excel');
-});
 
-// Akses publik untuk melihat foto & TTD hasil presensi
-Route::get('/presence/{id}/photo', [MediaController::class, 'photo'])->name('presence.photo');
-Route::get('/presence/{id}/signature', [MediaController::class, 'signature'])->name('presence.signature');
+    // Akses aman untuk melihat foto & TTD hasil presensi
+    Route::get('/presence/{id}/photo', [MediaController::class, 'photo'])->name('presence.photo');
+    Route::get('/presence/{id}/signature', [MediaController::class, 'signature'])->name('presence.signature');
+});
 
 // Area Proteksi Ketat: HANYA Super Admin
 Route::middleware(['auth', 'role:admin'])->group(function () {

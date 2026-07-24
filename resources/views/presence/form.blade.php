@@ -673,11 +673,40 @@
       }
 
       const ctx = canvas.getContext('2d');
-      canvas.width = 640;
-      canvas.height = 480;
+      const targetWidth = 640;
+      const targetHeight = 480;
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
 
       if(activeStream && !video.classList.contains('d-none')) {
-        ctx.drawImage(video, 0, 0, 640, 480);
+        const videoWidth = video.videoWidth;
+        const videoHeight = video.videoHeight;
+
+        if (videoWidth && videoHeight) {
+          const videoRatio = videoWidth / videoHeight;
+          const targetRatio = targetWidth / targetHeight;
+
+          let sx, sy, sWidth, sHeight;
+
+          if (videoRatio > targetRatio) {
+            // Video lebih lebar daripada target canvas (landscape) -> potong bagian kanan & kiri
+            sHeight = videoHeight;
+            sWidth = videoHeight * targetRatio;
+            sx = (videoWidth - sWidth) / 2;
+            sy = 0;
+          } else {
+            // Video lebih tinggi daripada target canvas (portrait HP) -> potong bagian atas & bawah
+            sWidth = videoWidth;
+            sHeight = videoWidth / targetRatio;
+            sx = 0;
+            sy = (videoHeight - sHeight) / 2;
+          }
+
+          ctx.drawImage(video, sx, sy, sWidth, sHeight, 0, 0, targetWidth, targetHeight);
+        } else {
+          // Fallback jika dimensi asli video belum siap
+          ctx.drawImage(video, 0, 0, targetWidth, targetHeight);
+        }
         video.classList.add('d-none');
       } else {
         ctx.fillStyle = '#172b4d';

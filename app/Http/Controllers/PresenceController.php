@@ -24,7 +24,16 @@ class PresenceController extends Controller
         $today = $now->toDateString();
         $time = $now->toTimeString();
 
-        $events = Event::where('date', $today)
+        $events = Event::where(function ($query) use ($today) {
+                $query->where(function ($q) use ($today) {
+                    $q->whereNull('date_end')
+                      ->where('date', $today);
+                })->orWhere(function ($q) use ($today) {
+                    $q->whereNotNull('date_end')
+                      ->where('date', '<=', $today)
+                      ->where('date_end', '>=', $today);
+                });
+            })
             ->where('time_start', '<=', $time)
             ->where('time_end', '>=', $time)
             ->latest()
@@ -225,12 +234,24 @@ class PresenceController extends Controller
         $identityLog = $presence->nip ? "NIP: {$presence->nip}" : "Umum";
         ActivityLog::log('submit_presence', "Tamu '{$presence->name}' ({$identityLog}) berhasil mengisi presensi untuk kegiatan '{$event->name}'.");
 
+        // Berikan tanda bahwa sesi browser ini yang berhak melihat halaman sukses
+        session()->put("just_submitted_presence_{$presence->uuid}", true);
+
         return redirect()->route('presence.success', $presence->uuid);
     }
 
     public function showSuccess($presence_uuid)
     {
+        // Verifikasi hak kepemilikan sesi
+        if (!session()->has("just_submitted_presence_{$presence_uuid}")) {
+            abort(403, 'Akses ditolak: Anda tidak berwenang melihat kartu kehadiran ini.');
+        }
+
         $presence = Presence::with('event')->where('uuid', $presence_uuid)->firstOrFail();
+        
+        // Izinkan sesi browser ini mengakses berkas foto & TTD milik presensi ini
+        session()->put("allowed_presence_media_{$presence->id}", true);
+        
         return view('presence.success', compact('presence'));
     }
 

@@ -41,7 +41,7 @@
                 @if($event->audience_type === 'pegawai' || $event->audience_type === 'semua')
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder">NIP</th>
                 @endif
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Nama Lengkap</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder" style="min-width: 140px; max-width: 180px; white-space: normal !important;">Nama Lengkap</th>
                 
                 {{-- Dynamic Semi-Custom Columns --}}
                 @if(in_array('sc-phone', $event->fields ?? []))
@@ -50,15 +50,15 @@
                 @if(in_array('sc-gender', $event->fields ?? []))
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Jenis Kelamin</th>
                 @endif
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Instansi</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder" style="min-width: 180px; max-width: 250px; white-space: normal !important;">Instansi</th>
                 @if(in_array('sc-email', $event->fields ?? []))
-                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Email</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder" style="min-width: 150px; max-width: 200px; white-space: normal !important;">Email</th>
                 @endif
 
                 {{-- Dynamic Custom Columns --}}
                 @if($event->custom_fields && count($event->custom_fields) > 0)
                   @foreach($event->custom_fields as $cf)
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder">{{ $cf['label'] }}</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder" style="min-width: 150px; max-width: 200px; white-space: normal !important;">{{ $cf['label'] }}</th>
                   @endforeach
                 @endif
 
@@ -83,7 +83,7 @@
                   @if($event->audience_type === 'pegawai' || $event->audience_type === 'semua')
                     <td class="text-sm">{{ $presence->nip ?? '-' }}</td>
                   @endif
-                  <td class="text-sm font-weight-bold">{{ $presence->name }}</td>
+                  <td class="text-sm font-weight-bold" style="white-space: normal !important; word-break: break-word; min-width: 140px; max-width: 180px;">{{ $presence->name }}</td>
                   
                   {{-- WhatsApp --}}
                   @if(in_array('sc-phone', $event->fields ?? []))
@@ -95,17 +95,17 @@
                     <td class="text-sm">{{ $presence->data_presensi['Jenis Kelamin'] ?? '-' }}</td>
                   @endif
                   
-                  <td class="text-sm">{{ $presence->institution }}</td>
+                  <td class="text-sm" style="white-space: normal !important; word-break: break-word; min-width: 180px; max-width: 250px;">{{ $presence->institution }}</td>
                   
                   {{-- Email --}}
                   @if(in_array('sc-email', $event->fields ?? []))
-                    <td class="text-sm">{{ $presence->data_presensi['Email'] ?? '-' }}</td>
+                    <td class="text-sm" style="white-space: normal !important; word-break: break-all; min-width: 150px; max-width: 200px;">{{ $presence->data_presensi['Email'] ?? '-' }}</td>
                   @endif
 
                   {{-- Custom Fields --}}
                   @if($event->custom_fields && count($event->custom_fields) > 0)
                     @foreach($event->custom_fields as $cf)
-                      <td class="text-sm">{{ $presence->data_presensi[$cf['label']] ?? '-' }}</td>
+                      <td class="text-sm" style="white-space: normal !important; word-break: break-word; min-width: 150px; max-width: 200px;">{{ $presence->data_presensi[$cf['label']] ?? '-' }}</td>
                     @endforeach
                   @endif
 

@@ -23,8 +23,34 @@ class SubmitPresenceRequest extends FormRequest
             'phone' => in_array('sc-phone', $fields) ? 'required|string|max:30' : 'nullable|string|max:30',
             'email' => in_array('sc-email', $fields) ? 'required|email|max:255' : 'nullable|email|max:255',
             'institution' => in_array('sc-institution', $fields) ? 'required|string|max:255' : 'nullable|string|max:255',
-            'photo' => in_array('sc-photo', $fields) ? 'required|string' : 'nullable|string',
-            'signature' => in_array('sc-signature', $fields) ? 'required|string' : 'nullable|string',
+            'photo' => in_array('sc-photo', $fields) 
+                ? [
+                    'required', 
+                    'string',
+                    function ($attribute, $value, $fail) {
+                        if (!preg_match('/^data:image\/(jpeg|jpg|png);base64,/', $value)) {
+                            $fail('Format foto tidak valid. Wajib berupa data gambar Base64.');
+                        }
+                        if (strlen($value) > 6000000) {
+                            $fail('Ukuran berkas foto terlalu besar. Maksimal 4MB.');
+                        }
+                    }
+                  ] 
+                : 'nullable|string',
+            'signature' => in_array('sc-signature', $fields) 
+                ? [
+                    'required', 
+                    'string',
+                    function ($attribute, $value, $fail) {
+                        if (!preg_match('/^data:image\/(png|jpeg|jpg);base64,/', $value)) {
+                            $fail('Format tanda tangan tidak valid. Wajib berupa data gambar Base64.');
+                        }
+                        if (strlen($value) > 3000000) {
+                            $fail('Ukuran berkas tanda tangan terlalu besar. Maksimal 2MB.');
+                        }
+                    }
+                  ] 
+                : 'nullable|string',
         ];
 
         if ($this->input('tipe_peserta') === 'pegawai') {

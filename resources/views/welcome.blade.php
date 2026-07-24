@@ -194,7 +194,7 @@
                     <div class="icon icon-shape icon-xs bg-gradient-light shadow text-center me-3">
                       <i class="ni ni-calendar-grid-58 text-primary"></i>
                     </div>
-                    <span class="text-sm font-weight-bold">{{ \Carbon\Carbon::parse($ev->date)->translatedFormat('d F Y') }}</span>
+                    <span class="text-sm font-weight-bold">{{ $ev->formatted_date_range }}</span>
                   </div>
                   <div class="list-group-item border-0 d-flex align-items-center px-0 py-2">
                     <div class="icon icon-shape icon-xs bg-gradient-light shadow text-center me-3">

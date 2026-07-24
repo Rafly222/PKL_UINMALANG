@@ -56,11 +56,11 @@ class Event extends Model
         if ($this->date_end && $this->date_end !== $this->date) {
             $endDate = Carbon::parse($this->date_end);
             if ($startDate->format('m Y') === $endDate->format('m Y')) {
-                return $startDate->format('d') . ' - ' . $endDate->format('d F Y');
+                return $startDate->translatedFormat('d') . ' - ' . $endDate->translatedFormat('d F Y');
             }
-            return $startDate->format('d M Y') . ' - ' . $endDate->format('d M Y');
+            return $startDate->translatedFormat('d M Y') . ' - ' . $endDate->translatedFormat('d M Y');
         }
-        return $startDate->format('d F Y');
+        return $startDate->translatedFormat('d F Y');
     }
 
     // Accessor untuk mendapatkan password terdekripsi jika event privat

@@ -81,24 +81,29 @@ class MediaController extends Controller
      */
     private function authorizeAccess(Presence $presence)
     {
-        // Pastikan pengguna telah terautentikasi (login)
+        // 1. Izinkan akses jika pengguna memiliki sesi pengisian presensi yang valid (untuk halaman sukses)
+        if (session("allowed_presence_media_{$presence->id}")) {
+            return;
+        }
+
+        // Pastikan pengguna telah terautentikasi (login) untuk pengecekan berikutnya
         if (!Auth::check()) {
             abort(401, 'Silakan login terlebih dahulu untuk mengakses media ini.');
         }
 
         $user = Auth::user();
 
-        // 1. Super Admin (role: admin) selalu diizinkan
+        // 2. Super Admin (role: admin) selalu diizinkan
         if ($user->role === 'admin') {
             return;
         }
 
-        // 2. Pembuat Event diizinkan melihat semua absensi di event miliknya
+        // 3. Pembuat Event diizinkan melihat semua absensi di event miliknya
         if ($user->id === $presence->event->user_id) {
             return;
         }
 
-        // 3. Pemilik Absensi sendiri (staf yang bersangkutan) diizinkan melihat filenya sendiri
+        // 4. Pemilik Absensi sendiri (staf yang bersangkutan) diizinkan melihat filenya sendiri
         if (!empty($presence->nip) && $user->nip === $presence->nip) {
             return;
         }

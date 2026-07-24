@@ -80,8 +80,8 @@ erDiagram
         string nip "18 digit (nullable)"
         string institution
         string phone
-        longtext photo "base64 string"
-        longtext signature "base64 png"
+        string photo "file path (nullable)"
+        string signature "file path (nullable)"
         json data_presensi "value custom fields"
     }
     BLACKLISTS {
@@ -171,8 +171,8 @@ php artisan migrate:fresh --seed
 
 ### Langkah 3: Konfigurasi Routing (`routes/web.php`)
 Daftarkan rute akses sistem dengan membaginya ke dalam 3 kelompok utama:
-1. **Akses Publik Bebas:** Halaman utama (`/`), Form Presensi (`/presence/form/{id}`), Submit Presensi, dan Link Gambar (`/presence/{id}/photo` dan `/presence/{id}/signature`).
-2. **Akses Dashboard Ter-autentikasi (`auth`):** Dashboard user staff (`/dashboard`), Buat Event, Hapus Event, dan Rekap Presensi.
+1. **Akses Publik Bebas:** Halaman utama (`/`), Halaman Gerbang Sandi (`/presence/gate/{uuid}`), Form Presensi (`/presence/form/{id}`), dan Submit Presensi.
+2. **Akses Ter-autentikasi (`auth`):** Dashboard user staff (`/dashboard`), Buat/Edit Event, Rekap Presensi, serta Akses Aman Media (`/presence/{id}/photo` dan `/presence/{id}/signature`) untuk membatasi unduhan foto/tanda tangan secara aman.
 3. **Akses Khusus Super Admin (`auth` & `role:admin`):** Dashboard admin (`/admin/dashboard`), Tambah/Hapus User, dan Tambah/Hapus Blacklist.
 
 ### Langkah 4: Inisialisasi Datatables di Sisi Client (Frontend)
@@ -202,3 +202,7 @@ Saat presentasi di hadapan pembimbing lapangan dan penguji, tekankan poin-poin k
 3. **Fleksibilitas Input Dinamis:** Formulir presensi dapat dikonfigurasi secara instan oleh pembuat event untuk memunculkan input custom (seperti no HP, foto wajah, tanda tangan) tanpa perlu menulis baris kode baru di database.
 4. **Keandalan Waktu (Time-Locking):** Waktu akses presensi dikunci ketat berbasis server menggunakan timezone `'Asia/Jakarta'`, memastikan tidak ada manipulasi waktu absensi oleh peserta.
 5. **Kemudahan Rekapitulasi Data:** File ekspor Excel menyajikan data NIK/NIP yang bersih (bebas format angka ilmiah) dan link unduh media foto & tanda tangan biner yang dapat diklik langsung.
+6. **Pengamanan Ketat Media Absensi (Private Media Authorization):** Berkas foto wajah dan tanda tangan disimpan di area terisolasi dan dilindungi hak aksesnya lewat `MediaController`. Hanya Admin, Pembuat Event terkait, dan Staf pemilik absensi yang bersangkutan saja yang diizinkan memuat gambar tersebut, mencegah pencurian data identitas.
+7. **Pembangkitan Sandi Otomatis (Pre-generated Event Password):** Form pembuatan event privat dilengkapi tombol "Generate Acak" instan untuk mempercepat pengisian kode dan menampilkan sandi secara transparan kepada pembuat event sebelum form disubmit.
+8. **Integrasi Mode Gelap Premium (Premium Dark Mode):** Penambahan switch mode gelap-terang di navbar atas yang disinkronkan dengan `localStorage` browser dan script anti-flash di awal render halaman untuk memastikan transisi visual gelap yang halus dan premium.
+9. **Desain Mobile-First Pilihan Gender:** Komponen pemilihan Jenis Kelamin diubah dari dropdown select menjadi tombol radio (radio buttons) dengan id unik agar lebih bersahabat dan mudah diketuk pada perangkat seluler.

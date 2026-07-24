@@ -133,3 +133,4 @@ Di dalam modal preview, semua informasi yang diminta oleh pengguna disajikan sec
 *   **QR Kode**: Hasil render dari `qrcode.min.js`.
 *   **Tanggal 1 ~ 31**: Ditampilkan secara otomatis dari accessor format rentang tanggal event.
 *   **Unduh QR Kode**: Tombol khusus berkelas `.download-qr-btn` untuk memicu pengunduhan file resolusi tinggi dengan logo Kota Malang tersemat di dalamnya secara permanen.
+*   **Informasi Kata Sandi (Event Privat)**: Menampilkan label/badge berisi password kegiatan terdekripsi di dalam modal preview QR Code (di atas gambar QR Code). Hal ini memudahkan admin atau staf pembuat event untuk mengetahui password event privat tanpa harus membuka menu pengeditan data event.
